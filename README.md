@@ -18,17 +18,14 @@ This project constitutes an comprehensive and objective approach to automate dat
     
 ## Framework Architecture <a name = "ta"></a>
 
-![Atlantic Architecture](https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG)
-    
-    ---
 <img src="https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG" align="center" width="850" height="650" />
 
 
     
-    
 ### Preprocessing Available Methods  <a name = "ta1"></a>
 
-    
+* DateTime Feature Engineering:  if there are columns of the Date type, these will be converted and transformed into additional columns (Day of the week, Day of the month, Day  Year, Month, Year, Weekend) which will be added by association to the input
+input dataset and subsequently the original column will be deleted.
     
 
 As versões instaladas devem ser as mais recentes referentes aos links abaixo indicados:
