@@ -9,18 +9,17 @@
 
 This project constitutes an comprehensive and objective approach to automate data processing through the integration and objectively validated application of various processing mechanisms, ranging from feature engineering, automated feature selection, different encoding versions and null imputation methods.  The optimization methodology of this framework follows a evaluation structured in tree-based models by the implemention of Random Forest and Extra Trees ensembles.
 
-## Framework Architecture <a name = "ta"></a>
-
-![Atlantic Architecture](https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG)
-
-### Pré-requisitos <a name = "pre1"></a>
-* [SWI-Prolog 8.2.4](https://www.swi-prolog.org/download/stable)
-* [Python 3.9](https://www.python.org/downloads)
-* [Twilio Sandbox for WhatsApp](https://www.twilio.com/docs/whatsapp/sandbox)
+Main Development Tools <a name = "pre1"></a>
+* [Python](https://www.python.org/downloads)
+* [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
 * [npm](https://www.npmjs.com/get-npm)
 * [R 4.0](https://cran.r-project.org/mirrors.html)
 * [RStudio](https://www.rstudio.com/products/rstudio/download)
 
+    
+## Framework Architecture <a name = "ta"></a>
+
+![Atlantic Architecture](https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG)
 
 
     
