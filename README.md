@@ -18,7 +18,7 @@ This project constitutes an comprehensive and objective approach to automate dat
     
 ## Framework Architecture <a name = "ta"></a>
 
-![Atlantic Architecture](https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG alt="drawing" width="200"/)
+![Atlantic Architecture](https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG)
 
 
     
