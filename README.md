@@ -4,27 +4,12 @@
   <h2 align="center"> Atlantic - Automated PreProcessing Framework for Supervised Machine Learning
   <br>
   
-## Índice de conteúdos
 
-- [Contextualização Tecnológica](#ta)
-  - [Pré-requisitos](#ta1)
-  - [Greenshoes Github Project](#ta2)
-- [Configuração Anaconda](#tb)
-  - [Instalação e Customização Anaconda](#tb1)
-  - [Criação Ambiente de Desenvolvimento](#tb2)
-  - [Customização do Ambiente](#tb3)
-- [Configuração Powerbi](#td)
-    - [Acesso ao Protótipo Powerbi Desenvolvido](#td1)
-    - [Conectar PowerBi ao Ambiente Python](#td2)
-    - [Permitir Interligação de Fonte Externa](#td3)
-    - [Atualizar Dados](#td4)
+## Technological Contextualization <a name = "ta"></a>
 
+This project constitutes an comprehensive and objective approach to automate data processing through the integration and objectively validated application of various processing mechanisms, ranging from feature engineering, automated feature selection, different versions of encodings and null imputation methods.  The optimization methodology of this framework follows a evaluation structured in tree-based models by the implemention of Random Forest and Extra Trees ensembles.
 
-
-## Contextualização Tecnológica <a name = "ta"></a>
-A tecnólogia em causa trata-se de um sistema de suporte à decisão que será implementado através da criação de um protótipo a partir do software "Microsoft Power BI Desktop" que permitirá aferir o desenvolvimento de uma solução de Machine Learning (preditiva) e Data Mining (analitica) com viabilidade de produzir suporte informacional ao negócio da Overcube.
-
-### Pré-requisitos  <a name = "ta1"></a>
+### Preprocessing Available Methods  <a name = "ta1"></a>
 
 As versões instaladas devem ser as mais recentes referentes aos links abaixo indicados:
 
