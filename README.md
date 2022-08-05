@@ -13,6 +13,13 @@ This project constitutes an comprehensive and objective approach to automate dat
 
 ![Atlantic Architecture](https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG)
 
+### Pré-requisitos <a name = "pre1"></a>
+* [SWI-Prolog 8.2.4](https://www.swi-prolog.org/download/stable)
+* [Python 3.9](https://www.python.org/downloads)
+* [Twilio Sandbox for WhatsApp](https://www.twilio.com/docs/whatsapp/sandbox)
+* [npm](https://www.npmjs.com/get-npm)
+* [R 4.0](https://cran.r-project.org/mirrors.html)
+* [RStudio](https://www.rstudio.com/products/rstudio/download)
 
 
 
