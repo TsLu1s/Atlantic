@@ -7,7 +7,7 @@
 
 ## Technological Contextualization <a name = "ta"></a>
 
-This project constitutes an comprehensive and objective approach to automate data processing through the integration and objectively validated application of various processing mechanisms, ranging from feature engineering, automated feature selection, different versions of encodings and null imputation methods.  The optimization methodology of this framework follows a evaluation structured in tree-based models by the implemention of Random Forest and Extra Trees ensembles.
+This project constitutes an comprehensive and objective approach to automate data processing through the integration and objectively validated application of various processing mechanisms, ranging from feature engineering, automated feature selection, different encoding versions and null imputation methods.  The optimization methodology of this framework follows a evaluation structured in tree-based models by the implemention of Random Forest and Extra Trees ensembles.
 
 ## Framework Architecture <a name = "ta"></a>
 
