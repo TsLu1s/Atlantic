@@ -9,6 +9,9 @@
 
 This project constitutes an comprehensive and objective approach to automate data processing through the integration and objectively validated application of various processing mechanisms, ranging from feature engineering, automated feature selection, different versions of encodings and null imputation methods.  The optimization methodology of this framework follows a evaluation structured in tree-based models by the implemention of Random Forest and Extra Trees ensembles.
 
+## ## Technological Architecture <a name = "ta"></a>
+    
+    
 ### Preprocessing Available Methods  <a name = "ta1"></a>
 
 As versões instaladas devem ser as mais recentes referentes aos links abaixo indicados:
