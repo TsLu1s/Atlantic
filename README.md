@@ -21,7 +21,7 @@ This project constitutes an comprehensive and objective approach to automate dat
 ![Atlantic Architecture](https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG)
     
     ---
-![Atlantic Architecture]<img src="https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG" width="900" height="700" />
+<img src="https://github.com/TsLu1s/Atlantic/blob/main/img/ATL%20Architecture.PNG" align="center" width="850" height="650" />
 
 
     
