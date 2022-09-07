@@ -72,12 +72,12 @@ Target = "Name_Target_Column"    # Define Target Feature to Predict
 
    
 # Simple Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, Target:str="Name_Target_Column"
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                  # Dataset:pd.DataFrame, Target:str="Name_Target_Column"
                                                         Target,                       # Split_Racio:float=0.75 [0.6,0.9[ -> Recommended
                                                         Split_Racio=0.75)
     
 # Customizable Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, 
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                  # Dataset:pd.DataFrame, 
                                                         Target"Name_Target_Column",   # Target:str="Name_Target_Column"
                                                         Split_Racio=0.75,             # Split_Racio:float=0.75, total_vi:float=0.98 
                                                         total_vi=0.98,                # h2o_fs_models:int [1,50+[,  encoding_fs:bool=True\False[5,15+[
@@ -130,7 +130,7 @@ You can get filter your most valuable features from the dataset via this 2 featu
 ```py    
     
 Selected_Columns, Selected_H2O_Importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,Target:str="Name_Target_Column",
-                                                                  Target,  #  total_vi:float [0.7,1[, h2o_fs_models:int [1,50+[, encoding_fs:bool=True/False
+                                                                  Target,      #  total_vi:float [0.7,1[, h2o_fs_models:int [1,50+[, encoding_fs:bool=True/False
                                                                   total_vi=0.98,     
                                                                   h2o_fs_models =7,
                                                                   encoding_fs=True)
