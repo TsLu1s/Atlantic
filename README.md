@@ -105,10 +105,10 @@ from atlantic import Atl_Data_Processing
 Train, Test = split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                       # Dataset:pd.DataFrame, Split_Racio:float
 
-Train, Test = atl.encoding_V1_Transform(Train,Test,Target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_V2_Transform(Train,Test,Target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
-Train, Test = atl.encoding_V3_Transform(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_V4_Transform(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
+Train, Test = atl.encoding_v1(Train,Test,Target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
+Train, Test = atl.encoding_v2(Train,Test,Target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
+Train, Test = atl.encoding_v3(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
+Train, Test = atl.encoding_v4(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
 
 # Train:pd.DataFrame, Test:pd.DataFrame, Target:str="Name_Target_Column"        
     
@@ -222,7 +222,7 @@ atl.iterative_null_imputation(Train_DF:pd.DataFrame,
     
 ## VIF Feature Selection Evaluation 
     
-atl.VIF_Performance_Selection(Train:pd.DataFrame,
+atl.vif_performance_selection(Train:pd.DataFrame,
                           Test:pd.DataFrame,
                           Target:str,
                           vif_ratio:float=10.0) # return Train, Test
