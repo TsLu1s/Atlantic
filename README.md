@@ -65,19 +65,19 @@ Importante Notes:
 ```py
     
 import atlantic as atl
-#from sklearn.preprocessing import StandardScaler, MinMaxScaler 
-    
+import pandas as pd 
+
 Dataset = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
 Target = "Name_Target_Column"    # Define Target Feature to Predict
 
    
 # Simple Option
-Processed_Dataset,Train,Test = atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, Target:str="Name_Target_Column"
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, Target:str="Name_Target_Column"
                                                         Target,                       # Split_Racio:float=0.75 [0.6,0.9[ -> Recommended
                                                         Split_Racio=0.75)
     
 # Customizable Option
-Processed_Dataset,Train,Test = atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, 
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, 
                                                         Target"Name_Target_Column",   # Target:str="Name_Target_Column"
                                                         Split_Racio=0.75,             # Split_Racio:float=0.75, total_vi:float=0.98 
                                                         total_vi=0.98,                # h2o_fs_models:int [1,50+[,  encoding_fs:bool=True\False[5,15+[
@@ -105,10 +105,10 @@ from atlantic import Atl_Data_Processing
 Train, Test = split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                       # Dataset:pd.DataFrame, Split_Racio:float
 
-Train, Test = encoding_V1_Transform(Train,Test,Target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
-Train, Test = encoding_V2_Transform(Train,Test,Target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
-Train, Test = encoding_V3_Transform(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
-Train, Test = encoding_V4_Transform(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
+Train, Test = atl.encoding_V1_Transform(Train,Test,Target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
+Train, Test = atl.encoding_V2_Transform(Train,Test,Target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
+Train, Test = atl.encoding_V3_Transform(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
+Train, Test = atl.encoding_V4_Transform(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
 
 # Train:pd.DataFrame, Test:pd.DataFrame, Target:str="Name_Target_Column"        
     
@@ -129,14 +129,14 @@ You can get filter your most valuable features from the dataset via this 2 featu
     
 ```py    
     
-Selected_Columns, Selected_H2O_Importance = feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,Target:str="Name_Target_Column",
+Selected_Columns, Selected_H2O_Importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,Target:str="Name_Target_Column",
                                                                   Target,  #  total_vi:float [0.7,1[, h2o_fs_models:int [1,50+[, encoding_fs:bool=True/False
                                                                   total_vi=0.98,     
                                                                   h2o_fs_models =7,
                                                                   encoding_fs=True)
 
 
-Selected_Columns, VIF_Dataset = feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, Target:str="Name_Target_Column",
+Selected_Columns, VIF_Dataset = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, Target:str="Name_Target_Column",
                                                       Target,  # VIF:float [5,15+[
                                                       VIF=10.0)
 ```
@@ -148,7 +148,7 @@ The `eng_date` function converts and transforms columns of Datetime type into ad
     
 ```py   
     
-Dataset = engin_date(Dataset,Drop=False) # Dataset:pd.DataFrame, Drop:bool
+Dataset = atl.engin_date(Dataset,Drop=False) # Dataset:pd.DataFrame, Drop:bool
     
 ```
 
@@ -175,45 +175,45 @@ The following functions were used in the development of this project.
     
 ## Data Preprocessing 
     
-reset_index_DF(Dataset:pd.DataFrame) # return Dataset
+atl.reset_index_DF(Dataset:pd.DataFrame) # return Dataset
     
-split_dataset(Dataset:pd.DataFrame,
+atl.split_dataset(Dataset:pd.DataFrame,
               Split_Racio:float) # return Train, Test
     
-reindex_columns(Dataset:pd.DataFrame,
+atl.reindex_columns(Dataset:pd.DataFrame,
                 Feature_Importance:list) # return Dataset
         
-numerical_columns(Dataset:pd.DataFrame,
+atl.numerical_columns(Dataset:pd.DataFrame,
                   Target:str) # return list_num_cols
     
-categorical_columns(Dataset:pd.DataFrame,
+atl.categorical_columns(Dataset:pd.DataFrame,
                     Target:str) # return list_cat_cols 
     
-del_nulls_target(Dataset:pd.DataFrame,
+atl.del_nulls_target(Dataset:pd.DataFrame,
                  Target:str)  # return Dataset
     
-remove_columns_by_nulls(Dataset:pd.DataFrame,
+atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
                         per:int) # return Dataset
 
 ## Simplified Null Imputation (Only numeric features)
 
-const_null_imputation(Train:pd.DataFrame,
+atl.const_null_imputation(Train:pd.DataFrame,
                       Test:pd.DataFrame,
                       Target:str,
                       imp_value:int=0) # return Train, Test 
     
-simple_null_imputation(Train:pd.DataFrame,
+atl.simple_null_imputation(Train:pd.DataFrame,
                        Test:pd.DataFrame,
                        Target:str,
                        strat:str='mean') # return Train, Test
     
-knn_null_imputation(Train:pd.DataFrame,
+atl.knn_null_imputation(Train:pd.DataFrame,
                     Test:pd.DataFrame,
                     Target:str,
                     neighbors:int=5) # return Train, Test
     
     
-iterative_null_imputation(Train_DF:pd.DataFrame,
+atl.iterative_null_imputation(Train_DF:pd.DataFrame,
                           Test_DF:pd.DataFrame,
                           Target:str,
                           order:str='ascending',
@@ -222,7 +222,7 @@ iterative_null_imputation(Train_DF:pd.DataFrame,
     
 ## VIF Feature Selection Evaluation 
     
-VIF_Performance_Selection(Train:pd.DataFrame,
+atl.VIF_Performance_Selection(Train:pd.DataFrame,
                           Test:pd.DataFrame,
                           Target:str,
                           vif_ratio:float=10.0) # return Train, Test
