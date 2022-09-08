@@ -242,4 +242,5 @@ Project Link - https://github.com/TsLu1s/Atlantic
 # Acknowledgements
   
 * [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
-* [Sklearn](https://scikit-learn.org/stable/)  
+* [Sklearn](https://scikit-learn.org/stable/) 
+    
