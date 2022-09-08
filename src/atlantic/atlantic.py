@@ -1143,7 +1143,7 @@ def vif_performance_selection(train:pd.DataFrame,
     Perf_Default_VIF=Pred_Performance_VIF[eval_metric][0]
     print("   ")
     print("Default Performance:",Default_Performance)
-    print("Performance Default VIF:",Perf_Default_VIF)
+    print("Default Performance VIF:",Perf_Default_VIF)
     
     if Perf_Default_VIF<=Default_Performance:
         print("The VIF filtering method was applied    ")
