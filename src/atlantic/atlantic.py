@@ -13,7 +13,6 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 h2o.init()
 
-
 ##################################################### Loading/Split do Dataset #############################################################
 
 def reset_index_DF(Dataset:pd.DataFrame):
