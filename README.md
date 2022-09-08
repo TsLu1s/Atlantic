@@ -9,9 +9,9 @@ The `atlantic` project constitutes an comprehensive and objective approach to si
 
 This project aims at providing the following aplication capabilities:
 
-* General applicability on tabular datasets: The developed preprocessing procedures are applicable on any data table associated with Supervised Machine Learning scopes regardless of the properties or specifications of the Dataset input features.
+* General applicability on tabular datasets: The developed preprocessing procedures are applicable on any data table associated with Supervised Machine Learning scopes regardless of the properties or specifications of the Dataset features.
 
-* Automated treatment of tabular data associated with predictive analysis: It implements a global and carefully validated tested data treatment based on the characteristics of each of the Dataset input columns, assuming its identification to the associated target column.
+* Automated treatment of tabular data associated with predictive analysis: It implements a global and carefully validated tested data treatment based on the characteristics of each Dataset input columns, assuming its identification to the associated target column.
 
 * Robustness and improvement of predictive results: The implementation of the `atlantic` automated data preprocessing function aims at improve predictive performance directly associated with the processing methods implemented based on the Dataset properties.  
     
@@ -242,5 +242,4 @@ Project Link - https://github.com/TsLu1s/Atlantic
 # Acknowledgements
   
 * [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
-* [Sklearn](https://scikit-learn.org/stable/) 
-    
+* [Sklearn](https://scikit-learn.org/stable/)  
