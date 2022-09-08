@@ -765,7 +765,8 @@ def version4_Encoding(df_train:pd.DataFrame, df_test:pd.DataFrame, Target:str):
 
 def Select_Encoding_Method(df_train:pd.DataFrame, 
                            df_test:pd.DataFrame, 
-                           Target, pred_type:str,
+                           Target:str, 
+                           pred_type:str,
                            eval_metric:str):
     """
     The Select_Encoding_Method function is used to select the best encoding method for a given dataset. 
@@ -1442,17 +1443,7 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     
     """
     The atlantic_data_processing function is used to preprocess the input dataframe. 
-    It is composed of several steps:
-        1) Remove columns with more than 99% of null values;
-        2) Remove Target Null Values;
-        3) Datetime Feature Engineering
-        4) Feature Selection by Variance H2O AutoML Variable Importance; 
-        5) Encoding Method Selection;
-        6) NULL SUBSTITUTION + ENCODING APLICATION;
-        7) Feature Selection by Variance Inflation Factor (VIF); 
-    
-       The function returns a DataFrame_Final, Train and Test DataFrames transformed with the best performance selected preprocessing methods.
-    
+
     :param Dataset:pd.DataFrame: Pass the dataset to be processed
     :param Target:str: Define the target column
     :param Split_Racio:float: Define the size of the test set
@@ -1460,6 +1451,7 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     :param h2o_fs_models:int=7: Select the number of models used in the feature selection process
     :param encoding_fs:bool=True: Select the encoding method
     :param vif_ratio:float=10.0: Control the vif ratio
+    
     """
     
     Dataframe_=Dataset.copy()
