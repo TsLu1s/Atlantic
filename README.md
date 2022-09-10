@@ -7,7 +7,7 @@
 
 The `Atlantic` project constitutes an comprehensive and objective approach to simplify and automate data processing through the integration and objectively validated application of various preprocessing mechanisms, ranging from feature engineering, automated feature selection, multiple encoding versions and null imputation methods. The optimization methodology of this framework follows a evaluation structured in tree-based models by the implemention of Random Forest and Extra Trees ensembles.
 
-This project aims at providing the following aplication capabilities:
+This project aims at providing the following application capabilities:
 
 * General applicability on tabular datasets: The developed preprocessing procedures are applicable on any data table associated with Supervised Machine Learning scopes regardless of the properties or specifications of the Dataset features.
 
@@ -28,7 +28,7 @@ Major frameworks used to built this project:
 ## Framework Architecture <a name = "ta"></a>
 
 <p align="center">
-  <img src="https://github.com/TsLu1s/Atlantic/blob/main/img/ATL_Architecture_Final.PNG" align="center" width="850" height="650" />
+  <img src="https://i.ibb.co/hBtWrRV/ATL-Architecture-Final.png" align="center" width="850" height="650" />
 </p>  
 
 ## Where to get it <a name = "ta"></a>
@@ -192,7 +192,7 @@ atl.del_nulls_target(Dataset:pd.DataFrame,
                      Target:str)  # return Dataset
     
 atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
-                            per:int) # return Dataset
+                            percentage:int) # return Dataset
 
 ## Simplified Null Imputation (Only numeric features)
 
