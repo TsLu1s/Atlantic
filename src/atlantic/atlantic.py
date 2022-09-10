@@ -13,6 +13,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 h2o.init()
 
+
 ##################################################### Loading/Split do Dataset #############################################################
 
 def reset_index_DF(Dataset:pd.DataFrame):
@@ -433,8 +434,9 @@ def null_substitution_method(train:pd.DataFrame,
     MAE_KNN=KKN_Performance[eval_metric].sum()
     MAE_Iterartive=Iterative_Performance[eval_metric].sum()
 
-    print("KNN Performance: ", KKN_Performance, "\n Iterative Performance: ", Iterative_Performance,
-          "\n Zero Substitution Performance: ", Zero_Sub_Performance, "\n Simple Imputation Performance: ", Simple_Performance)
+    print("KNN Performance: ", round(MAE_KNN, 5), "\n Iterative Performance: ", round(MAE_Iterartive, 5),
+          "\n Zero Substitution Performance: ", round(MAE_Zero_Sub, 5), "\n Simple Imputation Performance: ", round(MAE_Simple, 5))
+    
     List_Imputation=[MAE_Iterartive,MAE_KNN,MAE_Zero_Sub,MAE_Simple]
     
     List_Imputation.sort()
@@ -765,8 +767,7 @@ def version4_Encoding(df_train:pd.DataFrame, df_test:pd.DataFrame, Target:str):
 
 def Select_Encoding_Method(df_train:pd.DataFrame, 
                            df_test:pd.DataFrame, 
-                           Target:str, 
-                           pred_type:str,
+                           Target, pred_type:str,
                            eval_metric:str):
     """
     The Select_Encoding_Method function is used to select the best encoding method for a given dataset. 
@@ -1144,7 +1145,7 @@ def vif_performance_selection(train:pd.DataFrame,
     Perf_Default_VIF=Pred_Performance_VIF[eval_metric][0]
     print("   ")
     print("Default Performance:",Default_Performance)
-    print("Default Performance VIF:",Perf_Default_VIF)
+    print("Performance Default VIF:",Perf_Default_VIF)
     
     if Perf_Default_VIF<=Default_Performance:
         print("The VIF filtering method was applied    ")
@@ -1443,7 +1444,17 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     
     """
     The atlantic_data_processing function is used to preprocess the input dataframe. 
-
+    It is composed of several steps:
+        1) Remove columns with more than 99% of null values;
+        2) Remove Target Null Values;
+        3) Datetime Feature Engineering
+        4) Feature Selection by Variance H2O AutoML Variable Importance; 
+        5) Encoding Method Selection;
+        6) NULL SUBSTITUTION + ENCODING APLICATION;
+        7) Feature Selection by Variance Inflation Factor (VIF); 
+    
+       The function returns a DataFrame_Final, Train and Test DataFrames transformed with the best performance selected preprocessing methods.
+    
     :param Dataset:pd.DataFrame: Pass the dataset to be processed
     :param Target:str: Define the target column
     :param Split_Racio:float: Define the size of the test set
@@ -1451,7 +1462,6 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     :param h2o_fs_models:int=7: Select the number of models used in the feature selection process
     :param encoding_fs:bool=True: Select the encoding method
     :param vif_ratio:float=10.0: Control the vif ratio
-    
     """
     
     Dataframe_=Dataset.copy()
@@ -1548,3 +1558,4 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     DataFrame_Final=reset_index_DF(Train_DF)
 
     return DataFrame_Final, Train, Test
+
