@@ -78,11 +78,11 @@ Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,            
     
 # Customizable Option
 Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, 
-                                                            Target"Name_Target_Column",   # Target:str="Name_Target_Column"
+                                                            Target="Name_Target_Column",   # Target:str="Name_Target_Column"
                                                             Split_Racio=0.75,             # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
                                                             total_vi=0.98,                # h2o_fs_models:int [1,50],  encoding_fs:bool=True\False
                                                             h2o_fs_models=7,              # vif_ratio:float=10.0 [3,30]
-                                                            encoding_fs="on",
+                                                            encoding_fs=True,
                                                             vif_ratio=10.0)
 ```  
 
@@ -153,7 +153,7 @@ Dataset = atl.engin_date(Dataset,Drop=False) # Dataset:pd.DataFrame, Drop:bool
 
 ### 2.4 Predictive Performance Metrics
 
-You can analyse the obtained predictive performance results by using the given bellow functions witch contains the most used metrics for each supervised predictive context (regression, binary and multiclass classification).
+You can analyse the obtained predictive performance results by using the given bellow functions witch contains the most used metrics for each supervised predictive context.
     
     
 ```py  
