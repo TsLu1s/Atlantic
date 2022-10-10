@@ -1429,17 +1429,15 @@ def Predictive_Evaluation(Train_DF,Test_DF,
         metric='Accuracy'
         a=Class_ExtraTrees_Prediction(train,test,Target)
         b=Class_RandomForest_Prediction(train,test,Target)
+        x=pd.concat([a,b]) 
+        x=x.sort_values(metric, ascending=False)
     elif pred_type=="Reg":
         metric='Mean Absolute Error'
         a=Reg_ExtraTrees_Prediction(train,test,Target)
         b=Reg_RandomForest_Prediction(train,test,Target)
-        
-    if pred_type=="Reg":
         x=pd.concat([a,b]) 
         x=x.sort_values(metric, ascending=True)
-    elif pred_type=="Class":
-        x=pd.concat([a,b]) 
-        x=x.sort_values(metric, ascending=False)
+        
     del x['Estimators']
     
     y,z=x.iloc[:1,:],x.iloc[1:2,:]
