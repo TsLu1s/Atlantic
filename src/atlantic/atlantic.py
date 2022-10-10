@@ -17,7 +17,7 @@ h2o.init()
 ##################################################### Loading/Split do Dataset #############################################################
 
 def reset_index_DF(Dataset:pd.DataFrame):
-        
+    
     Dataset=Dataset.reset_index()
     Dataset.drop(Dataset.columns[0], axis=1, inplace=True)
     
@@ -441,6 +441,9 @@ def null_substitution_method(train:pd.DataFrame,
     
     List_Imputation.sort()
     Imputation_Method=""
+    
+    if pred_type=="Class":
+        List_Imputation.sort(reverse=True)
 
     if List_Imputation[0]==MAE_Iterartive:
         Imputation_Method="Iterative"
@@ -825,7 +828,10 @@ def Select_Encoding_Method(df_train:pd.DataFrame,
     List_Encoding=[Perf_Version1,Perf_Version2,Perf_Version3,Perf_Version4]
     List_Encoding.sort()
     Encoding_Method=""
-
+    
+    if pred_type=="Class":
+        List_Encoding.sort(reverse=True)
+        
     if List_Encoding[0]==Perf_Version1:
         Encoding_Method="Encoding Version 1"
         print("Encoding Version 1 was choosen with an ", metric, " of: ", round(Perf_Version1, 5))
@@ -1146,13 +1152,20 @@ def vif_performance_selection(train:pd.DataFrame,
     print("   ")
     print("Default Performance:",Default_Performance)
     print("Performance Default VIF:",Perf_Default_VIF)
-    
-    if Perf_Default_VIF<=Default_Performance:
-        print("The VIF filtering method was applied    ")
-        _train_=_train_[Selected_Columns_VIF]
-        _test_=_test_[Selected_Columns_VIF]
-    else:
-        print("The VIF filtering method was not applied    ")
+    if pred_type=="Reg":
+        if Perf_Default_VIF<Default_Performance:
+            print("The VIF filtering method was applied    ")
+            _train_=_train_[Selected_Columns_VIF]
+            _test_=_test_[Selected_Columns_VIF]
+        else:
+            print("The VIF filtering method was not applied    ")
+    elif pred_type=="Class":
+        if Perf_Default_VIF>Default_Performance:
+            print("The VIF filtering method was applied    ")
+            _train_=_train_[Selected_Columns_VIF]
+            _test_=_test_[Selected_Columns_VIF]
+        else:
+            print("The VIF filtering method was not applied    ")
     return _train_, _test_
    
 ########################################################### Metrics ########################################################################
@@ -1420,9 +1433,13 @@ def Predictive_Evaluation(Train_DF,Test_DF,
         metric='Mean Absolute Error'
         a=Reg_ExtraTrees_Prediction(train,test,Target)
         b=Reg_RandomForest_Prediction(train,test,Target)
-
-    x=pd.concat([a,b]) 
-    x=x.sort_values(metric, ascending=True)
+        
+    if pred_type=="Reg":
+        x=pd.concat([a,b]) 
+        x=x.sort_values(metric, ascending=True)
+    elif pred_type=="Class":
+        x=pd.concat([a,b]) 
+        x=x.sort_values(metric, ascending=False)
     del x['Estimators']
     
     y,z=x.iloc[:1,:],x.iloc[1:2,:]
@@ -1558,5 +1575,3 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     DataFrame_Final=reset_index_DF(Train_DF)
 
     return DataFrame_Final, Train, Test
-
-
