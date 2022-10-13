@@ -29,6 +29,7 @@ Major frameworks used to built this project:
 
 <p align="center">
   <img src="https://i.ibb.co/hBtWrRV/ATL-Architecture-Final.png" align="center" width="850" height="650" />
+  
 </p>  
 
 ## Where to get it <a name = "ta"></a>
