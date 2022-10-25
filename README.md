@@ -235,7 +235,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/TsLu1s/Atlan
 
 ## Contact 
  
-Luis Santos - [LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   
+[LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   
     
 # Acknowledgements
   
