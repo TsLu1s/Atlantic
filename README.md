@@ -235,10 +235,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/TsLu1s/Atlan
 
 ## Contact 
  
-[LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   
+[Luís Santos - LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   
     
-# Acknowledgements
-  
-* [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
-* [Sklearn](https://scikit-learn.org/stable/)  
+
     
