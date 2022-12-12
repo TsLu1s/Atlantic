@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import cane
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler, MinMaxScaler, RobustScaler
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor, RandomForestClassifier, ExtraTreesClassifier
 from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
@@ -404,7 +404,7 @@ def null_substitution_method(train:pd.DataFrame,
     '''
 
     train_,test_=train.copy(),test.copy()
-    Sel_Cols= list(train.columns)
+    sel_cols= list(train.columns)
 
     num_cols,cat_cols=numerical_columns(train,target),categorical_columns (train,target) 
 
@@ -434,12 +434,12 @@ def null_substitution_method(train:pd.DataFrame,
     print('Iterative Imputation Loading')
     train_iter,test_iter=iterative_null_imputation(train,test,target)
 
-    const_perf=pred_eval(train_const, test_const,target,pred_type)
-    simple_perf=pred_eval(train_simple, test_simple,target,pred_type)
-    knn_perf=pred_eval(train_knn, test_knn,target,pred_type) 
-    Iterative_perf=pred_eval(train_iter, test_iter,target,pred_type)
+    const_perf=pred_eval(train_const, test_const,target)
+    simple_perf=pred_eval(train_simple, test_simple,target)
+    knn_perf=pred_eval(train_knn, test_knn,target) 
+    iter_perf=pred_eval(train_iter, test_iter,target)
 
-    List=[knn_perf,Iterative_perf,const_perf,simple_perf]
+    List=[knn_perf,iter_perf,const_perf,simple_perf]
     perf_imp=pd.concat(List)
     perf_imp=perf_imp.reset_index()
     perf_imp = perf_imp.sort_values([eval_metric], ascending=True)
@@ -447,7 +447,7 @@ def null_substitution_method(train:pd.DataFrame,
     mae_const=const_perf[eval_metric].sum()
     mae_simple=simple_perf[eval_metric].sum()
     mae_knn=knn_perf[eval_metric].sum()
-    mae_Iterartive=Iterative_perf[eval_metric].sum()
+    mae_Iterartive=iter_perf[eval_metric].sum()
     
     print('Null Imputation Methods Performance:')
     
@@ -465,19 +465,19 @@ def null_substitution_method(train:pd.DataFrame,
     if list_imp[0]==mae_Iterartive:
         imp_method='Iterative'
         train, test=train_iter.copy(),test_iter.copy()
-        print('Iterative Imputation Algorithm was chosen with an ', metric, ' of: ', mae_Iterartive)
+        print('Iterative Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_Iterartive, 5))
     elif list_imp[0]==mae_knn:
         imp_method='KNN'
         train, test=train_knn.copy(), test_knn.copy()
-        print('KNN Imputation Algorithm was chosen with an ', metric, ' of: ', mae_knn)
+        print('KNN Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_knn, 5))
     elif list_imp[0]==mae_const:
         imp_method='Const'   
         train, test=train_const.copy(),test_const.copy()
-        print('Constant Imputation was chosen with an ', metric, ' of: ', mae_const)
+        print('Constant Imputation was chosen with an ', metric, ' of: ', round(mae_const, 5))
     elif list_imp[0]==mae_simple:
         imp_method='Simple'  
         train, test=train_simple.copy(),test_simple.copy()
-        print('Simple  Imputation Algorithm was chosen with an ', metric, ' of: ', mae_simple)
+        print('Simple  Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_simple, 5))
 
     return train, test,list_imp,imp_method,perf_imp
 
@@ -570,76 +570,31 @@ def encode_label(train: pd.DataFrame, test: pd.DataFrame, target:str) -> tuple:
 
 def encode_standard(train: pd.DataFrame, test: pd.DataFrame, target:str) -> tuple:
     
-    '''
-    The encode_standard function takes in a training and test set, as well as the target variable. 
-    It then encodes all of the categorical variables using one-hot encoding. 
-    The function returns two transformed datasets: train_ and test_. 
-    
-    :param train:pd.DataFrame: Pass the training dataset
-    :param test:pd.DataFrame: Make sure that the test dataframe is not changed
-    :param target:str: Select the target column from the training dataset
-    '''
-    
     train,test=reset_index_DF(train),reset_index_DF(test)
+    train_,test_=train.copy(),test.copy()
     
     encoders=numerical_columns(train,target)
     
     if len(encoders)>0:
         
-        train_ = train[encoders].copy()
-        test_ = test[encoders].copy() 
-
-        scaler = StandardScaler()
-        scaler.fit(train_)
-
-        df=pd.DataFrame(scaler.transform(train_))
-        df.columns=encoders
-        train_=df
-
-        df_t=pd.DataFrame(scaler.transform(test_))
-        df_t.columns=encoders
-        test_=df_t
-
-        train_=transform_dataset(train,train_[encoders])
-        test_=transform_dataset(test,test_[encoders])
+        scaler,num_cols=fit_StandardScaler(train_,target)
+        train_[num_cols] = scaler.transform(train_[num_cols])
+        test_[num_cols] = scaler.transform(test_[num_cols])
 
     return train_,test_
 
 def encode_minmax(train: pd.DataFrame, test: pd.DataFrame, target:str) -> tuple:
-    
-    '''
-    The encode_minmax function takes in a dataframe and the target column name. It then 
-    applies the MinMaxScaler to all of the numerical columns, and returns two transformed 
-    dataframes with those columns scaled. The first is for training, and the second is for testing.
-    
-    :param train:pd.DataFrame: Specify the train dataset
-    :param test:pd.DataFrame: Make sure that the test dataset has the same columns as the train dataset
-    :param target:str: Specify the target column name
-    :return: A tuple with the encoded train and test datasets
-    '''
-    
+       
     train,test=reset_index_DF(train),reset_index_DF(test)
+    train_,test_=train.copy(),test.copy()
     
     encoders=numerical_columns(train,target)
     
     if len(encoders)>0:
         
-        train_ = train[encoders].copy() 
-        test_ = test[encoders].copy() 
-
-        scaler = MinMaxScaler()
-        scaler.fit(train_) 
-
-        df=pd.DataFrame(scaler.transform(train_))
-        df.columns=encoders
-        train_=df
-
-        df_t=pd.DataFrame(scaler.transform(test_))
-        df_t.columns=encoders
-        test_=df_t
-
-        train_=transform_dataset(train,train_[encoders])
-        test_=transform_dataset(test,test_[encoders])
+        scaler,num_cols = fit_MinmaxScaler(train_,target)
+        train_[num_cols] = scaler.transform(train_[num_cols])
+        test_[num_cols] = scaler.transform(test_[num_cols])
 
     return train_,test_
 
@@ -648,7 +603,7 @@ def encode_minmax(train: pd.DataFrame, test: pd.DataFrame, target:str) -> tuple:
 def version1_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
     '''
-    The version1_encoding function takes in a training and test dataframe, as well as the name of the target column. 
+    The version_encoding functions take in a training and test dataframe, as well as the name of the target column. 
     It then encodes all categorical columns using one-hot encoding, and all numerical columns using standard scaling. 
     If there are any null values in either the training or test set, it will impute them with 0s for numerical values and 'MISSING' for categorical ones.
 
@@ -675,18 +630,7 @@ def version1_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
     return train_pred, test_pred,_train,_test
 
 def version2_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
-    
-    '''
-    The version2_encoding function takes in a training and test dataframe, as well as the name of the target column.
-    It then encodes all categorical columns using an idf encoding method, and all numerical columns using a minmax encoding method.
-    If there are any null values in either the train or test set, it will impute these missing values with 0s for numerical columns 
-    and 'N/A' for categorical columns.
-    
-    :param train:pd.DataFrame: Pass the training data set
-    :param test:pd.DataFrame: test the function with a dataset that has no missing values
-    :param target:str: Specify the target column name
-    '''
-    
+        
     train_,test_ = train.copy(),test.copy()
     _train,_test = train_.copy(),test_.copy()
 
@@ -706,17 +650,6 @@ def version2_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
 
 def version3_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
-    '''
-    The version3_encoding function takes in a dataframe and returns the following:
-        1. train_pred, test_pred - The processed train/test dataframes with all categorical columns encoded 
-                                          and null values imputed.
-        2. _train, _test - The original train/test dataframes that were inputted into the function (for use later)
-    
-    :param train:pd.DataFrame: Specify the training dataset
-    :param test:pd.DataFrame: Create the test set
-    :param target:str: Specify the target column name
-    '''
-    
     train_,test_ = train.copy(),test.copy()
     _train,_test = train_.copy(),test_.copy()
 
@@ -735,18 +668,7 @@ def version3_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
     return train_pred, test_pred,_train,_test
 
 def version4_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
-    
-    '''
-    The version4_encoding function takes in a training and test dataframe, 
-    and returns the following:
-    train_pred, test_pred - The training and test dataframes with categorical variables encoded.
-    The original input dataframes are returned as well (for version4 purposes). 
-    
-    :param train:pd.DataFrame: Pass the training dataframe
-    :param test:pd.DataFrame: Create a copy of the test dataframe
-    :param target:str: Specify the target column name
-    '''
-    
+       
     train_,test_ = train.copy(),test.copy()
     _train,_test = train_.copy(),test_.copy()
 
@@ -796,10 +718,10 @@ def Select_Encoding_Method(train:pd.DataFrame,
     train_v3_p,test_v3_p,train_v3, test_v3=version3_encoding(_train_, _test_,target)
     train_v4_p,test_v4_p,train_v4, test_v4=version4_encoding(_train_, _test_,target)
 
-    pred_perf_v1=pred_eval(train_v1_p, test_v1_p,target,pred_type)
-    pred_perf_v2=pred_eval(train_v2_p, test_v2_p,target,pred_type)
-    pred_perf_v3=pred_eval(train_v3_p, test_v3_p,target,pred_type)
-    pred_perf_v4=pred_eval(train_v4_p, test_v4_p,target,pred_type)
+    pred_perf_v1=pred_eval(train_v1_p, test_v1_p,target)
+    pred_perf_v2=pred_eval(train_v2_p, test_v2_p,target)
+    pred_perf_v3=pred_eval(train_v3_p, test_v3_p,target)
+    pred_perf_v4=pred_eval(train_v4_p, test_v4_p,target)
     
     p_v1=pred_perf_v1[eval_metric].sum()
     p_v2=pred_perf_v2[eval_metric].sum()
@@ -818,7 +740,7 @@ def Select_Encoding_Method(train:pd.DataFrame,
     elif pred_type=='Class':
         print('Predictive Performance Encoding Versions:')
         print('\n AUC Version 1 [IDF + StandardScaler] : ', round(p_v1, 5),
-              '\n AUC Version 2 [IDF + StandardScaler] : ', round(p_v2, 5),
+              '\n AUC Version 2 [IDF + MinMaxScaler] : ', round(p_v2, 5),
               '\n AUC Version 3 [Label + StandardScaler] : ', round(p_v3, 5),
               '\n AUC Version 4 [IDF + MinMaxScaler] : ', round(p_v4, 5))
         metric='AUC'
@@ -852,12 +774,14 @@ def Select_Encoding_Method(train:pd.DataFrame,
     
     return _train_,_test_,enc_method
 
-############################################################# Encoding Transform Methods ########################################################################################
+################################################################## Encodings ###############################################################
+
+############################################################# Encoding Pipeline Methods ####################################################
 
 def encoding_v1(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
     '''
-    The encoding_v1 function takes in a training and test dataframe, as well as the name of the target column.
+    The encoding functions take in a training and test dataframe, as well as the name of the target column.
     It returns two modified dataframes with all categorical columns encoded using frequency-inverse document 
     frequency encoding. The function will only encode those columns that are categorical (as determined by the 
     categorical_columns function). If there are numerical columns, they will be encoded using standard scaling.
@@ -880,17 +804,7 @@ def encoding_v1(train:pd.DataFrame, test:pd.DataFrame, target:str):
     return _train,_test
 
 def encoding_v2(train:pd.DataFrame, test:pd.DataFrame, target:str):
-    
-    '''
-    The encoding_v2 function takes in a training and test dataframe, as well as the name of the target column.
-    It then encodes all categorical columns using an idf encoding scheme. It also optionally encodes numerical columns using a minmax scaling scheme.
-    The function returns two transformed dataframes: one for training and one for testing.
-    
-    :param train:pd.DataFrame: Pass the training dataframe
-    :param test:pd.DataFrame: Encode the test dataframe
-    :param target:str: Specify the target column
-    '''
-    
+        
     train,test=reset_index_DF(train),reset_index_DF(test)
     _train,_test = train.copy(),test.copy()
     
@@ -905,15 +819,6 @@ def encoding_v2(train:pd.DataFrame, test:pd.DataFrame, target:str):
 
 def encoding_v3(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
-    '''
-    The encoding_v3 function takes in a training and test dataframe, as well as the target column name. 
-    It then encodes the categorical columns using Label Encoding and Standard Encoding. The function returns two encoded dataframes.
-    
-    :param train:pd.DataFrame: Specify the training dataframe
-    :param test:pd.DataFrame: Check if the encoding is done correctly
-    :param target:str: Specify the target column name
-    '''
-    
     train,test=reset_index_DF(train),reset_index_DF(test)
     _train,_test = train.copy(),test.copy()
     
@@ -927,17 +832,7 @@ def encoding_v3(train:pd.DataFrame, test:pd.DataFrame, target:str):
     return _train,_test
 
 def encoding_v4(train:pd.DataFrame, test:pd.DataFrame, target:str):
-    
-    '''
-    The encoding_v4 function takes in a training and test dataframe, as well as the name of the target column.
-    It then encodes all categorical columns using Label Encoding, and all numerical columns using MinMax Scaling.
-    The function returns two transformed dataframes: one for training and one for testing.
-    
-    :param train:pd.DataFrame: Specify the training dataset
-    :param test:pd.DataFrame: Get the test dataframe
-    :param target:str: Specify the target column name
-    '''
-    
+        
     train,test=reset_index_DF(train),reset_index_DF(test)
     _train,_test = train.copy(),test.copy()
     
@@ -950,6 +845,122 @@ def encoding_v4(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
     return _train,_test
 
+######################################################## Encoding Updated Methods - >0.0.9 Version ###########################################
+
+######### MultiColumn LabelEncoding
+
+def fit_Label_Encoding(Dataset:pd.DataFrame,target:str):
+    
+    le = LabelEncoder()
+    encoders=categorical_columns(Dataset,target)
+    df,list_cols,list_le=Dataset.copy(),[],[]
+    
+    for c in encoders:
+        list_cols.append(c),list_le.append(le.fit(df[c]))
+    le_dict = {list_cols[i]: list_le[i] for i in range(len(list_cols))}
+    
+    return le_dict
+
+def transform_Label_Encoding(Dataset:pd.DataFrame,le_fit:dict):
+    
+    encoders=list(le_fit.keys())
+    df=Dataset.copy()
+
+    for c in encoders:
+        le=le_fit[c]  
+        df[c] = df[c].map(lambda s: '<unknown>' if s not in le.classes_ else s)
+        le.classes_ = np.append(le.classes_, '<unknown>')
+        df[c] = le.transform(df[c])
+        
+    return df 
+
+######### MultiColumn OneHotEncoding
+
+def fit_OneHot_Encoding(Dataset:pd.DataFrame,target:str,n_distinct:int=10):
+
+    df,list_cols,list_le=Dataset.copy(),[],[]
+    drop_org_cols,list_ohe=True,[] 
+    encoders=categorical_columns(df,target)
+    print(encoders)
+    if len(encoders)>0:
+        for enc in encoders:
+            if len(list(dict.fromkeys(df[enc].tolist())))<=n_distinct:  ## Less/= than n distinct elements in col
+                ohe = OneHotEncoder(handle_unknown = 'ignore')
+                print("******", enc)              
+                
+                list_cols.append(enc),list_le.append(ohe.fit(df[[enc]]))
+    
+    ohe_fit = {list_cols[i]: list_le[i] for i in range(len(list_cols))}
+    ohe_fit["n_distinct"]=n_distinct
+    
+    return ohe_fit
+
+def transform_OneHot_Encoding(Dataset:pd.DataFrame,ohe_fit:dict):
+    
+    df= Dataset.copy()
+    drop_org_cols,list_ohe,n_distinct=True,[],ohe_fit["n_distinct"]
+    del ohe_fit["n_distinct"]
+    encoders=list(ohe_fit.keys())
+
+    if len(encoders)>0:
+        for enc in encoders:
+            col_n=[]
+            if len(list(dict.fromkeys(df[enc].tolist())))<n_distinct:  ## Less than n distinct elements in col
+                print("****************", enc)
+                list_ohe.append(enc)
+                ohe = ohe_fit[enc] 
+                x=ohe.transform(df[[enc]]).toarray()
+                df_copy = pd.DataFrame(x)
+                enc_cols = list(df_copy.columns)
+                for element in range(len(enc_cols)):
+                    name=enc+"_"+str(element+1)
+                    col_n.append(name)
+                df_copy = df_copy.rename(columns={enc_cols[i]: col_n[i] for i in range(len(enc_cols))})
+
+                df = pd.concat([df, df_copy.set_index(df.index)], axis=1)
+    df,ohe_fit['n_distinct']=df.drop(list_ohe, axis=1),n_distinct
+    
+    return df
+
+############################# Scalers
+
+
+def fit_StandardScaler(Dataset:pd.DataFrame,target:str):
+    
+    df=Dataset.copy()
+    
+    num_cols=numerical_columns(df,target)
+    
+    scaler = StandardScaler()
+
+    scaler = scaler.fit(df[num_cols])
+
+    return scaler, num_cols
+
+def fit_MinmaxScaler(Dataset:pd.DataFrame,target:str):
+    
+    df=Dataset.copy()
+    
+    num_cols=numerical_columns(df,target)
+    
+    scaler = MinMaxScaler() 
+
+    scaler = scaler.fit(df[num_cols])
+
+    return scaler, num_cols
+
+def fit_RobustScaler(Dataset:pd.DataFrame,target:str):
+    
+    df=Dataset.copy()
+    
+    num_cols=numerical_columns(df,target)
+    
+    scaler = RobustScaler()
+    
+    scaler = scaler.fit(df[num_cols])
+    
+    return scaler, num_cols
+
 ########################################################### Feature Selection ##############################################################
 
 ###################################  H2O Feature Selection ######################################
@@ -961,9 +972,6 @@ def feature_selection_h2o(Dataset:pd.DataFrame, target:str, total_vi :float=0.98
         - Dataset: A pandas dataframe with all the columns of your dataset, including target variable and features. 
         - target: The name of your target variable (string). 
         - Total_vi : The total relative importance percentage you want to keep in your dataset (float). It should be between 0.5 and 1.0 . Default value is 0.98 .  
-         If you want to use default value, just leave it blank or type None .
-    
-         Optional
     
     :param Dataset:pd.DataFrame: Input the dataset
     :param target:str: Define the target column of the dataset
@@ -1079,18 +1087,18 @@ def feature_selection_vif(Dataset:pd.DataFrame, target:str, VIF:float=10.0):
     Input_Cols.remove(target)
     Dataset_=Dataset[Input_Cols]
     vif_df=calc_vif(Dataset_)
-    Sel_Cols=Input_Cols
+    sel_cols=Input_Cols
     for line in range(0,len(vif_df['VIF'])):
         if vif_df['VIF'].loc[vif_df['VIF'].idxmax()]>=VIF:
             vif_df.drop(vif_df['variables'].loc[vif_df['VIF']==vif_df['VIF'].max()].index, inplace=True)
-            Sel_Cols=[]
+            sel_cols=[]
             for rows in vif_df['variables']:
-                Sel_Cols.append(rows)
-        Dataset_=Dataset_[Sel_Cols]
+                sel_cols.append(rows)
+        Dataset_=Dataset_[sel_cols]
         vif_df=calc_vif(Dataset_)
-    Sel_Cols.append(target)
+    sel_cols.append(target)
 
-    return Sel_Cols,vif_df
+    return sel_cols,vif_df
 
 def vif_performance_selection(train:pd.DataFrame, 
                               test:pd.DataFrame, 
@@ -1100,21 +1108,18 @@ def vif_performance_selection(train:pd.DataFrame,
     '''
     The vif_performance_selection function is used to select the best features from a dataset. 
     It uses the VIF (Variance Inflation Factor) method to remove columns with high multicollinearity. 
-    The function takes in 5 parameters: train, test, target, vif_ratio and pred_type. The train parameter is a pandas dataframe of training data containing all the features and target variable(s). The test parameter is a pandas dataframe of testing/validation data containing all the features and target variable(s). The target parameter specifies which column in your dataset contains your dependent or response variable that you are trying
-    
-    :param train:pd.DataFrame: Pass the training dataset
-    :param test:pd.DataFrame: test the performance of the model on a different dataset
-    :param target:str: Specify the target column name
+    The function takes in 5 parameters: train, test, target, vif_ratio and pred_type. 
+    The train parameter is a pandas dataframe of training data containing all the features and target variable(s). 
+    The test parameter is a pandas dataframe of testing/validation data containing all the features and target variable(s). 
+
     :param vif_ratio:float=10.0: Set the threshold for vif (variance inflation factor) value
     :return: The train and test datasets after feature selection
     '''
     
     assert vif_ratio>=3 and vif_ratio<=30 , 'vif_ratio value should be in [3,30] interval'
     
-    train_=train.copy()
-    test_=test.copy()
-    _train_=train_.copy()
-    _test_=test_.copy()
+    train_,test_=train.copy(),test.copy()
+    _train_,_test_=train_.copy(),test_.copy()
     
     pred_type, eval_metric=target_type(_train_, target)
     
@@ -1123,9 +1128,9 @@ def vif_performance_selection(train:pd.DataFrame,
     elif pred_type=='Reg':
         metric='MAE'
     
-    Sel_Cols=list(train_.columns)
+    sel_cols=list(train_.columns)
     
-    perf_default = pred_eval(_train_, _test_,target,pred_type)
+    perf_default = pred_eval(_train_, _test_,target)
     default_p=perf_default[eval_metric][0]
     
     _train__,_test__=train_.copy(),test_.copy()
@@ -1133,7 +1138,7 @@ def vif_performance_selection(train:pd.DataFrame,
     try:
         Cols_vif,vif_df=feature_selection_vif(_train__,target,vif_ratio)
         print('Number of Selected VIF Columns: ', len(Cols_vif), 
-              '\n Removed Columns with VIF (Feature Selection - VIF):', len(Sel_Cols) - len(Cols_vif), 
+              '\n Removed Columns with VIF (Feature Selection - VIF):', len(sel_cols) - len(Cols_vif), 
               '\n Selected Columns:', Cols_vif)
         _train__=_train__[Cols_vif]
         _test__=_test__[Cols_vif]
@@ -1141,11 +1146,11 @@ def vif_performance_selection(train:pd.DataFrame,
         print('traceback.format_exc: ', traceback.format_exc())
 
         
-    pred_vif = pred_eval(_train__, _test__,target,pred_type)
+    pred_vif = pred_eval(_train__, _test__,target)
     p_default_vif=pred_vif[eval_metric][0]
     print('   ')
-    print('Default Performance:',default_p)
-    print('Performance Default VIF:',p_default_vif)
+    print('Default Performance:',round(default_p, 4))
+    print('Performance Default VIF:',round(p_default_vif, 4))
     if pred_type=='Reg':
         if p_default_vif<default_p:
             print('The VIF filtering method was applied    ')
@@ -1245,200 +1250,74 @@ def metrics_binary_classification(y_true, y_pred):
 
 ###########################################################  Tree Based Algorithms   #######################################################
 
-def Reg_RandomForest_Prediction(train, test, target):
+def divide_dfs(train:pd.DataFrame,test:pd.DataFrame,target:str):
     
-    '''
-    The Reg_RandomForest_Prediction function takes in a training and test set, as well as the target variable. 
-    It then trains a Random Forest Regressor on the training data and predicts on the test data. It returns a DataFrame with performance metrics for each estimator.
+    sel_cols=list(train.columns)
+    sel_cols.remove(target)
+    sel_cols.append(target) 
+    train,test=train[sel_cols],test[sel_cols]  
+    
+    X_train = train.iloc[:, 0:(len(sel_cols)-1)].values
+    X_test = test.iloc[:, 0:(len(sel_cols)-1)].values
+    y_train = train.iloc[:, (len(sel_cols)-1)].values
+    y_test = test.iloc[:, (len(sel_cols)-1)].values
+    
+    return X_train,X_test,y_train,y_test
 
-    :param train: Specify the training data
-    :param test: Define the test dataframe
-    :param target: Define the target column
-    :return: A dataframe with the performance of each number of estimators
-    '''
 
-    Sel_Cols= list(train.columns)
-    Sel_Cols.remove(target)
-    Sel_Cols.append(target) 
-    train=train[Sel_Cols]
-    test=test[Sel_Cols]   
+def pred_eval(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
-    X_train = train.iloc[:, 0:(len(Sel_Cols)-1)].values
-    X_test = test.iloc[:, 0:(len(Sel_Cols)-1)].values
-    y_train = train.iloc[:, (len(Sel_Cols)-1)].values
-    y_test = test.iloc[:, (len(Sel_Cols)-1)].values
+
+    X_train,X_test,y_train,y_test=divide_dfs(train,test,target)  
     
-    list_estimators,list_algos=[100,250,500],[]
+    list_estimators,rf,et=[100,250,500],[],[]
+    pred_type, eval_metric=target_type(train, target)
     
     for estimators in list_estimators:
         
-        regressor_RF = RandomForestRegressor(n_estimators=estimators, random_state=42)
-        regressor_RF.fit(X_train, y_train)
-        y_pred = regressor_RF.predict(X_test)
-        RF_perf=pd.DataFrame(metrics_regression(y_test,y_pred),index=[0])
-        RF_perf[['Estimators']]=estimators
-        list_algos.append(RF_perf)
-    RF_Dataframe=pd.concat(list_algos)
-    
-    return RF_Dataframe
-
-def Reg_ExtraTrees_Prediction(train, test, target):
-    
-    '''
-    The Reg_ExtraTrees_Prediction function takes in a train and test dataframe, 
-    and the target column name as inputs. It then performs an ExtraTreesRegressor model on the train set, 
-    and returns a dataframe with metrics of the test set.
-
-    :param train: train the model
-    :param test: test the model with a different dataset
-    :param target: Specify the target column in the train and test dataframes
-    :return: A dataframe with the performance of each algorithm for every number of estimators
-    '''
-
-    Sel_Cols= list(train.columns)
-    Sel_Cols.remove(target)
-    Sel_Cols.append(target) 
-    train=train[Sel_Cols]
-    test=test[Sel_Cols]  
-    
-    X_train = train.iloc[:, 0:(len(Sel_Cols)-1)].values
-    X_test = test.iloc[:, 0:(len(Sel_Cols)-1)].values
-    y_train = train.iloc[:, (len(Sel_Cols)-1)].values
-    y_test = test.iloc[:, (len(Sel_Cols)-1)].values
-    
-    list_estimators,list_algos=[100,250,500],[]
-    
-    for estimators in list_estimators:
+        if pred_type=='Reg': 
+            regressor_RF = RandomForestRegressor(n_estimators=estimators, random_state=42)
+            regressor_RF.fit(X_train, y_train)
+            y_pred_rfr = regressor_RF.predict(X_test)
+            RF_perf=pd.DataFrame(metrics_regression(y_test,y_pred_rfr),index=[0])
+            RF_perf[['Estimators']]=estimators
+            rf.append(RF_perf)
+                    
+            Reg_ET = ExtraTreesRegressor(n_estimators=estimators, random_state=42)
+            Reg_ET.fit(X_train, y_train)
+            y_pred_etr = Reg_ET.predict(X_test)
+            ET_perf=pd.DataFrame(metrics_regression(y_test,y_pred_etr),index=[0])
+            ET_perf[['Estimators']]=estimators
+            et.append(ET_perf)
         
-        Reg_ET = ExtraTreesRegressor(n_estimators=estimators, random_state=42)
-        Reg_ET.fit(X_train, y_train)
-        y_pred = Reg_ET.predict(X_test)
-        ET_perf=pd.DataFrame(metrics_regression(y_test,y_pred),index=[0])
-        ET_perf[['Estimators']]=estimators
-        list_algos.append(ET_perf)
-    
-    ET_Dataframe=pd.concat(list_algos) 
-    return ET_Dataframe
-
-def Class_RandomForest_Prediction(train, test, target):
-    
-    '''
-    The Class_RandomForest_Prediction function takes in a train and test dataframe, 
-    and the target column name as inputs. It then performs Random Forest Classification on the training set, 
-    and returns a dataframe with performance metrics for each estimator value.
-
-    :param train: Pass the train dataset
-    :param test: Define if the function is used to train and test on the training set or to make predictions on a test set
-    :param target: Specify the target column in the train and test dataframes
-    :return: A dataframe that contains the accuracy, precision, recall and f-score for different values of estimators
-    '''
-
-    Sel_Cols= list(train.columns)
-    Sel_Cols.remove(target)
-    Sel_Cols.append(target) 
-    train=train[Sel_Cols]
-    test=test[Sel_Cols]   
-    
-    list_estimators,list_algos=[100,250,500],[]
-    
-    for estimators in list_estimators:
+        elif pred_type=='Class': 
+            classifier_RF = RandomForestClassifier(n_estimators=estimators, random_state=42)
+            classifier_RF.fit(X_train, y_train)
+            y_pred_rfc = classifier_RF.predict(X_test)
+            RF_perf=pd.DataFrame(metrics_classification(y_test,y_pred_rfc),index=[0])
+            RF_perf[['Estimators']]=estimators
+            rf.append(RF_perf)
+            
+            classifier_ET = ExtraTreesClassifier(n_estimators=estimators, random_state=42)
+            classifier_ET.fit(X_train, y_train)
+            y_pred_etc = classifier_ET.predict(X_test)
+            ET_perf=pd.DataFrame(metrics_classification(y_test,y_pred_etc),index=[0])
+            ET_perf[['Estimators']]=estimators
+            et.append(ET_perf)
         
-        X_train = train.iloc[:, 0:(len(Sel_Cols)-1)].values
-        X_test = test.iloc[:, 0:(len(Sel_Cols)-1)].values
-        y_train = train.iloc[:, (len(Sel_Cols)-1)].values
-        y_test = test.iloc[:, (len(Sel_Cols)-1)].values
-        
-        classifier_RF = RandomForestClassifier(n_estimators=estimators, random_state=42)
-        classifier_RF.fit(X_train, y_train)
-        y_pred = classifier_RF.predict(X_test)
-        RF_perf=pd.DataFrame(metrics_classification(y_test,y_pred),index=[0])
-        RF_perf[['Estimators']]=estimators
-        list_algos.append(RF_perf)
-    
-    RF_Dataframe=pd.concat(list_algos)
-    
-    return RF_Dataframe
-
-def Class_ExtraTrees_Prediction(train, test, target):
-    
-    '''
-    The Class_ExtraTrees_Prediction function is used to predict the target variable for a given test dataset. 
-    The function takes in three parameters: train, test and target. The train parameter is the training dataframe 
-    that contains both features and target variable(the feature that we want to predict). The test parameter is the test dataframe that contains all features except for the target variable which we are trying to predict using our trained model. Finally, target is a string containing name of our target feature.
-
-    :param train: Specify the training dataset
-    :param test: Determine if the model is trained on a test set or not
-    :param target: Specify the target column in the train and test dataframes
-    :return: A dataframe with the performance of each number of estimators
-    '''
-
-    Sel_Cols= list(train.columns)
-    Sel_Cols.remove(target)
-    Sel_Cols.append(target) 
-    train=train[Sel_Cols]
-    test=test[Sel_Cols]  
-    
-    list_estimators,list_algos=[100,250,500],[]
-    
-    for estimators in list_estimators:
-        
-        X_train = train.iloc[:, 0:(len(Sel_Cols)-1)].values
-        X_test = test.iloc[:, 0:(len(Sel_Cols)-1)].values
-        y_train = train.iloc[:, (len(Sel_Cols)-1)].values
-        y_test = test.iloc[:, (len(Sel_Cols)-1)].values
-        
-        classifier_ET = ExtraTreesClassifier(n_estimators=estimators, random_state=42)
-        classifier_ET.fit(X_train, y_train)
-        y_pred = classifier_ET.predict(X_test)
-        ET_perf=pd.DataFrame(metrics_classification(y_test,y_pred),index=[0])
-        ET_perf[['Estimators']]=estimators
-        list_algos.append(ET_perf)
-    
-    ET_Dataframe=pd.concat(list_algos) 
-    
-    return ET_Dataframe
-
-###########################################################    Predictive Evaluation   ######################################################
-
-def pred_eval(train,test, 
-                          target, 
-                          pred_type:str):
-    '''
-    The pred_eval function takes in a training dataframe, testing dataframe, 
-    a target column name and a prediction type (Class or Reg). It then runs the ExtraTrees 
-    and RandomForest models on both datasets. The results are concatenated together and sorted by metric. 
-    The top two rows of the resulting table are averaged to produce one final row of metrics.
-    
-    :param train: Specify the training dataframe
-    :param test: test the model on a dataset that is not used for training
-    :param target: Define the target variable for the model
-    :param pred_type:str: Specify whether the function is used for classifcation or regression
-    :return: The mean absolute error for the extratrees and randomforest models
-    '''
-    
-    train=train.copy()
-    test=test.copy()
-    
-    if pred_type=='Class':
-        metric='Accuracy'
-        a=Class_ExtraTrees_Prediction(train,test,target)
-        b=Class_RandomForest_Prediction(train,test,target)
-    elif pred_type=='Reg':
-        metric='Mean Absolute Error'
-        a=Reg_ExtraTrees_Prediction(train,test,target)
-        b=Reg_RandomForest_Prediction(train,test,target)
-        
+    a,b=pd.concat(rf),pd.concat(et) 
+         
     if pred_type=='Reg':
         x=pd.concat([a,b]) 
-        x=x.sort_values(metric, ascending=True)
+        x=x.sort_values(eval_metric, ascending=True)
     elif pred_type=='Class':
         x=pd.concat([a,b]) 
-        x=x.sort_values(metric, ascending=False)
+        x=x.sort_values(eval_metric, ascending=False)
     del x['Estimators']
     
     y,z=x.iloc[:1,:],x.iloc[1:2,:]
     Metrics_Final=(y+z)/2
-
+    
     return Metrics_Final
 
 #############################################################################################################################################
@@ -1481,10 +1360,10 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
 ############################## Validation Dataframe ##############################
 
     Dataset_=remove_columns_by_nulls(Dataset_, 99.99)
-    Sel_Cols= list(Dataset_.columns)
-    Sel_Cols.remove(target)
-    Sel_Cols.append(target) 
-    Dataset_=Dataset_[Sel_Cols] ## target -> Last Column Index
+    sel_cols= list(Dataset_.columns)
+    sel_cols.remove(target)
+    sel_cols.append(target) 
+    Dataset_=Dataset_[sel_cols] ## target -> Last Column Index
 
     train, test= split_dataset(Dataset_,Split_Racio)
 
@@ -1502,11 +1381,11 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
 
 ############################## Feature Selection ##############################
     
-    Sel_Cols, Sel_Imp =feature_selection_h2o(train,target,total_vi,h2o_fs_models,encoding_fs)
-    print('Selected Columns:', Sel_Cols)
+    sel_cols, Sel_Imp =feature_selection_h2o(train,target,total_vi,h2o_fs_models,encoding_fs)
+    print('Selected Columns:', sel_cols)
 
-    train=train[Sel_Cols]
-    test=test[Sel_Cols]
+    train=train[sel_cols]
+    test=test[sel_cols]
 
 ############################## Encoding Method Selection ##############################   
 
@@ -1554,7 +1433,7 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     elif enc_method=='Encoding Version 4':
         train_df, test_df=encoding_v4(train_df, test_df,target)
 
-    if imp_method=='Const':  
+    if imp_method=='Const':
         train_df,test_df=const_null_imputation(train_df, test_df,target)
     elif imp_method=='Simple':  
         train_df, test_df=simple_null_imputation(train_df, test_df,target)
