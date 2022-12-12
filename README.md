@@ -68,17 +68,17 @@ Importante Notes:
 import atlantic as atl
 import pandas as pd 
 
-Dataset = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
-Target = "Name_Target_Column"    # Define Target Feature to Predict
+data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
+#target = "Name_Target_Column" # -> Define Target Feature to Predict
 
    
 # Simple Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, target:str="Name_Target_Column"
-                                                            target,                       # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset=data,                      # Dataset:pd.DataFrame, target:str="Name_Target_Column"
+                                                            target="Name_Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
                                                             Split_Racio=0.75)
     
 # Customizable Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                        # Dataset:pd.DataFrame, 
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset=data,                   # Dataset:pd.DataFrame, 
                                                             target="Name_Target_Column",    # target:str="Name_Target_Column"
                                                             Split_Racio=0.75,               # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
                                                             total_vi=0.98,                  # h2o_fs_models:int [1,50],  encoding_fs:bool=True\False
@@ -129,14 +129,14 @@ You can get filter your most valuable features from the dataset via this 2 featu
     
 ```py    
     
-Selected_Columns, Selected_H2O_Importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Name_Target_Column",
+selected_columns, selected_h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Name_Target_Column",
                                                                       target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
                                                                       total_vi=0.98,     
                                                                       h2o_fs_models =7,
                                                                       encoding_fs=True)
 
 
-Selected_Columns, VIF_Dataset = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Name_Target_Column",
+selected_columns, vif_dataset = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Name_Target_Column",
                                                           target,  # VIF:float [3,30]
                                                           VIF=10.0)
 ```
@@ -148,7 +148,7 @@ The `eng_date` function converts and transforms columns of Datetime type into ad
     
 ```py   
     
-Dataset = atl.engin_date(Dataset,Drop=False) # Dataset:pd.DataFrame, Drop:bool
+dataset = atl.engin_date(Dataset,Drop=False) # Dataset:pd.DataFrame, Drop:bool
     
 ```
 
@@ -159,11 +159,11 @@ You can analyse the obtained predictive performance results by using the given b
     
 ```py  
 
-Reg_Performance = pd.DataFrame(atl.metrics_regression(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
+reg_performance = pd.DataFrame(atl.metrics_regression(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
     
-Binary_Class_Performance = pd.DataFrame(atl.metrics_binary_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
+binary_class_Performance = pd.DataFrame(atl.metrics_binary_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
     
-MultiClass_Performance = pd.DataFrame(atl.metrics_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
+multiClass_performance = pd.DataFrame(atl.metrics_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
     
 ```
 
