@@ -175,16 +175,16 @@ The following functions were used in the development of this project.
     
 ## Data Preprocessing 
     
-atl.reset_index_DF(Dataset:pd.DataFrame) # return Dataset
+atl.reset_index_DF(Dataset:pd.DataFrame) # return dataset
     
 atl.split_dataset(Dataset:pd.DataFrame,
                   Split_Racio:float) # return train, test
     
 atl.reindex_columns(Dataset:pd.DataFrame,
-                    Feature_Importance:list) # return Dataset
+                    Feature_Importance:list) # return dataset
         
 atl.numerical_columns(Dataset:pd.DataFrame,
-                      Target:str) # return list_num_cols
+                      target:str) # return list_num_cols
     
 atl.categorical_columns(Dataset:pd.DataFrame,
                         target:str) # return list_cat_cols 
@@ -193,14 +193,14 @@ atl.del_nulls_target(Dataset:pd.DataFrame,
                      target:str)  # return Dataset
     
 atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
-                            percentage:int) # return Dataset
+                            percentage:int) # return dataset
 
 ## Simplified Null Imputation (Only numeric features)
 
 atl.const_null_imputation(train:pd.DataFrame,
                           test:pd.DataFrame,
                           target:str,
-                          imp_value:int=0) # return Train, test 
+                          imp_value:int=0) # return train, test 
     
 atl.simple_null_imputation(train:pd.DataFrame,
                            test:pd.DataFrame,
