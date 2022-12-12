@@ -86,9 +86,9 @@ processed_dataset,train,test = atl.atlantic_data_processing(Dataset=data,       
     
 ### 2.1 Encoding Versions
  
-There are multiple preprocessing functions available to direct use. The encoding functions 'LabelEncoder' and 'OneHotEncoder' are upgraded to an automatic multicolumn  application, as are the scalers 'Standard', 'MinMax' and 'Robust'. Just follow the steps shown bellow.
+There are multiple preprocessing functions available to direct use. The encoding functions 'LabelEncoder' and 'OneHotEncoder' are upgraded to an automatic multicolumn  application, as are the scalers 'Standard', 'MinMax' and 'Robust'. 
  
-* Note : 'n_distinct' costumizable parameter in 'OneHotEncoder' function constitutes the max limiter of distinct elements in columns, this meaning, columns with more distince values then 'n_distinct' will not be encoded.    
+* Note : 'n_distinct' costumizable parameter in 'OneHotEncoder' function constitutes the max limiter of distinct elements in columns, this meaning, columns with higher distinct values then 'n_distinct' will not be encoded.    
 
 ```py
 import atlantic as atl
