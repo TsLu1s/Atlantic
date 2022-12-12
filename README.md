@@ -29,11 +29,10 @@ Major frameworks used to built this project:
 
 <p align="center">
   <img src="https://i.ibb.co/wgfxFCc/ATL-Architecture-Final.png" align="center" width="800" height="600" />
-  
-</p>  
+</p>
 
 ## Where to get it <a name = "ta"></a>
-    
+
 Binary installer for the latest released version is available at the Python Package Index ([PyPI](https://pypi.org/project/atlantic/)).  
 
 ## Installation  
@@ -58,7 +57,7 @@ You can also customize the main function further (customizable option) by alteri
  
 Importante Notes:
     
-* Default predictive evaluation metric for regression contexts is MAE (mean absolute error) and classification is AUC (Accuracy).
+* Default predictive evaluation metric for regression contexts is MAE (Mean Absolute Error) and classification is AUC (Accuracy).
 * In order to avoid data leakage only Train\Test processed returned Datasets should be used for predictive analysis, `Processed_Dataset` variable should only be used for observation purposes.
     
 ```py
@@ -67,8 +66,6 @@ import atlantic as atl
 import pandas as pd 
 
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
-#target = "Name_Target_Column" # -> Define Target Feature to Predict
-
    
 # Simple Option
 processed_dataset,train,test = atl.atlantic_data_processing(Dataset=data,                 # Dataset:pd.DataFrame, target:str="Name_Target_Column"
@@ -89,26 +86,50 @@ processed_dataset,train,test = atl.atlantic_data_processing(Dataset=data,       
     
 ### 2.1 Encoding Versions
  
-There are 4 different main encoding versions available to direct use. This were generated through the combination of the following distinct preprocessing methods:
-
-* [Sklearn MinMaxScaler](https://scikit-learn.org/stable/modules/preprocessing.html) 
-* [Sklearn StandardScaler](https://scikit-learn.org/stable/modules/preprocessing.html)
-* [Sklearn LabelEncoding](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html)
-* [Inverse Document Frequency (IDF)](https://pypi.org/project/cane/) 
-    
+There are multiple preprocessing functions available to direct use. The encoding functions 'LabelEncoder' and 'OneHotEncoder' are upgraded to an automatic multicolumn  application, as are the scalers 'Standard', 'MinMax' and 'Robust'. Just follow the steps shown bellow.
+ 
+* Note : 'n_distinct' costumizable parameter in 'OneHotEncoder' function constitutes the max limiter of distinct elements in columns, this meaning, columns with more distince values then 'n_distinct' will not be encoded.    
 
 ```py
+import atlantic as atl
+import pandas as pd 
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 
-    
 train, test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                           # Dataset:pd.DataFrame, Split_Racio:float
+target = "Name_Target_Column" # -> target feature name
+    
+## Encoders
+# MultiColumn LabelEncoder
 
-train, test = atl.encoding_v1(train,test,target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
-train, test = atl.encoding_v2(train,test,target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
-train, test = atl.encoding_v3(train,test,target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
-train, test = atl.encoding_v4(train,test,target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
+le_fit=atl.fit_Label_Encoding(train,target)  
+train=atl.transform_Label_Encoding(train,le_fit)
+test=atl.transform_Label_Encoding(test,le_fit)
+    
+# MultiColumn OneHotEncoder
 
-# train:pd.DataFrame, test:pd.DataFrame, target:str="Name_Target_Column"        
+ohe_fit=atl.fit_OneHot_Encoding(train,target,n_distinct=10)
+train=atl.transform_OneHot_Encoding(train,ohe_fit)
+test=atl.transform_OneHot_Encoding(test,ohe_fit)
+    
+## Scalers
+# StandardScaler
+    
+scaler,num_cols=atl.fit_StandardScaler(train,target)
+train[num_cols] = scaler.transform(train[num_cols])
+test[num_cols] = scaler.transform(test[num_cols])  
+
+# MinmaxScaler
+    
+scaler,num_cols=atl.fit_MinmaxScaler(train,target)
+train[num_cols] = scaler.transform(train[num_cols])
+test[num_cols] = scaler.transform(test[num_cols])     
+    
+# RobustScaler
+
+scaler,num_cols=atl.fit_RobustScaler(train,target)
+train[num_cols] = scaler.transform(train[num_cols])
+test[num_cols] = scaler.transform(test[num_cols])  
     
 ```    
    
