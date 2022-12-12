@@ -93,7 +93,6 @@ There are multiple preprocessing functions available to direct use. In this pack
 ```py
 import atlantic as atl
 import pandas as pd 
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 
 train, test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                           # Dataset:pd.DataFrame, Split_Racio:float
