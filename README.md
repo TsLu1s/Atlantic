@@ -73,16 +73,16 @@ Target = "Name_Target_Column"    # Define Target Feature to Predict
 
    
 # Simple Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, Target:str="Name_Target_Column"
-                                                            Target,                       # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, target:str="Name_Target_Column"
+                                                            target,                       # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
                                                             Split_Racio=0.75)
     
 # Customizable Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, 
-                                                            Target="Name_Target_Column",   # Target:str="Name_Target_Column"
-                                                            Split_Racio=0.75,             # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
-                                                            total_vi=0.98,                # h2o_fs_models:int [1,50],  encoding_fs:bool=True\False
-                                                            h2o_fs_models=7,              # vif_ratio:float=10.0 [3,30]
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                        # Dataset:pd.DataFrame, 
+                                                            target="Name_Target_Column",    # target:str="Name_Target_Column"
+                                                            Split_Racio=0.75,               # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
+                                                            total_vi=0.98,                  # h2o_fs_models:int [1,50],  encoding_fs:bool=True\False
+                                                            h2o_fs_models=7,                # vif_ratio:float=10.0 [3,30]
                                                             encoding_fs=True,
                                                             vif_ratio=10.0)
 ```  
@@ -105,12 +105,12 @@ There are 4 different main encoding versions available to direct use. This were 
 Train, Test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                           # Dataset:pd.DataFrame, Split_Racio:float
 
-Train, Test = atl.encoding_v1(Train,Test,Target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_v2(Train,Test,Target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
-Train, Test = atl.encoding_v3(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_v4(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
+Train, Test = atl.encoding_v1(train,test,target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
+Train, Test = atl.encoding_v2(train,test,target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
+Train, Test = atl.encoding_v3(train,test,target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
+Train, Test = atl.encoding_v4(train,test,target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
 
-# Train:pd.DataFrame, Test:pd.DataFrame, Target:str="Name_Target_Column"        
+# train:pd.DataFrame, test:pd.DataFrame, target:str="Name_Target_Column"        
     
 ```    
    
@@ -129,15 +129,15 @@ You can get filter your most valuable features from the dataset via this 2 featu
     
 ```py    
     
-Selected_Columns, Selected_H2O_Importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,Target:str="Name_Target_Column",
-                                                                      Target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
+Selected_Columns, Selected_H2O_Importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Name_Target_Column",
+                                                                      target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
                                                                       total_vi=0.98,     
                                                                       h2o_fs_models =7,
                                                                       encoding_fs=True)
 
 
-Selected_Columns, VIF_Dataset = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, Target:str="Name_Target_Column",
-                                                          Target,  # VIF:float [3,30]
+Selected_Columns, VIF_Dataset = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Name_Target_Column",
+                                                          target,  # VIF:float [3,30]
                                                           VIF=10.0)
 ```
     
@@ -178,7 +178,7 @@ The following functions were used in the development of this project.
 atl.reset_index_DF(Dataset:pd.DataFrame) # return Dataset
     
 atl.split_dataset(Dataset:pd.DataFrame,
-                  Split_Racio:float) # return Train, Test
+                  Split_Racio:float) # return train, test
     
 atl.reindex_columns(Dataset:pd.DataFrame,
                     Feature_Importance:list) # return Dataset
@@ -187,45 +187,45 @@ atl.numerical_columns(Dataset:pd.DataFrame,
                       Target:str) # return list_num_cols
     
 atl.categorical_columns(Dataset:pd.DataFrame,
-                    Target:str) # return list_cat_cols 
+                        target:str) # return list_cat_cols 
     
 atl.del_nulls_target(Dataset:pd.DataFrame,
-                     Target:str)  # return Dataset
+                     target:str)  # return Dataset
     
 atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
                             percentage:int) # return Dataset
 
 ## Simplified Null Imputation (Only numeric features)
 
-atl.const_null_imputation(Train:pd.DataFrame,
-                          Test:pd.DataFrame,
-                          Target:str,
-                          imp_value:int=0) # return Train, Test 
+atl.const_null_imputation(train:pd.DataFrame,
+                          test:pd.DataFrame,
+                          target:str,
+                          imp_value:int=0) # return Train, test 
     
-atl.simple_null_imputation(Train:pd.DataFrame,
-                           Test:pd.DataFrame,
-                           Target:str,
-                           strat:str='mean') # return Train, Test
+atl.simple_null_imputation(train:pd.DataFrame,
+                           test:pd.DataFrame,
+                           target:str,
+                           strat:str='mean') # return train, test
     
-atl.knn_null_imputation(Train:pd.DataFrame,
-                        Test:pd.DataFrame,
-                        Target:str,
-                        neighbors:int=5) # return Train, Test
+atl.knn_null_imputation(train:pd.DataFrame,
+                        test:pd.DataFrame,
+                        target:str,
+                        neighbors:int=5) # return train, test
     
     
-atl.iterative_null_imputation(Train_DF:pd.DataFrame,
-                              Test_DF:pd.DataFrame,
-                              Target:str,
+atl.iterative_null_imputation(train:pd.DataFrame,
+                              test:pd.DataFrame,
+                              target:str,
                               order:str='ascending',
-                              iterations:int=10) # return Train, Test
+                              iterations:int=10) # return train, test
     
     
 ## VIF Feature Selection Evaluation 
     
-atl.vif_performance_selection(Train:pd.DataFrame,
-                              Test:pd.DataFrame,
-                              Target:str,
-                              vif_ratio:float=10.0) # return Train, Test
+atl.vif_performance_selection(train:pd.DataFrame,
+                              test:pd.DataFrame,
+                              target:str,
+                              vif_ratio:float=10.0) # return train, test
     
 ```   
     
