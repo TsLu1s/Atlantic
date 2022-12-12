@@ -73,7 +73,7 @@ data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Data
 
    
 # Simple Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset=data,                      # Dataset:pd.DataFrame, target:str="Name_Target_Column"
+Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset=data,                 # Dataset:pd.DataFrame, target:str="Name_Target_Column"
                                                             target="Name_Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
                                                             Split_Racio=0.75)
     
