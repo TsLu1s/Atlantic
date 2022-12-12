@@ -102,13 +102,13 @@ There are 4 different main encoding versions available to direct use. This were 
 ```py
 
     
-Train, Test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
+train, test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                           # Dataset:pd.DataFrame, Split_Racio:float
 
-Train, Test = atl.encoding_v1(train,test,target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_v2(train,test,target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
-Train, Test = atl.encoding_v3(train,test,target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_v4(train,test,target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
+train, test = atl.encoding_v1(train,test,target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
+train, test = atl.encoding_v2(train,test,target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
+train, test = atl.encoding_v3(train,test,target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
+train, test = atl.encoding_v4(train,test,target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
 
 # train:pd.DataFrame, test:pd.DataFrame, target:str="Name_Target_Column"        
     
