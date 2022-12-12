@@ -73,12 +73,12 @@ data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Data
 
    
 # Simple Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset=data,                 # Dataset:pd.DataFrame, target:str="Name_Target_Column"
+processed_dataset,train,test = atl.atlantic_data_processing(Dataset=data,                 # Dataset:pd.DataFrame, target:str="Name_Target_Column"
                                                             target="Name_Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
                                                             Split_Racio=0.75)
     
 # Customizable Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset=data,                   # Dataset:pd.DataFrame, 
+processed_dataset,train,test = atl.atlantic_data_processing(Dataset=data,                   # Dataset:pd.DataFrame, 
                                                             target="Name_Target_Column",    # target:str="Name_Target_Column"
                                                             Split_Racio=0.75,               # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
                                                             total_vi=0.98,                  # h2o_fs_models:int [1,50],  encoding_fs:bool=True\False
