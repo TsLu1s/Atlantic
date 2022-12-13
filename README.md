@@ -236,15 +236,6 @@ atl.iterative_null_imputation(train:pd.DataFrame,
                               target:str,
                               order:str='ascending',
                               iterations:int=10) # return train, test
-    
-    
-## VIF Feature Selection Evaluation 
-    
-atl.vif_performance_selection(train:pd.DataFrame,
-                              test:pd.DataFrame,
-                              target:str,
-                              vif_ratio:float=10.0) # return train, test
-    
 ```   
     
 ## License
