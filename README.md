@@ -86,7 +86,7 @@ processed_dataset,train,test = atl.atlantic_data_processing(Dataset=data,       
     
 ### 2.1 Encoding Versions
  
-There are multiple preprocessing functions available to direct use. In this package the encoding functions `LabelEncoder` and `OneHotEncoder` are upgraded to an automatic multicolumn application, as are the scalers `Standard`, `MinMax` and `Robust`. 
+There are multiple preprocessing functions available to direct use. This package provides upgrated encoding `LabelEncoder` and `OneHotEncoder` functions with an automatic multicolumn application, as are the scalers `Standard`, `MinMax` and `Robust`. 
  
 * Note : `n_distinct` costumizable parameter in `OneHotEncoder` function constitutes the max limiter of distinct elements in columns, this meaning, columns with higher distinct values then 'n_distinct' will not be encoded.    
 
