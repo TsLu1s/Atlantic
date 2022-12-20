@@ -851,11 +851,11 @@ def encoding_v4(train:pd.DataFrame, test:pd.DataFrame, target:str):
 
 def fit_Label_Encoding(Dataset:pd.DataFrame,target:str):
     
-    le = LabelEncoder()
     encoders=categorical_columns(Dataset,target)
     df,list_cols,list_le=Dataset.copy(),[],[]
     
     for c in encoders:
+        le = LabelEncoder()
         list_cols.append(c),list_le.append(le.fit(df[c]))
     le_dict = {list_cols[i]: list_le[i] for i in range(len(list_cols))}
     
