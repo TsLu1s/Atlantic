@@ -32,16 +32,6 @@ def split_dataset(Dataset:pd.DataFrame, Split_Racio:float):
     return train,test
 
 def transform_dataset(Dataset:pd.DataFrame, Dataframe:pd.DataFrame):
-    
-    '''
-    The transform_dataset function takes two datasets, one to be transformed and another that contains the 
-    transformations. The transform_dataset function then transforms the dataset with all of its transformations.
-
-
-    :param Dataset:pd.DataFrame: Pass the dataset to be transformed
-    :param Dataset_Transf:pd.DataFrame: Transform the dataset:pd
-    :return: A dataset with the transformed columns
-    '''
 
     df_ = Dataset.copy()
     _df = Dataframe.copy()
@@ -51,34 +41,8 @@ def transform_dataset(Dataset:pd.DataFrame, Dataframe:pd.DataFrame):
         
     return df_
 
-
-def reindex_columns(Dataset:pd.DataFrame, Feature_Importance:list):
-    
-    '''
-    The reindex_columns function takes a dataframe and a list of column names as input. 
-    It returns the same dataframe with the columns in the order specified by the list of column names.
-    
-    :param Dataset:pd.DataFrame: Pass the dataset to be reindexed
-    :param Feature_Importance:list: Reindex the columns in the dataframe
-    :return: A dataframe with the columns reordered to match the feature importance list
-    '''
-    
-    total_cols=list(Dataset.columns)
-    y=feature_importance+total_cols
-    z=list(dict.fromkeys(y))
-    Dataset=Dataset[z]
-    
-    return Dataset
-
 def target_type(Dataset:pd.DataFrame, target:str):  
     
-    '''
-    The target_type function takes in a pandas dataframe and returns the type of prediction problem. 
-    
-    :param Dataset:pd.DataFrame: Pass the dataframe that we want to use for our analysis
-    :param target:str: Identify the target variable
-    '''
-
     df=Dataset[[target]]
     reg_target,class_target=df.select_dtypes(include=['int','float']).columns.tolist(),df.select_dtypes(include=['object']).columns.tolist()
     if len(class_target)==1:
@@ -87,20 +51,13 @@ def target_type(Dataset:pd.DataFrame, target:str):
     elif len(reg_target)==1:
         pred_type='Reg'
         eval_metric='Mean Absolute Error'
+        
     return pred_type, eval_metric
 
 ############################################################# Datetime Feature Engineering ######################################################
 
 def slice_timestamp(Dataset:pd.DataFrame,date_col:str='Date'):
-    """
-    The slice_timestamp function takes a dataframe and returns the same dataframe with the date column sliced to just include
-    the year, month, day and hour. This is done by converting all of the values in that column to strings then slicing them 
-    accordingly. The function then converts those slices back into datetime objects so they can be used for further analysis.
     
-    :param Dataset:pd.DataFrame: Pass the dataset to be sliced
-    :param date_col:str='Date': Specify the name of the column that contains the date information
-    :return: A dataframe with the timestamp column sliced to only include the year, month and day
-    """
     df=Dataset.copy()
     cols=list(df.columns)
     for col in cols:
@@ -108,21 +65,22 @@ def slice_timestamp(Dataset:pd.DataFrame,date_col:str='Date'):
             df[date_col] = df[date_col].astype(str)
             df[date_col] = df[date_col].str.slice(0,19)
             df[date_col] = pd.to_datetime(df[date_col])
+            
     return df
 
 
-def engin_date(Dataset:pd.DataFrame, Drop:bool=True):
+def engin_date(Dataset:pd.DataFrame, drop:bool=True):
     
-    '''
+    """
     The engin_date function takes a DataFrame and returns a DataFrame with the date features engineered.
     The function has two parameters: 
     Dataset: A Pandas DataFrame containing at least one column of datetime data. 
-    Drop: A Boolean value indicating whether or not to drop the original datetime columns from the returned dataset.
+    drop: A Boolean value indicating whether or not to drop the original datetime columns from the returned dataset.
     
     :param Dataset:pd.DataFrame: Pass the dataset
-    :param Drop:bool=False: Decide whether or not to drop the original datetime columns from the returned dataset
+    :param drop:bool=False: Decide whether or not to drop the original datetime columns from the returned dataset
     :return: A dataframe with the date features engineered
-    '''
+    """
 
     Dataset_=Dataset.copy()
     Df=Dataset_.copy()
@@ -137,38 +95,38 @@ def engin_date(Dataset:pd.DataFrame, Drop:bool=True):
     for col in a['column']:
         list_date_columns.append(col)
 
-    def create_date_features(df,element):
+    def create_date_features(df,elemento):
         
-        df[element + '_day_of_month'] = df[element].dt.day
-        df[element + '_day_of_week'] = df[element].dt.dayofweek + 1
-        df[[element + '_is_wknd']] = df[[element + '_day_of_week']].replace([1, 2, 3, 4, 5, 6, 7], 
+        df[elemento + '_day_of_month'] = df[elemento].dt.day
+        df[elemento + '_day_of_week'] = df[elemento].dt.dayofweek + 1
+        df[[elemento + '_is_wknd']] = df[[elemento + '_day_of_week']].replace([1, 2, 3, 4, 5, 6, 7], 
                             [0, 0, 0, 0, 0, 1, 1 ]) 
-        df[element + '_month'] = df[element].dt.month
-        df[element + '_day_of_year'] = df[element].dt.dayofyear
-        df[element + '_year'] = df[element].dt.year
-        df[element + '_hour']=df[element].dt.hour
-        df[element + '_minute']=df[element].dt.minute
-        df[element + '_Season']=''
+        df[elemento + '_month'] = df[elemento].dt.month
+        df[elemento + '_day_of_year'] = df[elemento].dt.dayofyear
+        df[elemento + '_year'] = df[elemento].dt.year
+        df[elemento + '_hour']=df[elemento].dt.hour
+        df[elemento + '_minute']=df[elemento].dt.minute
+        df[elemento + '_Season']=''
         winter = list(range(1,80)) + list(range(355,370))
         spring = range(80, 172)
         summer = range(172, 264)
         fall = range(264, 355)
 
-        df.loc[(df[element + '_day_of_year'].isin(spring)), element + '_Season'] = '2'
-        df.loc[(df[element + '_day_of_year'].isin(summer)), element + '_Season'] = '3'
-        df.loc[(df[element + '_day_of_year'].isin(fall)), element + '_Season'] = '4'
-        df.loc[(df[element + '_day_of_year'].isin(winter)), element + '_Season'] = '1'
-        df[element + '_Season']=df[element + '_Season'].astype(np.int64)
+        df.loc[(df[elemento + '_day_of_year'].isin(spring)), elemento + '_Season'] = '2'
+        df.loc[(df[elemento + '_day_of_year'].isin(summer)), elemento + '_Season'] = '3'
+        df.loc[(df[elemento + '_day_of_year'].isin(fall)), elemento + '_Season'] = '4'
+        df.loc[(df[elemento + '_day_of_year'].isin(winter)), elemento + '_Season'] = '1'
+        df[elemento + '_Season']=df[elemento + '_Season'].astype(np.int64)
         
         return df 
     
-    if Drop==True:
-        for element in list_date_columns:
-            Df=create_date_features(Df,element)
-            Df=Df.drop(element,axis=1)
-    elif Drop==False:
-        for element in list_date_columns:
-            Df=create_date_features(Df,element)
+    if drop==True:
+        for elemento in list_date_columns:
+            Df=create_date_features(Df,elemento)
+            Df=Df.drop(elemento,axis=1)
+    elif drop==False:
+        for elemento in list_date_columns:
+            Df=create_date_features(Df,elemento)
     #if len(list_date_columns)>=1:
     #    print('Date Time Feature Generation')
         
@@ -176,45 +134,25 @@ def engin_date(Dataset:pd.DataFrame, Drop:bool=True):
 
 ############################################################# Enconding Lists ###################################################################
 
-def numerical_columns(Dataset:pd.DataFrame, target:str):
+def num_cols(Dataset:pd.DataFrame, target:str):
     
-    '''
-    The numerical_columns function returns a list of the numerical columns in the dataframe.
-    It takes two arguments: Dataset and target. 
-    Dataset is the name of your dataset, and target is the name of your target variable
+    n_cols=Dataset.select_dtypes(include=['int','float']).columns.tolist()
     
-    :param Dataset:pd.DataFrame: Pass the dataframe that will be used to analyze
-    :param target:str: Identify the target variable
-    :return: A list with the numerical columns of a dataframe
-    '''
-    
-    num_cols=Dataset.select_dtypes(include=['int','float']).columns.tolist()
-    
-    for col in num_cols:
+    for col in n_cols:
         if col==target:
-            num_cols.remove(target)
+            n_cols.remove(target)
             
-    return num_cols
+    return n_cols
 
-def categorical_columns(Dataset:pd.DataFrame, target):
-    
-    '''
-    The categorical_columns function returns a list of the categorical columns in the dataset.
-    The function takes two arguments: Dataset and target. 
-    Dataset is a pandas dataframe, and target is the name of your target variable column as a string.
-    
-    :param Dataset:pd.DataFrame: Specify the dataframe where we want to find the categorical columns
-    :param target: Remove the target column from the list of categorical columns
-    :return: A list with the categorical columns of a dataframe
-    '''
-    
-    cat_cols=Dataset.select_dtypes(include=['object']).columns.tolist()
+def cat_cols(Dataset:pd.DataFrame, target):
 
-    for col in cat_cols:
+    c_cols=Dataset.select_dtypes(include=['object']).columns.tolist()
+
+    for col in c_cols:
         if col==target:
-            cat_cols.remove(target)
+            c_cols.remove(target)
             
-    return cat_cols 
+    return c_cols 
 
 ############################################################# Nulls Treatment ###################################################################
 
@@ -225,16 +163,6 @@ def del_nulls_target(Dataset:pd.DataFrame, target:str):
     return Dataset
 
 def remove_columns_by_nulls(Dataset:pd.DataFrame, percentage:int): ## Colunas 
-    
-    '''
-    The remove_columns_by_nulls function removes columns from a dataframe that have more than the percentage of null values specified by the user.
-    The function takes two arguments:
-    Dataset - The dataset to be modified. This should be a pandas DataFrame object.
-    percentage - A number between 0 and 100, inclusive, which represents the maximum allowable percentage of null values in any given column before it is removed from the dataframe.
-    
-    :param Dataset:pd.DataFrame: Pass the dataset to be cleaned
-    :param percentage:int: Specify the percentage of null values that a column must have in order to be removed
-    '''
     
     assert percentage>0 and percentage<=100 , 'percentage should not exceed value of 100'
     df=Dataset.copy()
@@ -247,139 +175,109 @@ def remove_columns_by_nulls(Dataset:pd.DataFrame, percentage:int): ## Colunas
 
     return df
 
-############################################################# Null_Substitution ########################################################################################
+############################################################# Null Imputation ########################################################################################
 
-def const_null_imputation(train:pd.DataFrame,
-                          test:pd.DataFrame, 
-                          target:str, 
-                          imp_value:int=0):
+def fit_SimpleImp(df:pd.DataFrame,
+                   target:str,
+                   strat:str='mean'):
+    """
+    The fit_SimpleImp function fits a SimpleImputer to the dataframe. 
+    The function returns the fitted SimpleImputer object.
     
-    '''
-    The const_null_imputation function imputes a constant value to all the null values in the dataframe.
-    The function takes three arguments: train, test and target. 
-    train is a pandas dataframe that contains training data with null values. 
-    test is a pandas dataframe that contains test/validation/holdout set with null values. 
-    target is the target variable name in both train and test sets.
-    
-    :param train:pd.DataFrame: Specify the training dataset
-    :param test:pd.DataFrame: test the model on a different dataset
+    :param df:pd.DataFrame: Specify the dataframe that you want to fit
     :param target:str: Specify the target variable
-    :param imp_value:int=0: Set the imputation value for all the null values in both train and test dataframes
-    :return: The training and test dataframes with the null values imputed by a constant value
-    '''
+    :param strat:str: Specify the strategy to use when replacing missing values
+    :return: A simpleimputer object
+    """
     
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_=train.copy(),test.copy()
+    #df=reset_index_DF(df)
+    df_=df.copy()
     
-    train,test=train.loc[:, train.columns != target],test.loc[:, test.columns != target]
-    train,test=train.fillna(imp_value),test.fillna(imp_value)
-    train[target],test[target]=train_[target],test_[target]
-    
-    return train,test
+    df=df.loc[:, df.columns != target]
+    input_cols= list(df.columns)
 
-def simple_null_imputation(train:pd.DataFrame,
-                           test:pd.DataFrame,
-                           target:str,
-                           strat:str='mean'):
-    
-    '''
-    The simple_null_imputation function takes in a train and test, as well as the target column name. 
-    It then removes the target column from both train and test, imputes missing values with mean for numerical columns 
-    and most frequent value for categorical columns. It returns two dataframes: one with train data and one with test data.
-    
-    :param train:pd.DataFrame: Specify the training dataframe
-    :param test:pd.DataFrame: Impute the missing values in the test
-    :param target:str: Specify the target variable for which we are imputing missing values
-    :param strat:str='mean': Specify the strategy to use for imputing missing values
-    '''
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_=train.copy(),test.copy()
-    
-    train,test=train.loc[:, train.columns != target],test.loc[:, test.columns != target]
-    
-    Input_Cols= list(train.columns)
 
-    imp_mean = SimpleImputer(missing_values=np.nan, strategy=strat)
-    imp_mean.fit(train)
+    imputer = SimpleImputer(missing_values=np.nan, strategy=strat)
+    imputer.fit(df)
     
-    train = imp_mean.transform(train[Input_Cols])
-    train = pd.DataFrame(train, columns = Input_Cols)
-    
-    test=imp_mean.transform(test[Input_Cols])
-    test = pd.DataFrame(test, columns = Input_Cols)
-    
-    train[target]=train_[target]
-    test[target]=test_[target]
-    
-    return train,test
+    return imputer
 
-def knn_null_imputation(train:pd.DataFrame, 
-                        test:pd.DataFrame, 
-                        target:str, 
-                        neighbors:int=5):
-    '''
-    The knn_null_imputation function imputes the null values in a dataframe using KNN imputation. 
-    The function returns two dataframes, one with the null values imputed and another with the target column unchanged.
-    
-    
-    :param train:pd.DataFrame: Specify the training dataset
-    :param test:pd.DataFrame: Specify the dataframe that will be used to impute the missing values
-    :param target:str: Specify the target variable
-    :param neighbors:int=5: Set the number of neighbors to be used in the knn algorithm
-    '''
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_=train.copy(),test.copy()
+def transform_SimpleImp(df:pd.DataFrame,
+                         target:str,
+                         imputer):
+    """
+    The transform_SimpleImp function takes a dataframe and imputes missing values using the SimpleImputer. 
+    The function returns a new dataframe with the imputed values in place of NaN's.
 
-    train,test=train.loc[:, train.columns != target],test.loc[:, test.columns != target]
+    :param df:pd.DataFrame: Specify the dataframe that is to be transformed
+    :param target:str: Specify the target column in the dataframe
+    :param imputer: Select the imputer to be used
+    :return: The dataframe with the imputed values in the columns that were transformed
+    """
+    
+    df=reset_index_DF(df)    
+    df_=df.copy()
+    df=df.loc[:, df.columns != target]
+    input_cols= list(df.columns)
+    df = imputer.transform(df[input_cols])
+    df = pd.DataFrame(df, columns = input_cols)
+
+    df_[input_cols]=df[input_cols]
+    
+    return df_
+
+def fit_KnnImp(df:pd.DataFrame, 
+                target:str, 
+                neighbors:int=5):
+    
+    df_=df.copy()
+    df=df.loc[:, df.columns != target]
     imputer = KNNImputer(n_neighbors=neighbors)
-    imputer.fit(train)
-    train = pd.DataFrame(imputer.transform(train),columns = train.columns) 
-    test = pd.DataFrame(imputer.transform(test),columns = test.columns) 
+    imputer.fit(df)
     
-    train[target],test[target]=train_[target],test_[target]
-    
-    return train,test
+    return imputer
 
-def iterative_null_imputation(train:pd.DataFrame, 
-                              test:pd.DataFrame, 
-                              target:str, 
-                              order:str='ascending', 
-                              iterations:int=10):
-    '''
+def transform_KnnImp(df:pd.DataFrame,
+                      target:str,
+                      imputer):
     
-    The iterative_null_imputation function imputes null values in the dataframe. 
-    The imputation is done by iteratively replacing null values with the mean of that column. 
-    This function takes three parameters: train, test, and target. The train parameter is a pandas dataframe containing all training data (including target variable). The test parameter is a pandas dataframe containing all test/validation/holdout set (including target variable). The target parameter specifies which column contains the target variable for this dataset.
+    df=reset_index_DF(df)   
+    df_=df.copy()
     
-    :param train:pd.DataFrame: Specify the training dataframe
-    :param test:pd.DataFrame: Impute the missing values in test
-    :param target:str: Specify the target variable
-    :param order:str='ascending': Determine the order in which the imputation is done
-    :param iterations:int=10: Specify the number of iterations that the iterative imputation algorithm will run
+    df=df.loc[:, df.columns != target]
+    df = pd.DataFrame(imputer.transform(df),columns = df.columns) 
+    
+    input_cols= list(df.columns)
+    df_[input_cols]=df[input_cols]
+    
+    return df_
 
-    '''
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_=train.copy(),test.copy()
-    
-    train,test=train.loc[:, train.columns != target],test.loc[:, test.columns != target]
-    
-    Input_Cols= list(train.columns)
-    
-    imputer = IterativeImputer(imputation_order=order,max_iter=iterations,random_state=0,n_nearest_features=None)#(int(len(Input_Cols)*0.2)))
-    imputer=imputer.fit(train)
-    
-    train = pd.DataFrame(imputer.transform(train))
-    train.columns = Input_Cols
-    
-    test = pd.DataFrame(imputer.transform(test))
-    test.columns = Input_Cols
+def fit_IterImp(df:pd.DataFrame, 
+                 target:str, 
+                 order:str='ascending'):
 
-    train[target],test[target]=train_[target],test_[target]
+    df_=df.copy()
+    df=df.loc[:, df.columns != target]
+    imputer = IterativeImputer(imputation_order=order,max_iter=10,random_state=0,n_nearest_features=None)
+    imputer=imputer.fit(df)
+
+    return imputer
+
+def transform_IterImp(df:pd.DataFrame,
+                      target:str,
+                      imputer):
     
-    return train,test
+    df=reset_index_DF(df)   
+    df_=df.copy()
+    
+    df=df.loc[:, df.columns != target]
+    input_cols= list(df.columns)
+    df = pd.DataFrame(imputer.transform(df))
+    df.columns = input_cols
+    
+    df_[input_cols]=df[input_cols]
+    
+    return df_
 
 def null_substitution_method(train:pd.DataFrame, 
                              test:pd.DataFrame, 
@@ -387,26 +285,28 @@ def null_substitution_method(train:pd.DataFrame,
                              enc_method:str, 
                              pred_type:str,
                              eval_metric:str):
+    """
+    This function compares the performance of different imputation techniques
+    on a dataset with missing values.
     
-    '''
-    The null_substitution_method function takes in a train and test dataframe, 
-    the target variable, the encoding method used to encode categorical variables, 
-    the predictive type (regression or classification), and the evaluation metric.  
-    The null_substitution_method function returns a list of MAEs for each imputation algorithm.  
-    It also returns an Imputation Method that was chosen based on which one had the lowest MAEs.
-
-    :param train:pd.DataFrame: Pass the training data
-    :param test:pd.DataFrame: test the function with a small dataset
-    :param target:str: Specify the target column
-    :param enc_method:str: Choose the encoding method used to encode categorical variables
-    :param pred_type:str: Specify if the problem is a regression or classification problem
-    :param eval_metric:str: Select the evaluation metric used to rank the different imputation methods
-    '''
-
+    Parameters:
+    train : pd.DataFrame
+        The training set
+    test : pd.DataFrame
+        The test set
+    target : str
+        The target variable
+    enc_method : str
+        The encoding method to be used
+    pred_type : str
+        The type of prediction: 'Reg' for regression or 'Class' for classification
+    eval_metric : str
+        The evaluation metric to be used
+    """
     train_,test_=train.copy(),test.copy()
     sel_cols= list(train.columns)
 
-    num_cols,cat_cols=numerical_columns(train,target),categorical_columns (train,target) 
+    n_cols,c_cols=num_cols(train,target),cat_cols (train,target) 
 
     if pred_type=='Reg':
         metric='MAE'
@@ -414,47 +314,73 @@ def null_substitution_method(train:pd.DataFrame,
         metric='AUC'
     
     if enc_method=='Encoding Version 1':
-        train_pred,test_pred,train, test=version1_encoding(train, test,target)
+        train, test=encoding_v1(train, test,target)
     elif enc_method=='Encoding Version 2':
-        train_pred,test_pred,train, test=version2_encoding(train, test,target)
+        train, test=encoding_v2(train, test,target)
     elif enc_method=='Encoding Version 3':
-        train_pred,test_pred,train, test=version3_encoding(train, test,target)
+        train, test=encoding_v3(train, test,target)
     elif enc_method=='Encoding Version 4':
-        train_pred,test_pred,train, test=version4_encoding(train, test,target)
+        train, test=encoding_v4(train, test,target)
         
-    print('Const Null Substitution Loading')
-    train_const,test_const=const_null_imputation(train,test,target)
     
     print('Simple Imputation Loading')
-    train_simple, test_simple=simple_null_imputation(train,test,target)
+    imputer=fit_SimpleImp(train,
+                          target=target,
+                          strat='mean')
 
+    train_simple=transform_SimpleImp(train,
+                                     target=target,
+                                     imputer=imputer)
+    
+    test_simple=transform_SimpleImp(test,
+                                    target=target,
+                                    imputer=imputer)
+    
     print('KNN Imputation Loading')
-    train_knn, test_knn = knn_null_imputation(train,test,target)
+    imputer_knn=fit_KnnImp(train,
+                           target=target,
+                           neighbors=5)
+
+    train_knn=transform_KnnImp(train,
+                               target=target,
+                               imputer=imputer_knn)
+
+    test_knn=transform_KnnImp(test,
+                              target=target,
+                              imputer=imputer_knn)
     
     print('Iterative Imputation Loading')
-    train_iter,test_iter=iterative_null_imputation(train,test,target)
+    imputer_iter=fit_IterImp(train,
+                             target=target,
+                             order='ascending')
 
-    const_perf=pred_eval(train_const, test_const,target)
+    train_iter=transform_IterImp(train,
+                                 target=target,
+                                 imputer=imputer_iter)
+
+    test_iter=transform_IterImp(test,
+                                target=target,
+                                imputer=imputer_iter)
+
     simple_perf=pred_eval(train_simple, test_simple,target)
     knn_perf=pred_eval(train_knn, test_knn,target) 
     iter_perf=pred_eval(train_iter, test_iter,target)
 
-    List=[knn_perf,iter_perf,const_perf,simple_perf]
+    List=[knn_perf,iter_perf,simple_perf]
     perf_imp=pd.concat(List)
     perf_imp=perf_imp.reset_index()
     perf_imp = perf_imp.sort_values([eval_metric], ascending=True)
     
-    mae_const=const_perf[eval_metric].sum()
     mae_simple=simple_perf[eval_metric].sum()
     mae_knn=knn_perf[eval_metric].sum()
     mae_Iterartive=iter_perf[eval_metric].sum()
     
     print('Null Imputation Methods Performance:')
     
-    print('KNN Performance: ', round(mae_knn, 5), '\n Iterative Performance: ', round(mae_Iterartive, 5),
-          '\n Const Performance: ', round(mae_const, 5), '\n Simple Performance: ', round(mae_simple, 5))
+    print('KNN Performance: ', round(mae_knn, 4), '\n Iterative Performance: ', 
+          round(mae_Iterartive, 4),'\n Simple Performance: ', round(mae_simple, 4))
     
-    list_imp=[mae_Iterartive,mae_knn,mae_const,mae_simple]
+    list_imp=[mae_Iterartive,mae_knn,mae_simple]
     
     list_imp.sort()
     imp_method=''
@@ -465,383 +391,99 @@ def null_substitution_method(train:pd.DataFrame,
     if list_imp[0]==mae_Iterartive:
         imp_method='Iterative'
         train, test=train_iter.copy(),test_iter.copy()
-        print('Iterative Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_Iterartive, 5))
+        print('Iterative Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_Iterartive, 4))
     elif list_imp[0]==mae_knn:
         imp_method='KNN'
         train, test=train_knn.copy(), test_knn.copy()
-        print('KNN Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_knn, 5))
-    elif list_imp[0]==mae_const:
-        imp_method='Const'   
-        train, test=train_const.copy(),test_const.copy()
-        print('Constant Imputation was chosen with an ', metric, ' of: ', round(mae_const, 5))
+        print('KNN Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_knn, 4))
     elif list_imp[0]==mae_simple:
         imp_method='Simple'  
         train, test=train_simple.copy(),test_simple.copy()
-        print('Simple  Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_simple, 5))
+        print('Simple Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_simple, 4))
 
-    return train, test,list_imp,imp_method,perf_imp
-
-############################################################ ENCODINGS #########################################################################
-
-def encode_idf(train: pd.DataFrame, test: pd.DataFrame,target:str) -> tuple: ### target= Nome Coluna target
-    
-    '''
-    The encode_idf function takes a dataframe and encodes the categorical columns using the IDF method.
-    The function returns two transformed datasets, one for training and another for testing.
-    
-    :param train:pd.DataFrame: Select the training dataset
-    :param test:pd.DataFrame: Apply the transformation to a dataset that is not part of the training set
-    :param target:str: Specify the target column
-    :return: A tuple containing the transformed train and test datasets
-    '''
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_ = train.copy(),test.copy()
-    _train,_test = train_.copy(),test_.copy()
-    
-    encoders=categorical_columns(_train,target)
-    
-    if len(encoders)>0:
-        
-        IDF_filter = cane.idf(_train, n_coresJob=2,disableLoadBar = False, columns_use = encoders)  # application of specific multicolumn setting IDF
-        idfDicionary = cane.idfDictionary(Original = _train, Transformed = IDF_filter, columns_use = encoders) #, targetColumn=target)
-        
-        for col in encoders:
-            _test[col] = (_test[col]
-                             .map(idfDicionary[col])                  
-                             .fillna(max(idfDicionary[col].values()))) #self.idf_dict -> dici IDF
-                            
-        for col in encoders:
-            _train[col]=IDF_filter[col]
-
-        _train=transform_dataset(train_,_train[encoders])
-        _test=transform_dataset(test_,_test[encoders])
-    else:
-        print('###### No Categorical Columns ######')
-
-    return _train,_test
-
-def encode_label(train: pd.DataFrame, test: pd.DataFrame, target:str) -> tuple:
-    
-    '''
-    The encode_label function takes a DataFrame and encodes the categorical columns.
-    It returns two DataFrames, one with the encoded data and another with the original data.
-    
-    :param train:pd.DataFrame: Pass the training dataset
-    :param test:pd.DataFrame: Encode the test dataset
-    :param target:str: Specify the target column
-    '''
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_ = train.copy(),test.copy()
-    _train,_test = train_.copy(),test_.copy()
-    
-    _encoders = []
-    encoders=categorical_columns(_train,target)
-    
-    if len(encoders)>0:
-
-        for enc in encoders:
-            values = _train[enc].unique()
-            _values = pd.Series(values).dropna().reset_index(drop=True)
-            _values.index += 1
-            _values.name = enc
-            _encoders.append(_values)
-            dict_values = dict(map(reversed, _values.to_dict().items()))
-    
-            _train[enc] = _train[enc].map(dict_values.get, na_action='ignore')
-            values_test = _test[enc]
-            values_test = pd.Series(
-                values_test[~values_test.isin(_values)].unique()
-            ).dropna()
-            _values = pd.concat([_values, values_test], ignore_index=True)
-            _values.index += 1
-            _values.name = enc
-            dict_values = dict(map(reversed, _values.to_dict().items()))
-            _test[enc] = _test[enc].map(dict_values.get)
-        encoding_dict = pd.concat(_encoders, axis=1)
-
-        _train=transform_dataset(train_,_train[encoders])
-        _test=transform_dataset(test_,_test[encoders])
-    else:
-        print('###### No Categorical Columns ######')
-
-    return _train, _test
-
-def encode_standard(train: pd.DataFrame, test: pd.DataFrame, target:str) -> tuple:
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_=train.copy(),test.copy()
-    
-    encoders=numerical_columns(train,target)
-    
-    if len(encoders)>0:
-        
-        scaler,num_cols=fit_StandardScaler(train_,target)
-        train_[num_cols] = scaler.transform(train_[num_cols])
-        test_[num_cols] = scaler.transform(test_[num_cols])
-
-    return train_,test_
-
-def encode_minmax(train: pd.DataFrame, test: pd.DataFrame, target:str) -> tuple:
-       
-    train,test=reset_index_DF(train),reset_index_DF(test)
-    train_,test_=train.copy(),test.copy()
-    
-    encoders=numerical_columns(train,target)
-    
-    if len(encoders)>0:
-        
-        scaler,num_cols = fit_MinmaxScaler(train_,target)
-        train_[num_cols] = scaler.transform(train_[num_cols])
-        test_[num_cols] = scaler.transform(test_[num_cols])
-
-    return train_,test_
-
-#############################################################  Encodings Validation   ###############################################################################
-
-def version1_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
-    
-    '''
-    The version_encoding functions take in a training and test dataframe, as well as the name of the target column. 
-    It then encodes all categorical columns using one-hot encoding, and all numerical columns using standard scaling. 
-    If there are any null values in either the training or test set, it will impute them with 0s for numerical values and 'MISSING' for categorical ones.
-
-    :param train:pd.DataFrame: Specify the training dataset
-    :param test:pd.DataFrame: Check if there are any missing values in the test data
-    :param target:str: Specify the target column name
-    '''
-
-    train_,test_ = train.copy(),test.copy()
-    _train,_test = train_.copy(),test_.copy()
-
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target) 
-
-    if len(num_cols)>0:
-        _train,_test=encode_standard(_train,_test,target)
-    if len(cat_cols)>0:
-        _train,_test=encode_idf(_train,_test,target)
-
-    if (_train.isnull().sum().sum() or _test.isnull().sum().sum()) != 0:
-        train_pred, test_pred = simple_null_imputation(_train,_test,target)
-    else:
-        train_pred, test_pred=_train.copy(), _test.copy()
-    
-    return train_pred, test_pred,_train,_test
-
-def version2_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
-        
-    train_,test_ = train.copy(),test.copy()
-    _train,_test = train_.copy(),test_.copy()
-
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target) 
-
-    if len(num_cols)>0:
-        _train,_test=encode_minmax(_train,_test,target)    
-    if len(cat_cols)>0:
-        _train,_test=encode_idf(_train,_test,target)
-
-    if (_train.isnull().sum().sum() or _test.isnull().sum().sum()) != 0:
-        train_pred, test_pred = simple_null_imputation(_train,_test,target)
-    else:
-        train_pred, test_pred=_train.copy(), _test.copy()
-    
-    return train_pred, test_pred,_train,_test
-
-def version3_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
-    
-    train_,test_ = train.copy(),test.copy()
-    _train,_test = train_.copy(),test_.copy()
-
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target) 
-    
-    if len(num_cols)>0:
-        _train,_test=encode_standard(_train,_test,target)
-    if len(cat_cols)>0:
-        _train,_test=encode_label(_train,_test,target)
-                                           
-    if (_train.isnull().sum().sum() or _test.isnull().sum().sum()) != 0:
-        train_pred, test_pred = simple_null_imputation(_train,_test,target)
-    else:
-        train_pred, test_pred=_train.copy(), _test.copy()
-    
-    return train_pred, test_pred,_train,_test
-
-def version4_encoding(train:pd.DataFrame, test:pd.DataFrame, target:str):
-       
-    train_,test_ = train.copy(),test.copy()
-    _train,_test = train_.copy(),test_.copy()
-
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target) 
-    
-    if len(num_cols)>0:
-        _train,_test=encode_minmax(_train,_test,target)
-    if len(cat_cols)>0:
-        _train,_test=encode_label(_train,_test,target)
-    if (_train.isnull().sum().sum() or _test.isnull().sum().sum()) != 0:
-        train_pred, test_pred = simple_null_imputation(_train,_test,target)
-    else:
-        train_pred, test_pred=_train.copy(), _test.copy()
-    
-    return train_pred, test_pred,_train,_test
-
-##########################################################  Select Best Encoding Method  ############################################################################
-
-def Select_Encoding_Method(train:pd.DataFrame, 
-                           test:pd.DataFrame, 
-                           target:str, 
-                           pred_type:str,
-                           eval_metric:str):
-    '''
-    The Select_Encoding_Method function is used to select the best encoding method for a given dataset. 
-    The function takes in 5 parameters:
-        1) train: The training dataframe that will be used to train the model. This is a pandas dataframe object.
-        2) test: The test dataframe that will be used to test the performance of our model on unseen data. This is a pandas 
-                    dataframe object.    
-        3) target: A string indicating which column name represents the target variable in your dataset (y).  
-        4) pred_type: A string indicating whether
-    
-    :param train:pd.DataFrame: Select the train dataframe
-    :param test:pd.DataFrame: test the model with a different dataset than the one used for training
-    :param target: Select the target variable
-    :param pred_type:str: Select between regression or classification
-    :param eval_metric:str: Select the evaluation metric used to compare the different encoding versions
-    :return: The train and test datasets with the best encoding method
-    '''
-    
-    train_,test_=train.copy(),test.copy()
-    _train_,_test_=train_.copy(),test_.copy()
-
-    
-    train_v1_p,test_v1_p,train_v1, test_v1=version1_encoding(_train_, _test_,target)
-    train_v2_p,test_v2_p,train_v2, test_v2=version2_encoding(_train_, _test_,target)
-    train_v3_p,test_v3_p,train_v3, test_v3=version3_encoding(_train_, _test_,target)
-    train_v4_p,test_v4_p,train_v4, test_v4=version4_encoding(_train_, _test_,target)
-
-    pred_perf_v1=pred_eval(train_v1_p, test_v1_p,target)
-    pred_perf_v2=pred_eval(train_v2_p, test_v2_p,target)
-    pred_perf_v3=pred_eval(train_v3_p, test_v3_p,target)
-    pred_perf_v4=pred_eval(train_v4_p, test_v4_p,target)
-    
-    p_v1=pred_perf_v1[eval_metric].sum()
-    p_v2=pred_perf_v2[eval_metric].sum()
-    p_v3=pred_perf_v3[eval_metric].sum()
-    p_v4=pred_perf_v4[eval_metric].sum()
-    
-    if pred_type=='Reg':
-        print(' ')
-        print('Predictive Performance Encoding Versions:')
-        print(' ')
-        print('\n MAE Version 1 [IDF + StandardScaler] : ', round(p_v1, 5),
-              '\n MAE Version 2 [IDF + MinMaxScaler] : ', round(p_v2, 5),
-              '\n MAE Version 3 [Label + StandardScaler] : ', round(p_v3, 5),
-              '\n MAE Version 4 [IDF + MinMaxScaler] : ', round(p_v4, 5))
-        metric='MAE'
-    elif pred_type=='Class':
-        print('Predictive Performance Encoding Versions:')
-        print('\n AUC Version 1 [IDF + StandardScaler] : ', round(p_v1, 5),
-              '\n AUC Version 2 [IDF + MinMaxScaler] : ', round(p_v2, 5),
-              '\n AUC Version 3 [Label + StandardScaler] : ', round(p_v3, 5),
-              '\n AUC Version 4 [IDF + MinMaxScaler] : ', round(p_v4, 5))
-        metric='AUC'
-    
-    list_encoding=[p_v1,p_v2,p_v3,p_v4]
-    list_encoding.sort()
-    enc_method=''
-    
-    if pred_type=='Class':
-        list_encoding.sort(reverse=True)
-        
-    if list_encoding[0]==p_v1:
-        enc_method='Encoding Version 1'
-        print('Encoding Version 1 was choosen with an ', metric, ' of: ', round(p_v1, 5))
-        _train_,_test_=train_v1, test_v1
-        
-    elif list_encoding[0]==p_v2:
-        enc_method='Encoding Version 2'
-        print('Encoding Version 2 was choosen with an ', metric, ' of: ', round(p_v2, 5))
-        _train_,_test_=train_v2, test_v2        
-    
-    elif list_encoding[0]==p_v3:
-        enc_method='Encoding Version 3'
-        print('Encoding Version 3 was choosen with an ', metric, ' of: ', round(p_v3, 5))
-        _train_,_test_=train_v3, test_v3
-    
-    elif list_encoding[0]==p_v4:
-        enc_method='Encoding Version 4'
-        print('Encoding Version 4 was choosen with an ', metric, ' of: ', round(p_v4, 5))
-        _train_,_test_=train_v4, test_v4
-    
-    return _train_,_test_,enc_method
-
-################################################################## Encodings ###############################################################
+    return train, test,imp_method
 
 ############################################################# Encoding Pipeline Methods ####################################################
 
 def encoding_v1(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
-    '''
-    The encoding functions take in a training and test dataframe, as well as the name of the target column.
-    It returns two modified dataframes with all categorical columns encoded using frequency-inverse document 
-    frequency encoding. The function will only encode those columns that are categorical (as determined by the 
-    categorical_columns function). If there are numerical columns, they will be encoded using standard scaling.
+    """
+    Encoding method version 1.
+    This function applies two encoding techniques on the input dataframe:
+        - Scale numerical variables using StandardScaler
+        - Encode categorical variables using IDF
+        
+    Parameters:
+        train (pd.DataFrame): The training dataset
+        test (pd.DataFrame): The test dataset
+        target (str): The target variable
     
-    :param train:pd.DataFrame: Specify the training dataframe
-    :param test:pd.DataFrame: Encode the test dataframe
-    :param target:str: Specify the target column
-    '''
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
+    Returns:
+        _train, _test : A tuple of the transformed training and test datasets.
+    """
+
     _train,_test = train.copy(),test.copy()
     
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target) 
+    n_cols,c_cols=num_cols(_train,target),cat_cols(_train,target) 
 
-    if len(num_cols)>0:
-        _train,_test=encode_standard(_train,_test,target)    
-    if len(cat_cols)>0:
-        _train,_test=encode_idf(_train,_test,target)
+    if len(n_cols)>0:
+        scaler,n_cols= fit_StandardScaler(_train,target)
+        _train[n_cols] = scaler.transform(_train[n_cols])
+        _test[n_cols] = scaler.transform(_test[n_cols])    
+    if len(c_cols)>0:
+        idf_fit=fit_IDF_Encoding(_train,target)
+        _train=transform_IDF_Encoding(_train,idf_fit)
+        _test=transform_IDF_Encoding(_test,idf_fit)
 
     return _train,_test
 
 def encoding_v2(train:pd.DataFrame, test:pd.DataFrame, target:str):
-        
-    train,test=reset_index_DF(train),reset_index_DF(test)
+
     _train,_test = train.copy(),test.copy()
     
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target) 
+    n_cols,c_cols=num_cols(_train,target),cat_cols(_train,target)
 
-    if len(num_cols)>0:
-        _train,_test=encode_minmax(_train,_test,num_cols)
-    if len(cat_cols)>0:
-        _train,_test=encode_idf(_train,_test,target)
+    if len(n_cols)>0:
+        scaler,n_cols=fit_MinmaxScaler(_train,target)
+        _train[n_cols] = scaler.transform(_train[n_cols])
+        _test[n_cols] = scaler.transform(_test[n_cols])   
+    if len(c_cols)>0:
+        idf_fit=fit_IDF_Encoding(_train,target)
+        _train=transform_IDF_Encoding(_train,idf_fit)
+        _test=transform_IDF_Encoding(_test,idf_fit)
 
     return _train,_test
 
 def encoding_v3(train:pd.DataFrame, test:pd.DataFrame, target:str):
-    
-    train,test=reset_index_DF(train),reset_index_DF(test)
+
     _train,_test = train.copy(),test.copy()
     
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target) 
+    n_cols,c_cols=num_cols(_train,target),cat_cols(_train,target) 
     
-    if len(num_cols)>0:
-        _train,_test=encode_standard(_train,_test,target)
-    if len(cat_cols)>0:
-        _train,_test=encode_label(_train,_test,target)
-    
+    if len(n_cols)>0:
+        scaler,n_cols=fit_StandardScaler(_train,target)
+        _train[n_cols] = scaler.transform(_train[n_cols])
+        _test[n_cols] = scaler.transform(_test[n_cols])  
+    if len(c_cols)>0:
+        le_fit=fit_Label_Encoding(_train,target)  
+        _train=transform_Label_Encoding(_train,le_fit)
+        _test=transform_Label_Encoding(_test,le_fit)
     return _train,_test
 
 def encoding_v4(train:pd.DataFrame, test:pd.DataFrame, target:str):
-        
-    train,test=reset_index_DF(train),reset_index_DF(test)
+
     _train,_test = train.copy(),test.copy()
     
-    num_cols,cat_cols=numerical_columns(_train,target),categorical_columns(_train,target)
+    n_cols,c_cols=num_cols(_train,target),cat_cols(_train,target)
 
-    if len(num_cols)>0:
-        _train,_test=encode_minmax(_train,_test,target)
-    if len(cat_cols)>0:
-        _train,_test=encode_label(_train,_test,target)
+    if len(n_cols)>0:
+        scaler,n_cols=fit_MinmaxScaler(_train,target)
+        _train[n_cols] = scaler.transform(_train[n_cols])
+        _test[n_cols] = scaler.transform(_test[n_cols])   
+    if len(c_cols)>0:
+        le_fit=fit_Label_Encoding(_train,target)  
+        _train=transform_Label_Encoding(_train,le_fit)
+        _test=transform_Label_Encoding(_test,le_fit)
     
     return _train,_test
 
@@ -850,8 +492,15 @@ def encoding_v4(train:pd.DataFrame, test:pd.DataFrame, target:str):
 ######### MultiColumn LabelEncoding
 
 def fit_Label_Encoding(Dataset:pd.DataFrame,target:str):
-    
-    encoders=categorical_columns(Dataset,target)
+    """
+    This function performs the Label Encoding for categorical variables in a dataset.
+    Args:
+        Dataset (pd.DataFrame): The dataset that you want to encode.
+        target (str): The name of the target variable.
+    Returns:
+        le_dict (dict): A dictionary of label encoders for each categorical variable.
+    """
+    encoders=cat_cols(Dataset,target)
     df,list_cols,list_le=Dataset.copy(),[],[]
     
     for c in encoders:
@@ -862,7 +511,11 @@ def fit_Label_Encoding(Dataset:pd.DataFrame,target:str):
     return le_dict
 
 def transform_Label_Encoding(Dataset:pd.DataFrame,le_fit:dict):
-    
+    """
+    This function receives a dataset and a pre-trained label encoding dict.
+    It maps any unseen values in the dataset to '<unknown>', appends it to the classes_
+    array of the label encoder, and then applies the encoding to the dataframe.
+    """
     encoders=list(le_fit.keys())
     df=Dataset.copy()
 
@@ -874,13 +527,34 @@ def transform_Label_Encoding(Dataset:pd.DataFrame,le_fit:dict):
         
     return df 
 
+######### MultiColumn IDF_Encoding 
+
+def fit_IDF_Encoding(Dataset:pd.DataFrame,target:str):
+    df=Dataset.copy()
+    
+    encoders=cat_cols(df,target)
+    IDF_filter = cane.idf(df, n_coresJob=2,disableLoadBar = False, columns_use = encoders)
+    idf_fit = cane.idfDictionary(Original = df, Transformed = IDF_filter, columns_use = encoders) #, targetColumn=target)
+
+    return idf_fit
+
+def transform_IDF_Encoding(Dataset:pd.DataFrame,idf_fit:dict):
+    
+    encoders=list(idf_fit.keys())
+    df=Dataset.copy()
+        
+    for col in encoders:
+        df[col] = (df[col].map(idf_fit[col]).fillna(max(idf_fit[col].values())))
+        
+    return df 
+
 ######### MultiColumn OneHotEncoding
 
 def fit_OneHot_Encoding(Dataset:pd.DataFrame,target:str,n_distinct:int=10):
-
+        
     df,list_cols,list_le=Dataset.copy(),[],[]
     drop_org_cols,list_ohe=True,[] 
-    encoders=categorical_columns(df,target)
+    encoders=cat_cols(df,target)
     print(encoders)
     if len(encoders)>0:
         for enc in encoders:
@@ -906,7 +580,6 @@ def transform_OneHot_Encoding(Dataset:pd.DataFrame,ohe_fit:dict):
         for enc in encoders:
             col_n=[]
             if len(list(dict.fromkeys(df[enc].tolist())))<n_distinct:  ## Less than n distinct elements in col
-                print("****************", enc)
                 list_ohe.append(enc)
                 ohe = ohe_fit[enc] 
                 x=ohe.transform(df[[enc]]).toarray()
@@ -924,62 +597,157 @@ def transform_OneHot_Encoding(Dataset:pd.DataFrame,ohe_fit:dict):
 
 ############################# Scalers
 
-
 def fit_StandardScaler(Dataset:pd.DataFrame,target:str):
     
-    df=Dataset.copy()
-    
-    num_cols=numerical_columns(df,target)
+    df,n_cols=Dataset.copy(),num_cols(Dataset,target)
     
     scaler = StandardScaler()
+    scaler = scaler.fit(df[n_cols])
 
-    scaler = scaler.fit(df[num_cols])
-
-    return scaler, num_cols
+    return scaler, n_cols
 
 def fit_MinmaxScaler(Dataset:pd.DataFrame,target:str):
     
-    df=Dataset.copy()
-    
-    num_cols=numerical_columns(df,target)
+    df,n_cols=Dataset.copy(),num_cols(Dataset,target)
     
     scaler = MinMaxScaler() 
+    scaler = scaler.fit(df[n_cols])
 
-    scaler = scaler.fit(df[num_cols])
-
-    return scaler, num_cols
+    return scaler, n_cols
 
 def fit_RobustScaler(Dataset:pd.DataFrame,target:str):
     
-    df=Dataset.copy()
-    
-    num_cols=numerical_columns(df,target)
+    df,n_cols=Dataset.copy(),num_cols(Dataset,target)
     
     scaler = RobustScaler()
+    scaler = scaler.fit(df[n_cols])
     
-    scaler = scaler.fit(df[num_cols])
+    return scaler, n_cols
+
+
+#######################  Select Best Encoding Method  ######################
+
+
+def Select_Encoding_Method(train:pd.DataFrame, 
+                           test:pd.DataFrame, 
+                           target:str, 
+                           pred_type:str,
+                           eval_metric:str):
+    """
+    The function Select_Encoding_Method() is used for selecting the best encoding method for a given dataset, it takes in 4 arguments:
+
+    train: a dataframe containing the training data
+    test: a dataframe containing the test data
+    target: a string representing the target column
+    pred_type: a string indicating the type of prediction. It can either be 'Reg' for regression or 'Class' for classification
+    eval_metric: a string indicating the metric used to evaluate the performance of the predictions.
+    First, it copies the input datasets and create some variables to store the results of the encoding methods.
+    Then the function applies 4 different encoding methods (encoding_v1(), encoding_v2(), encoding_v3(), and encoding_v4()) to both the train and test datasets.
+    The function then evaluates the performance of these 4 encoded datasets using the pred_eval() function and a metric defined by the input eval_metric.
+    It will print the performance of each method and depending on pred_type it will select the best encoding method based on the chosen metric.
+    """
+    train_,test_=train.copy(),test.copy()
+    _train_,_test_=train_.copy(),test_.copy()
+
+
+    train_v1, test_v1=encoding_v1(_train_, _test_,target)
+    if (train_v1.isnull().sum().sum() or test_v1.isnull().sum().sum()) != 0:
+        imputer_v1=fit_SimpleImp(train_v1,target=target)
+        train_v1=transform_SimpleImp(train_v1,target=target,imputer=imputer_v1)
+        test_v1=transform_SimpleImp(test_v1,target=target,imputer=imputer_v1)
+        
+    train_v2, test_v2=encoding_v2(_train_, _test_,target)
+    if (train_v2.isnull().sum().sum() or test_v2.isnull().sum().sum()) != 0:
+        imputer_v2=fit_SimpleImp(train_v2,target=target)
+        train_v2=transform_SimpleImp(train_v2,target=target,imputer=imputer_v2)
+        test_v2=transform_SimpleImp(test_v2,target=target,imputer=imputer_v2)
+        
+    train_v3, test_v3=encoding_v3(_train_, _test_,target)
+    if (train_v3.isnull().sum().sum() or test_v3.isnull().sum().sum()) != 0:
+        imputer_v3=fit_SimpleImp(train_v3,target=target)
+        train_v3=transform_SimpleImp(train_v3,target=target,imputer=imputer_v3)
+        test_v3=transform_SimpleImp(test_v3,target=target,imputer=imputer_v3)
+        
+    train_v4, test_v4=encoding_v4(_train_, _test_,target)
+    if (train_v4.isnull().sum().sum() or test_v4.isnull().sum().sum()) != 0:
+         imputer_v4=fit_SimpleImp(train_v4,target=target)
+         train_v4=transform_SimpleImp(train_v4,target=target,imputer=imputer_v4)
+         test_v4=transform_SimpleImp(test_v4,target=target,imputer=imputer_v4)
+
+    pred_perf_v1=pred_eval(train_v1, test_v1,target)
+    pred_perf_v2=pred_eval(train_v2, test_v2,target)
+    pred_perf_v3=pred_eval(train_v3, test_v3,target)
+    pred_perf_v4=pred_eval(train_v4, test_v4,target)
     
-    return scaler, num_cols
+    p_v1=pred_perf_v1[eval_metric].sum()
+    p_v2=pred_perf_v2[eval_metric].sum()
+    p_v3=pred_perf_v3[eval_metric].sum()
+    p_v4=pred_perf_v4[eval_metric].sum()
+    
+    if pred_type=='Reg':
+        print(' ')
+        print('Predictive Performance Encoding Versions:')
+        print('\n MAE Version 1 [IDF + StandardScaler] : ', round(p_v1, 4),
+              '\n MAE Version 2 [IDF + MinMaxScaler] : ', round(p_v2, 4),
+              '\n MAE Version 3 [Label + StandardScaler] : ', round(p_v3, 4),
+              '\n MAE Version 4 [Label + MinMaxScaler] : ', round(p_v4, 4))
+        metric='MAE'
+    elif pred_type=='Class':
+        print('Predictive Performance Encoding Versions:')
+        print('\n AUC Version 1 [IDF + StandardScaler] : ', round(p_v1, 4),
+              '\n AUC Version 2 [IDF + MinMaxScaler] : ', round(p_v2, 4),
+              '\n AUC Version 3 [Label + StandardScaler] : ', round(p_v3, 4),
+              '\n AUC Version 4 [Label + MinMaxScaler] : ', round(p_v4, 4))
+        metric='AUC'
+    
+    list_encoding=[p_v1,p_v2,p_v3,p_v4]
+    list_encoding.sort()
+    enc_method=''
+    
+    if pred_type=='Class':
+        list_encoding.sort(reverse=True)
+        
+    if list_encoding[0]==p_v1:
+        enc_method='Encoding Version 1'
+        print('Encoding Version 1 was choosen with an ', metric, ' of: ', round(p_v1, 4))
+        
+    elif list_encoding[0]==p_v2:
+        enc_method='Encoding Version 2'
+        print('Encoding Version 2 was choosen with an ', metric, ' of: ', round(p_v2, 4))    
+    
+    elif list_encoding[0]==p_v3:
+        enc_method='Encoding Version 3'
+        print('Encoding Version 3 was choosen with an ', metric, ' of: ', round(p_v3, 4))
+    
+    elif list_encoding[0]==p_v4:
+        enc_method='Encoding Version 4'
+        print('Encoding Version 4 was choosen with an ', metric, ' of: ', round(p_v4, 4))
+    
+    return enc_method
 
 ########################################################### Feature Selection ##############################################################
-
 ###################################  H2O Feature Selection ######################################
 
 def feature_selection_h2o(Dataset:pd.DataFrame, target:str, total_vi :float=0.98, h2o_fs_models:int =7, encoding_fs:bool=True):
-    '''
-    The feature_selection_h2o function is used to select the most important input variables for a given model.
-    The function takes as input: 
-        - Dataset: A pandas dataframe with all the columns of your dataset, including target variable and features. 
-        - target: The name of your target variable (string). 
-        - Total_vi : The total relative importance percentage you want to keep in your dataset (float). It should be between 0.5 and 1.0 . Default value is 0.98 .  
-    
-    :param Dataset:pd.DataFrame: Input the dataset
-    :param target:str: Define the target column of the dataset
-    :param total_vi:float=0.98: Define the minimum percentage of relative importance that will be used to select the input columns
-    :param h2o_fs_models:int=7: Define the number of models to be used in the h2o automl process
-    :param encoding_fs:bool=True: Encode categorical variables
-    '''
-    
+    """
+    Function to select features using h2o's Autodml feature.
+    Parameters:
+    Dataset: pandas DataFrame, shape = (n_samples,n_features)
+            Dataframe 
+    target: str
+            target variable
+    total_vi : float
+            total relative importance percentage of the selected columns, default is 0.98
+    h2o_fs_models: int
+            h2o Autodml feature models,default is 7
+    encoding_fs : bool
+            if encoding should be applied or not to the dataset, default is True
+    Returns:
+    Selected_Cols: list
+            list of selected features
+    Selected_Importance: pandas DataFrame, shape = (n_features, 2)
+            Dataframe with the relative importance and variables
+    """
     assert total_vi>=0.5 and total_vi<=1 , 'total_vi value should be in [0.5,1] interval'
     assert h2o_fs_models>=1 and h2o_fs_models<=50 , 'h2o_fs_models value should be in [0,50] interval'
     
@@ -988,7 +756,7 @@ def feature_selection_h2o(Dataset:pd.DataFrame, target:str, total_vi :float=0.98
     
     if encoding_fs==True:
         le =LabelEncoder()
-        cols=categorical_columns(train_,target)   
+        cols=cat_cols(train_,target)   
         train_=train_[cols]
         train_ = train_.apply(lambda col: le.fit_transform(col.astype(str)), axis=0, result_type='expand')
         train=transform_dataset(train,train_)
@@ -1052,14 +820,10 @@ def feature_selection_h2o(Dataset:pd.DataFrame, target:str, total_vi :float=0.98
 ###############################################  VIF #########################################
 
 def calc_vif(X):
-    
     '''
     The calc_vif function calculates the variance inflation factor for each variable in a dataframe.
     It returns a pandas DataFrame with two columns: variables and VIF. The variables column contains 
     the names of the independent variables, while the VIF column contains their respective values.
-    
-    :param X: Specify the dataframe that contains all the independent variables
-    :return: A dataframe with the variables and their respective vifs
     '''
     # Calculating VIF
     vif = pd.DataFrame()
@@ -1069,18 +833,21 @@ def calc_vif(X):
     return vif
 
 def feature_selection_vif(Dataset:pd.DataFrame, target:str, VIF:float=10.0):
-    
-    '''
-    The feature_selection_vif function takes a pandas dataframe and the name of the target column as input.
-    It then calculates VIF for all columns in the dataset and returns a list of selected features based on 
-    VIF value. The function also returns vif_df which is used to plot graph between Variance Inflation Factor 
-    and independent variables.
-    
-    :param Dataset:pd.DataFrame: Pass the dataset
-    :param target:str: Specify the target variable
-    :param VIF:float=10.0: Set the threshold for vif value
-    '''
-    
+    """
+    Function to select features based on VIF 
+    Parameters:
+    Dataset: pandas DataFrame, shape = (n_samples,n_features)
+            Dataframe 
+    target: str
+            target variable
+    VIF: float
+            vif threshold ratio, default is 10.0
+    Returns:
+    sel_cols: list
+            list of selected features
+    vif_df : pandas DataFrame, shape = (n_features, 2)
+            Dataframe with the vif and variables
+    """   
     assert VIF>=3 and VIF<=30 , 'VIF value should be in [3,30] interval'
     
     Input_Cols= list(Dataset.columns)
@@ -1104,18 +871,23 @@ def vif_performance_selection(train:pd.DataFrame,
                               test:pd.DataFrame, 
                               target:str, 
                               vif_ratio:float=10.0):
-    
-    '''
-    The vif_performance_selection function is used to select the best features from a dataset. 
-    It uses the VIF (Variance Inflation Factor) method to remove columns with high multicollinearity. 
-    The function takes in 5 parameters: train, test, target, vif_ratio and pred_type. 
-    The train parameter is a pandas dataframe of training data containing all the features and target variable(s). 
-    The test parameter is a pandas dataframe of testing/validation data containing all the features and target variable(s). 
-
-    :param vif_ratio:float=10.0: Set the threshold for vif (variance inflation factor) value
-    :return: The train and test datasets after feature selection
-    '''
-    
+    """
+    Function to select features based on VIF performance
+    Parameters:
+    train: pandas DataFrame, shape = (n_samples,n_features)
+            Training dataframe 
+    test: pandas DataFrame, shape = (n_samples,n_features)
+            Test dataframe 
+    target: str
+            target variable
+    vif_ratio: float
+            vif threshold ratio, default is 10.0
+    Returns:
+    _train_: pandas DataFrame, shape = (n_samples,n_features)
+            Training dataframe with selected features
+    _test_: pandas DataFrame, shape = (n_samples,n_features)
+            Test dataframe with selected features
+    """
     assert vif_ratio>=3 and vif_ratio<=30 , 'vif_ratio value should be in [3,30] interval'
     
     train_,test_=train.copy(),test.copy()
@@ -1144,7 +916,6 @@ def vif_performance_selection(train:pd.DataFrame,
         _test__=_test__[Cols_vif]
     except Exception:
         print('traceback.format_exc: ', traceback.format_exc())
-
         
     pred_vif = pred_eval(_train__, _test__,target)
     p_default_vif=pred_vif[eval_metric][0]
@@ -1170,18 +941,16 @@ def vif_performance_selection(train:pd.DataFrame,
 ########################################################### Metrics ########################################################################
 
 def metrics_regression(y_real, y_pred): 
-    
-    '''
-    The metrics_regression function calculates the metrics of a regression model.
-    It takes as input two arrays: y_real and y_pred, which are the real values and 
-    the predicted values of a target variable respectively. It returns a dictionary 
-    with all the metrics.
-    
-    :param y_real: Store the real values of the target variable
-    :param y_pred: Predict the values of y based on the model
-    :return: A dictionary with the metrics of regression
-    '''
-    
+    """
+    Function to calculate various regression model evaluation metrics
+    Parameters:
+    y_real: array-like, shape = (n_samples)
+            Real values of the target
+    y_pred: array-like, shape = (n_samples)
+            Predicted values of the target
+    Returns:
+    Metrics_Prev_Regression: dictionary with keys as the metrics names, and values as the respective values
+    """
     mae=mean_absolute_error(y_real, y_pred)
     mape= mean_absolute_percentage_error(y_real, y_pred)
     mse=mean_squared_error(y_real, y_pred)
@@ -1198,15 +967,6 @@ def metrics_regression(y_real, y_pred):
     return Metrics_Prev_Regression
 
 def metrics_classification(y_true, y_pred):
-    
-    '''
-    The metrics_classification function takes in two parameters: y_true and y_pred. 
-    It returns a dictionary of metrics for the model's performance on the test set.
-    
-    :param y_true: Pass the actual labels of the data
-    :param y_pred: Store the predicted values
-    :return: A dictionary containing the accuracy, precision and f-score
-    '''
 
     accuracy_metric = accuracy_score(y_true, y_pred)
     precision_metric = precision_score(y_true, y_pred,average='micro')
@@ -1222,15 +982,6 @@ def metrics_classification(y_true, y_pred):
 
 def metrics_binary_classification(y_true, y_pred):
     
-    '''
-    The metrics_binary_classification function takes in two parameters: y_true and y_pred. 
-    It returns a dictionary of metrics for the binary classification task.
-
-    :param y_true: Specify the true class labels of the input samples
-    :param y_pred: Pass the predicted values of the target variable
-    :return: A dictionary of the metrics that are used to evaluate binary classification problems
-    '''
-
     f1_metric=f1_score(y_true, y_pred)
     accuracy_metric = accuracy_score(y_true, y_pred)
     precision_metric = precision_score(y_true, y_pred)
@@ -1267,10 +1018,9 @@ def divide_dfs(train:pd.DataFrame,test:pd.DataFrame,target:str):
 
 def pred_eval(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
-
     X_train,X_test,y_train,y_test=divide_dfs(train,test,target)  
     
-    list_estimators,rf,et=[100,250,500],[],[]
+    list_estimators,rf,et=[100],[],[]
     pred_type, eval_metric=target_type(train, target)
     
     for estimators in list_estimators:
@@ -1324,40 +1074,18 @@ def pred_eval(train:pd.DataFrame, test:pd.DataFrame, target:str):
 ###########################################################    Atlantic Pipeline   ##########################################################
 #############################################################################################################################################
 
-def atlantic_data_processing(Dataset:pd.DataFrame,
-                             target:str, 
-                             Split_Racio:float,
-                             total_vi:float=0.98,
-                             h2o_fs_models:int =7,
-                             encoding_fs:bool=True,
-                             vif_ratio:float=10.0):
-    
-    '''
-    The atlantic_data_processing function is used to preprocess the input dataframe. 
-    It is composed of several steps:
-        1) Remove columns with more than 99% of null values;
-        2) Remove target Null Values;
-        3) Datetime Feature Engineering
-        4) Feature Selection by Variance H2O AutoML Variable Importance; 
-        5) Encoding Method Selection;
-        6) NULL SUBSTITUTION + ENCODING APLICATION;
-        7) Feature Selection by Variance Inflation Factor (VIF); 
-    
-       The function returns a Dataframe, train and test DataFrames transformed with the best performance selected preprocessing methods.
-    
-    :param Dataset:pd.DataFrame: Pass the dataset to be processed
-    :param target:str: Define the target column
-    :param Split_Racio:float: Define the size of the test set
-    :param total_vi:float=0.98: Select the most relevant features
-    :param h2o_fs_models:int=7: Select the number of models used in the feature selection process
-    :param encoding_fs:bool=True: Select the encoding method
-    :param vif_ratio:float=10.0: Control the vif ratio
-    '''
+def fit_processing(Dataset:pd.DataFrame,
+                   target:str, 
+                   Split_Racio:float,
+                   total_vi:float=0.98,
+                   h2o_fs_models:int =7,
+                   encoding_fs:bool=True,
+                   vif_ratio:float=10.0):
     
     Dataframe_=Dataset.copy()
     Dataset_=Dataframe_.copy()
 
-############################## Validation Dataframe ##############################
+############################## Validation Procidment ##############################
 
     Dataset_=remove_columns_by_nulls(Dataset_, 99.99)
     sel_cols= list(Dataset_.columns)
@@ -1389,24 +1117,24 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
 
 ############################## Encoding Method Selection ##############################   
 
-    tr_bk,te_bk,enc_method=Select_Encoding_Method(train,test,target,Pred_type,Eval_metric)
+    enc_method=Select_Encoding_Method(train,test,target,Pred_type,Eval_metric)
 
 ############################## NULL SUBSTITUTION + ENCODING APLICATION ##############################
 
     if (train.isnull().sum().sum() or test.isnull().sum().sum()) != 0:
-        train, test,list_imp,imp_method,perf_imp=null_substitution_method(train,test,target,enc_method,Pred_type,Eval_metric)
+        train, test,imp_method=null_substitution_method(train,test,target,enc_method,Pred_type,Eval_metric)
     else:
         ## Encoding Method
         imp_method='Undefined'
         if enc_method=='Encoding Version 1':
-            train_pred,test_pred,train, test=version1_encoding(train, test,target)
+            train, test=encoding_v1(train, test,target)
         elif enc_method=='Encoding Version 2':
-            train_pred,test_pred,train, test=version2_encoding(train, test,target)
+            train, test=encoding_v2(train, test,target)
         elif enc_method=='Encoding Version 3':
-            train_pred,test_pred,train, test=version3_encoding(train, test,target)
+            train, test=encoding_v3(train, test,target)
         elif enc_method=='Encoding Version 4':
-            train_pred,test_pred,train, test=version4_encoding(train, test,target)
-            
+            train, test=encoding_v4(train, test,target)
+    
         print('    ')   
         print('There are no missing values in the Input Data')    
         print('    ') 
@@ -1415,33 +1143,121 @@ def atlantic_data_processing(Dataset:pd.DataFrame,
     
     train, test=vif_performance_selection(train,test,target)
 
-############################## Transformation Procediment ##############################
+############################## Fit Procediment ##############################
 
     Dataframe=Dataframe_.copy()
     Dataframe=del_nulls_target(Dataframe,target) ## Delete target Null Values 
     Dataframe=engin_date(Dataframe)
     Dataframe=Dataframe[list(train.columns)]
     train_df,test_df=split_dataset(Dataframe,Split_Racio)
-    train_df=Dataframe.copy()
-    
-    if enc_method=='Encoding Version 1':
-        train_df, test_df=encoding_v1(train_df, test_df,target)
-    elif enc_method=='Encoding Version 2':
-        train_df, test_df=encoding_v2(train_df, test_df,target)
-    elif enc_method=='Encoding Version 3':
-        train_df, test_df=encoding_v3(train_df, test_df,target)
-    elif enc_method=='Encoding Version 4':
-        train_df, test_df=encoding_v4(train_df, test_df,target)
+    train_df,n_cols=Dataframe.copy(),num_cols(Dataframe,target)
 
-    if imp_method=='Const':
-        train_df,test_df=const_null_imputation(train_df, test_df,target)
-    elif imp_method=='Simple':  
-        train_df, test_df=simple_null_imputation(train_df, test_df,target)
+    n_cols,c_cols=num_cols(train_df,target),cat_cols(train_df,target) 
+
+    if enc_method=='Encoding Version 1':
+        if len(n_cols)>0:
+            scaler,n_cols= fit_StandardScaler(train_df,target)
+            train_df[n_cols] = scaler.transform(train_df[n_cols])
+            test_df[n_cols] = scaler.transform(test_df[n_cols])    
+        if len(c_cols)>0:
+            fit_pre=fit_IDF_Encoding(train_df,target)
+            train_df=transform_IDF_Encoding(train_df,fit_pre)
+            test_df=transform_IDF_Encoding(test_df,fit_pre)
+
+    elif enc_method=='Encoding Version 2':
+        if len(n_cols)>0:
+            scaler,n_cols=fit_MinmaxScaler(train_df,target)
+            train_df[n_cols] = scaler.transform(train_df[n_cols])
+            test_df[n_cols] = scaler.transform(test_df[n_cols])   
+        if len(c_cols)>0:
+            fit_pre=fit_IDF_Encoding(train_df,target)
+            train_df=transform_IDF_Encoding(train_df,fit_pre)
+            test_df=transform_IDF_Encoding(test_df,fit_pre)
+            
+    elif enc_method=='Encoding Version 3':
+        if len(n_cols)>0:
+            scaler,n_cols=fit_StandardScaler(train_df,target)
+            train_df[n_cols] = scaler.transform(train_df[n_cols])
+            test_df[n_cols] = scaler.transform(test_df[n_cols])  
+        if len(c_cols)>0:
+            fit_pre=fit_Label_Encoding(train_df,target)  
+            train_df=transform_Label_Encoding(train_df,fit_pre)
+            test_df=transform_Label_Encoding(test_df,fit_pre)
+            
+    elif enc_method=='Encoding Version 4':
+        if len(n_cols)>0:
+            scaler,n_cols=fit_MinmaxScaler(train_df,target)
+            train_df[n_cols] = scaler.transform(train_df[n_cols])
+            test_df[n_cols] = scaler.transform(test_df[n_cols])   
+        if len(c_cols)>0:
+            fit_pre=fit_Label_Encoding(train_df,target)  
+            train_df=transform_Label_Encoding(train_df,fit_pre)
+            test_df=transform_Label_Encoding(test_df,fit_pre)
+
+    if len(c_cols)==0:fit_pre=None
+    if len(n_cols)==0:scaler=None
+    
+    if imp_method=='Simple':  
+        imputer=fit_SimpleImp(train_df,target=target,strat='mean')
+        
     elif imp_method=='KNN':  
-        train_df, test_df = knn_null_imputation(train_df, test_df,target)
+        imputer=fit_KnnImp(train_df,target=target,neighbors=5)
+        
     elif imp_method=='Iterative':
-        train_df,test_df=iterative_null_imputation(train_df, test_df,target)
+        imputer=fit_IterImp(train_df,target=target,order='ascending')
+
+    elif imp_method=='Undefined':
+        imputer=None
 
     Dataframe=reset_index_DF(train_df)
+        
+    ## Fit_Encoding_Version
+    
+    fit_atl={'enc_version':(enc_method,imp_method,target),
+             'null_imputer':imputer,
+             'cols':(list(Dataframe.columns),c_cols,n_cols),
+             'scaler':scaler,
+             'encod':fit_pre,
+             }
+    
+    return fit_atl
 
-    return Dataframe, train, test
+def data_processing(Dataset:pd.DataFrame,
+                    fit_atl:dict):
+    
+############################## Transformation Procediment ##############################
+
+    df=Dataset.copy()
+    
+    df=engin_date(df)
+    cols,c_cols,n_cols=fit_atl["cols"]
+    enc_method,imp_method,target=fit_atl["enc_version"]
+    scaler,input_cols=fit_atl["scaler"],c_cols+n_cols
+    fit_pre=fit_atl["encod"]
+    imputer=fit_atl["null_imputer"]
+    
+    df=df[cols]
+    
+    if len(n_cols)>0:
+        df[n_cols] = scaler.transform(df[n_cols])
+    
+    if enc_method=='Encoding Version 1' or enc_method=='Encoding Version 2':
+        if len(c_cols)>0:
+            df=transform_IDF_Encoding(df,fit_pre)
+    elif enc_method=='Encoding Version 3' or enc_method=='Encoding Version 4':
+        if len(c_cols)>0:
+            df=transform_Label_Encoding(df,fit_pre)
+            
+    if imp_method != "Undefined" and df[input_cols].isnull().sum().sum() != 0:
+        if imp_method=='Simple':  
+            df=transform_SimpleImp(df,target=target,imputer=imputer)
+        elif imp_method=='KNN':  
+            df=transform_KnnImp(df,target=target,imputer=imputer)
+        elif imp_method=='Iterative':
+            df=transform_IterImp(df,target=target,imputer=imputer)
+
+    return df
+
+
+
+
