@@ -128,8 +128,8 @@ test=atl.transform_OneHot_Encoding(test,ohe_fit)
 # MultiColumn IDF
 
 idf_fit=atl.fit_IDF_Encoding(train,target)
-train=atl.transform_OneHot_Encoding(train,idf_fit)
-test=atl.transform_OneHot_Encoding(test,idf_fit)
+train=atl.transform_IDF_Encoding(train,idf_fit)
+test=atl.transform_IDF_Encoding(test,idf_fit)
         
     
 ## Scalers
