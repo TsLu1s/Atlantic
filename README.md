@@ -61,7 +61,7 @@ Importante Notes:
     
 * Default predictive evaluation metric for regression contexts is MAE (Mean Absolute Error) and classification is AUC (Accuracy).
 * Although functional, `Atlantic` data processing is not optimized for big data purposes yet.
-* Major update is now available in **version 1.0.0**
+* Major update is now available in **versions=>1.0.0**
     
 ```py
     
