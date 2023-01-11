@@ -5,7 +5,7 @@
   
 ## Framework Contextualization <a name = "ta"></a>
 
-The `Atlantic` project constitutes an comprehensive and objective approach to simplify and automate data processing through the integration and objectively validated application of various preprocessing mechanisms, ranging from feature engineering, automated feature selection, multiple encoding versions and null imputation methods. The optimization methodology of this framework follows a evaluation structured in tree-based models by the implemention of Random Forest and Extra Trees ensembles.
+The `Atlantic` project constitutes an comprehensive and objective approach to simplify and automate data processing through the integration and objectively validated application of various preprocessing mechanisms, ranging from feature engineering, automated feature selection, multiple encoding versions and null imputation methods. The optimization methodology of this framework follows a evaluation structured in tree based models ensembles.
 
 This project aims at providing the following application capabilities:
 
@@ -28,14 +28,12 @@ Major frameworks used to built this project:
 ## Framework Architecture <a name = "ta"></a>
 
 <p align="center">
-  <img src="https://i.ibb.co/hBtWrRV/ATL-Architecture-Final.png" align="center" width="850" height="650" />
-</p>  
+  <img src="https://i.ibb.co/7VDGscP/ATL-Final-Architecture.png" align="center" width="800" height="650" />
+</p>    
 
 ## Where to get it <a name = "ta"></a>
-    
-The source code is currently hosted on GitHub at: https://github.com/TsLu1s/Atlantic
 
-Binary installer for the latest released version are available at the Python Package Index (PyPI).   
+Binary installer for the latest released version is available at the Python Package Index [PyPI](https://pypi.org/project/atlantic/). 
 
 ## Installation  
 
@@ -50,66 +48,108 @@ pip install atlantic
 ## 1. Atlantic - Automated Preprocessing Pipeline
 
 In order to be able to apply the automated preprocessing `atlantic` pipeline you need first to import the package. 
-The following needed step is to load a dataset and define your to be predicted target column name into the variable `Target` and define split ratio for your Train and Test subsets (default value=0.75).
-You can also customize the main function further (customizable option) by altering the following running pipeline parameters:
+The following needed step is to load a dataset and define your to be predicted target column name into the variable `Target` and define split ratio for your Train and Test subsets.
+You can customize the main function (customizable option) by altering the following running pipeline parameters:
+* Split_Racio: Division ratio in wich the preprocessing methods will be evaluated within the loaded Dataset.
 * total_vi: Minimal value of the total sum of relative variable\feature importance percentage selected in the "H2O AutoML feature selection" step.
 * h2o_fs_models: Quantity of models generated for competition in step "H2O AutoML feature selection" to evaluate the relative importance of each feature (only leaderboard model will be selected for evaluation).
 * encoding_fs: You can choose if you want to encond your features in order to reduce loading time in "H2O AutoML feature selection" step. If in "True" mode label encoding is applied to categorical features.
-* vif_ratio: This value defines the minimal 'threshold' for Variance Inflation Factor filtering (default value=10)  
+* vif_ratio: This value defines the minimal 'threshold' for Variance Inflation Factor filtering (default value=10).
  
 Importante Notes:
     
-* Default predictive evaluation metric for regression contexts is MAE (mean absolute error) and classification is AUC (Accuracy).
-* In order to avoid data leakage only Train\Test processed returned Datasets should be used for predictive analysis, `Processed_Dataset` variable should only be used for observation purposes.
+* Default predictive evaluation metric for regression contexts is MAE (Mean Absolute Error) and classification is AUC (Accuracy).
+* Although functional, `Atlantic` data processing is not optimized for big data purposes yet.
+* Major update is now available in **versions>=1.0.1**
     
 ```py
     
 import atlantic as atl
-import pandas as pd 
-
-Dataset = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
-Target = "Name_Target_Column"    # Define Target Feature to Predict
-
+import pandas as pd   
+    
+data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
    
+train,test=atl.split_dataset(data,Split_Racio=0.8) 
+
+### Fit Data Processing
+    
 # Simple Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, Target:str="Name_Target_Column"
-                                                            Target,                       # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
-                                                            Split_Racio=0.75)
+fit_atl = atl.fit_processing(Dataset=train,                # Dataset:pd.DataFrame, target:str="Name_Target_Column"
+                             target="Name_Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
+                             Split_Racio=0.75)
     
 # Customizable Option
-Processed_Dataset,Train,Test = atl.atlantic_data_processing(Dataset,                      # Dataset:pd.DataFrame, 
-                                                            Target"Name_Target_Column",   # Target:str="Name_Target_Column"
-                                                            Split_Racio=0.75,             # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
-                                                            total_vi=0.98,                # h2o_fs_models:int [1,50],  encoding_fs:bool=True\False
-                                                            h2o_fs_models=7,              # vif_ratio:float=10.0 [3,30]
-                                                            encoding_fs="on",
-                                                            vif_ratio=10.0)
+fit_atl = atl.fit_processing(Dataset=train,                  # Dataset:pd.DataFrame, 
+                             target="Name_Target_Column",    # target:str="Name_Target_Column"
+                             Split_Racio=0.75,               # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
+                             total_vi=0.98,                  # h2o_fs_models:int [1,50], encoding_fs:bool=True\False
+                             h2o_fs_models=7,                # vif_ratio:float=10.0 [3,30]
+                             encoding_fs=True,
+                             vif_ratio=10.0)
+
+### Transform Data Processing
+    
+train=atl.data_processing(train,
+                          fit_atl)
+test=atl.data_processing(test,
+                         fit_atl)
+    
 ```  
 
 ## 2. Atlantic - Preprocessing Data
     
 ### 2.1 Encoding Versions
  
-There are 4 different main encoding versions available to direct use. This were generated through the combination of the following distinct preprocessing methods:
-
-* [Sklearn MinMaxScaler](https://scikit-learn.org/stable/modules/preprocessing.html) 
-* [Sklearn StandardScaler](https://scikit-learn.org/stable/modules/preprocessing.html)
-* [Sklearn LabelEncoding](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html)
-* [Inverse Document Frequency (IDF)](https://pypi.org/project/cane/) 
-    
+There are multiple preprocessing functions available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) functions with an automatic multicolumn application, as are the scalers `Standard`, `MinMax` and `Robust`. 
+ 
+* Note : `n_distinct` costumizable parameter in `OneHotEncoder` function constitutes the max limiter of distinct elements in columns, this meaning, columns with higher distinct values then 'n_distinct' will not be encoded.    
 
 ```py
+import atlantic as atl
+import pandas as pd 
 
-    
-Train, Test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
+train, test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                           # Dataset:pd.DataFrame, Split_Racio:float
+target = "Name_Target_Column" # -> target feature name
+    
+## Encoders
+# MultiColumn LabelEncoder
 
-Train, Test = atl.encoding_v1(Train,Test,Target) ## Implements IDF to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_v2(Train,Test,Target) ## Implements IDF to Categorical Features, MinMaxScaler to Numeric Features
-Train, Test = atl.encoding_v3(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, StandardScaler to Numeric Features
-Train, Test = atl.encoding_v4(Train,Test,Target) ## Implements LabelEncoding to Categorical Features, MinMaxScaler to Numeric Features
+le_fit=atl.fit_Label_Encoding(train,target)  
+train=atl.transform_Label_Encoding(train,le_fit)
+test=atl.transform_Label_Encoding(test,le_fit)
+    
+# MultiColumn OneHotEncoder
 
-# Train:pd.DataFrame, Test:pd.DataFrame, Target:str="Name_Target_Column"        
+ohe_fit=atl.fit_OneHot_Encoding(train,target,n_distinct=10)
+train=atl.transform_OneHot_Encoding(train,ohe_fit)
+test=atl.transform_OneHot_Encoding(test,ohe_fit)
+    
+# MultiColumn IDF
+
+idf_fit=atl.fit_IDF_Encoding(train,target)
+train=atl.transform_IDF_Encoding(train,idf_fit)
+test=atl.transform_IDF_Encoding(test,idf_fit)
+        
+    
+## Scalers
+# StandardScaler
+    
+scaler,num_cols=atl.fit_StandardScaler(train,target)
+train[num_cols]=scaler.transform(train[num_cols])
+test[num_cols]=scaler.transform(test[num_cols])  
+
+# MinmaxScaler
+    
+scaler,num_cols=atl.fit_MinmaxScaler(train,target)
+train[num_cols]=scaler.transform(train[num_cols])
+test[num_cols]=scaler.transform(test[num_cols])     
+    
+# RobustScaler
+
+scaler,num_cols=atl.fit_RobustScaler(train,target)
+train[num_cols]=scaler.transform(train[num_cols])
+test[num_cols]=scaler.transform(test[num_cols])  
     
 ```    
    
@@ -128,41 +168,41 @@ You can get filter your most valuable features from the dataset via this 2 featu
     
 ```py    
     
-Selected_Columns, Selected_H2O_Importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,Target:str="Name_Target_Column",
-                                                                      Target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
-                                                                      total_vi=0.98,     
-                                                                      h2o_fs_models =7,
-                                                                      encoding_fs=True)
+selected_columns, h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Name_Target_Column",
+                                                             target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
+                                                             total_vi=0.98,     
+                                                             h2o_fs_models =7,
+                                                             encoding_fs=True)
 
 
-Selected_Columns, VIF_Dataset = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, Target:str="Name_Target_Column",
-                                                          Target,  # VIF:float [3,30]
-                                                          VIF=10.0)
+selected_columns, vif_importance = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Name_Target_Column",
+                                                             target,  # VIF:float [3,30]
+                                                             VIF=10.0)
 ```
     
 ### 2.3 Datetime Feature Engineering
 
-The `eng_date` function converts and transforms columns of Datetime type into additional columns (Day of the week, Weekend, Day of the month, Day of the  Year, Month, Year, Season) which will be added by association to the input dataset and subsequently deletes the original column if variable Drop=True.
+The engin_date function converts and transforms columns of Datetime type into additional columns (Year, Day of the Year, Season, Month, Day of the month, Day of the week, Weekend, Hour, Minute) which will be added by association to the input dataset and subsequently deletes the original column if parameter drop=True.
     
     
 ```py   
     
-Dataset = atl.engin_date(Dataset,Drop=False) # Dataset:pd.DataFrame, Drop:bool
+dataset = atl.engin_date(Dataset,drop=False) # Dataset:pd.DataFrame, drop:bool
     
 ```
 
 ### 2.4 Predictive Performance Metrics
 
-You can analyse the obtained predictive performance results by using the given bellow functions witch contains the most used metrics for each supervised predictive context (regression, binary and multiclass classification).
+You can analyse the obtained predictive performance results by using the given bellow functions witch contains the most used metrics for each supervised predictive context.
     
     
 ```py  
 
-Reg_Performance = pd.DataFrame(atl.metrics_regression(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
+reg_performance = pd.DataFrame(atl.metrics_regression(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
     
-Binary_Class_Performance = pd.DataFrame(atl.metrics_binary_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
+binary_class_Performance = pd.DataFrame(atl.metrics_binary_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
     
-MultiClass_Performance = pd.DataFrame(atl.metrics_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
+multiclass_performance = pd.DataFrame(atl.metrics_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
     
 ```
 
@@ -174,58 +214,45 @@ The following functions were used in the development of this project.
     
 ## Data Preprocessing 
     
-atl.reset_index_DF(Dataset:pd.DataFrame) # return Dataset
+atl.reset_index_DF(Dataset:pd.DataFrame) # return dataset
     
 atl.split_dataset(Dataset:pd.DataFrame,
-                  Split_Racio:float) # return Train, Test
-    
-atl.reindex_columns(Dataset:pd.DataFrame,
-                    Feature_Importance:list) # return Dataset
+                  Split_Racio:float) # return train, test
         
-atl.numerical_columns(Dataset:pd.DataFrame,
-                      Target:str) # return list_num_cols
+atl.num_cols(Dataset:pd.DataFrame,
+             target:str) # return list_num_cols
     
-atl.categorical_columns(Dataset:pd.DataFrame,
-                    Target:str) # return list_cat_cols 
+atl.cat_cols(Dataset:pd.DataFrame,
+             target:str) # return list_cat_cols 
     
 atl.del_nulls_target(Dataset:pd.DataFrame,
-                     Target:str)  # return Dataset
+                     target:str)  # return Dataset
     
 atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
-                            percentage:int) # return Dataset
+                            percentage:int) # return dataset
 
 ## Simplified Null Imputation (Only numeric features)
 
-atl.const_null_imputation(Train:pd.DataFrame,
-                          Test:pd.DataFrame,
-                          Target:str,
-                          imp_value:int=0) # return Train, Test 
+imputer_knn=atl.fit_KnnImp(df:pd.DataFrame,
+                           target:str,
+                           neighbors:int=5)
+df=atl.transform_KnnImp(df:pd.DataFrame,
+                        target:str,
+                        imputer=imputer_knn)
+
+imputer_simple=atl.fit_SimpleImp(df:pd.DataFrame,
+                                 target:str,
+                                 strat:str='mean')
+df=atl.transform_SimpleImp(df:pd.DataFrame,
+                           target:str,
+                           imputer=imputer_simple)
     
-atl.simple_null_imputation(Train:pd.DataFrame,
-                           Test:pd.DataFrame,
-                           Target:str,
-                           strat:str='mean') # return Train, Test
-    
-atl.knn_null_imputation(Train:pd.DataFrame,
-                        Test:pd.DataFrame,
-                        Target:str,
-                        neighbors:int=5) # return Train, Test
-    
-    
-atl.iterative_null_imputation(Train_DF:pd.DataFrame,
-                              Test_DF:pd.DataFrame,
-                              Target:str,
-                              order:str='ascending',
-                              iterations:int=10) # return Train, Test
-    
-    
-## VIF Feature Selection Evaluation 
-    
-atl.vif_performance_selection(Train:pd.DataFrame,
-                              Test:pd.DataFrame,
-                              Target:str,
-                              vif_ratio:float=10.0) # return Train, Test
-    
+imputer_iter=atl.fit_IterImp(df:pd.DataFrame, 
+                             target:str, 
+                             order:str='ascending')
+df=atl.transform_IterImp(df:pd.DataFrame,
+                         target:str,
+                         imputer=imputer_iter)
 ```   
     
 ## License
@@ -234,13 +261,4 @@ Distributed under the MIT License. See [LICENSE](https://github.com/TsLu1s/Atlan
 
 ## Contact 
  
-Luis Santos - [LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)
-
-Project Link - https://github.com/TsLu1s/Atlantic
-    
-    
-# Acknowledgements
-  
-* [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
-* [Sklearn](https://scikit-learn.org/stable/)  
-    
+[Luís Santos - LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   

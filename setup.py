@@ -6,13 +6,13 @@ long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
     name="atlantic",
-    version="0.0.41",
+    version="1.0.11",
     description="Atlantic is an automated preprocessing framework for supervised machine learning",
     long_description=long_description,      
     long_description_content_type="text/markdown",
     url="https://github.com/TsLu1s/Atlantic",
     author="Luís Santos",
-    author_email="luisfssantos98@hotmail.com",
+    author_email="luisf_ssantos@hotmail.com",
     license="MIT",
     packages=setuptools.find_packages(),
     python_requires='>=3.7.1',
