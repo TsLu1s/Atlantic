@@ -100,7 +100,7 @@ test=atl.data_processing(test,
     
 ### 2.1 Encoding Versions
  
-There are multiple preprocessing functions available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) functions with an automatic multicolumn application, as are the scalers `Standard`, `MinMax` and `Robust`. 
+There are multiple preprocessing functions available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) functions with an automatic multicolumn application. 
  
 * Note : `n_distinct` costumizable parameter in `OneHotEncoder` function constitutes the max limiter of distinct elements in columns, this meaning, columns with higher distinct values then 'n_distinct' will not be encoded.    
 
@@ -130,27 +130,7 @@ test=atl.transform_OneHot_Encoding(test,ohe_fit)
 idf_fit=atl.fit_IDF_Encoding(train,target)
 train=atl.transform_IDF_Encoding(train,idf_fit)
 test=atl.transform_IDF_Encoding(test,idf_fit)
-        
-    
-## Scalers
-# StandardScaler
-    
-scaler,num_cols=atl.fit_StandardScaler(train,target)
-train[num_cols]=scaler.transform(train[num_cols])
-test[num_cols]=scaler.transform(test[num_cols])  
-
-# MinmaxScaler
-    
-scaler,num_cols=atl.fit_MinmaxScaler(train,target)
-train[num_cols]=scaler.transform(train[num_cols])
-test[num_cols]=scaler.transform(test[num_cols])     
-    
-# RobustScaler
-
-scaler,num_cols=atl.fit_RobustScaler(train,target)
-train[num_cols]=scaler.transform(train[num_cols])
-test[num_cols]=scaler.transform(test[num_cols])  
-    
+            
 ```    
    
 ### 2.2 Feature Selection Methods
