@@ -193,9 +193,7 @@ The following functions were used in the development of this project.
 ```py  
     
 ## Data Preprocessing 
-    
-atl.reset_index_DF(Dataset:pd.DataFrame) # return dataset
-    
+
 atl.split_dataset(Dataset:pd.DataFrame,
                   Split_Racio:float) # return train, test
         
