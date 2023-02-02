@@ -194,17 +194,11 @@ The following functions were used in the development of this project.
     
 ## Data Preprocessing 
 
-atl.split_dataset(Dataset:pd.DataFrame,
-                  Split_Racio:float) # return train, test
-        
 atl.num_cols(Dataset:pd.DataFrame,
              target:str) # return list_num_cols
     
 atl.cat_cols(Dataset:pd.DataFrame,
-             target:str) # return list_cat_cols 
-    
-atl.del_nulls_target(Dataset:pd.DataFrame,
-                     target:str)  # return Dataset
+             target:str) # return list_cat_cols
     
 atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
                             percentage:int) # return dataset
