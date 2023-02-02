@@ -50,7 +50,7 @@ pip install atlantic
 In order to be able to apply the automated preprocessing `atlantic` pipeline you need first to import the package. 
 The following needed step is to load a dataset and define your to be predicted target column name into the variable `Target` and define split ratio for your Train and Test subsets.
 You can customize the main function (customizable option) by altering the following running pipeline parameters:
-* Split_Racio: Division ratio in wich the preprocessing methods will be evaluated within the loaded Dataset.
+* Split_Racio: Division ratio in which the preprocessing methods will be evaluated within the loaded Dataset.
 * total_vi: Minimal value of the total sum of relative variable\feature importance percentage selected in the "H2O AutoML feature selection" step.
 * h2o_fs_models: Quantity of models generated for competition in step "H2O AutoML feature selection" to evaluate the relative importance of each feature (only leaderboard model will be selected for evaluation).
 * encoding_fs: You can choose if you want to encond your features in order to reduce loading time in "H2O AutoML feature selection" step. If in "True" mode label encoding is applied to categorical features.
