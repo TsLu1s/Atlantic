@@ -68,8 +68,6 @@ import atlantic as atl
 import pandas as pd   
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
-    
-#data["Target_Column"] = data["Target_Column"].astype(str) #-> For Classification*
 
 train,test=atl.split_dataset(data,Split_Racio=0.8) 
 
