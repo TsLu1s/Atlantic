@@ -43,7 +43,7 @@ def transform_dataset(Dataset:pd.DataFrame, Dataframe:pd.DataFrame):
 def target_type(Dataset:pd.DataFrame, target:str):  
     
     df=Dataset[[target]]
-    reg_target,class_target=df.select_dtypes(include=['int','float']).columns.tolist(),df.select_dtypes(include=['object']).columns.tolist()
+    reg_target,class_target=df.select_dtypes(include=['int','float']).columns.tolist(),df.select_dtypes(include=['object','category']).columns.tolist()
     if len(class_target)==1:
         pred_type='Class'
         eval_metric='Accuracy'
@@ -1081,6 +1081,9 @@ def fit_processing(Dataset:pd.DataFrame,
                    encoding_fs:bool=True,
                    vif_ratio:float=10.0):
     
+    pred_type, eval_metric=target_type(Dataset, target) ## Prediction Contextualization
+    if pred_type=='Class': Dataset[target]=Dataset[target].astype(str)
+
     Dataframe_=Dataset.copy()
     Dataset_=Dataframe_.copy()
 
@@ -1099,8 +1102,6 @@ def fit_processing(Dataset:pd.DataFrame,
     train=del_nulls_target(train,target) ## Delete target Null Values
     test=del_nulls_target(test,target) ## Delete target Null Values
     
-    Pred_type, Eval_metric=target_type(Dataset_, target) ## Prediction Contextualization
-    
 ############################## Feature Engineering Date Column ##############################
 
     train=engin_date(train)
@@ -1116,12 +1117,12 @@ def fit_processing(Dataset:pd.DataFrame,
 
 ############################## Encoding Method Selection ##############################   
 
-    enc_method=Select_Encoding_Method(train,test,target,Pred_type,Eval_metric)
+    enc_method=Select_Encoding_Method(train,test,target,pred_type,eval_metric)
 
 ############################## NULL SUBSTITUTION + ENCODING APLICATION ##############################
 
     if (train.isnull().sum().sum() or test.isnull().sum().sum()) != 0:
-        train, test,imp_method=null_substitution_method(train,test,target,enc_method,Pred_type,Eval_metric)
+        train, test,imp_method=null_substitution_method(train,test,target,enc_method,pred_type,eval_metric)
     else:
         ## Encoding Method
         imp_method='Undefined'
