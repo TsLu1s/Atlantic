@@ -76,7 +76,7 @@ train,test=atl.split_dataset(data,Split_Racio=0.8)
 ### Fit Data Processing
     
 # Simple Option
-fit_atl = atl.fit_processing(Dataset=train,                # Dataset:pd.DataFrame, target:str="Target_Column"
+fit_atl = atl.fit_processing(Dataset=train,           # Dataset:pd.DataFrame, target:str="Target_Column"
                              target="Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
                              Split_Racio=0.75)
     
