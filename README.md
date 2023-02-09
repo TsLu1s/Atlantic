@@ -68,7 +68,9 @@ import atlantic as atl
 import pandas as pd   
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
-   
+
+#data[target] = data[target].astype(str) #-> If Classification 
+
 train,test=atl.split_dataset(data,Split_Racio=0.8) 
 
 ### Fit Data Processing
