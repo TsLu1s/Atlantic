@@ -69,7 +69,7 @@ import pandas as pd
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
 
-#data[target] = data[target].astype(str) #-> If Classification 
+#data[target] = data[target].astype(str) #-> For Classification*
 
 train,test=atl.split_dataset(data,Split_Racio=0.8) 
 
