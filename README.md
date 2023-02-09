@@ -69,20 +69,20 @@ import pandas as pd
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
 
-#data[target] = data[target].astype(str) #-> For Classification*
+#data["Target_Column"] = data["Target_Column"].astype(str) #-> For Classification*
 
 train,test=atl.split_dataset(data,Split_Racio=0.8) 
 
 ### Fit Data Processing
     
 # Simple Option
-fit_atl = atl.fit_processing(Dataset=train,                # Dataset:pd.DataFrame, target:str="Name_Target_Column"
-                             target="Name_Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
+fit_atl = atl.fit_processing(Dataset=train,                # Dataset:pd.DataFrame, target:str="Target_Column"
+                             target="Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
                              Split_Racio=0.75)
     
 # Customizable Option
 fit_atl = atl.fit_processing(Dataset=train,                  # Dataset:pd.DataFrame, 
-                             target="Name_Target_Column",    # target:str="Name_Target_Column"
+                             target="Target_Column",         # target:str="Target_Column"
                              Split_Racio=0.75,               # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
                              total_vi=0.98,                  # h2o_fs_models:int [1,50], encoding_fs:bool=True\False
                              h2o_fs_models=7,                # vif_ratio:float=10.0 [3,30]
@@ -112,7 +112,7 @@ import pandas as pd
 
 train, test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                           # Dataset:pd.DataFrame, Split_Racio:float
-target = "Name_Target_Column" # -> target feature name
+target = "Target_Column" # -> target feature name
     
 ## Encoders
 # MultiColumn LabelEncoder
@@ -150,14 +150,14 @@ You can get filter your most valuable features from the dataset via this 2 featu
     
 ```py    
     
-selected_columns, h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Name_Target_Column",
+selected_columns, h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Target_Column",
                                                              target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
                                                              total_vi=0.98,     
                                                              h2o_fs_models =7,
                                                              encoding_fs=True)
 
 
-selected_columns, vif_importance = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Name_Target_Column",
+selected_columns, vif_importance = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Target_Column",
                                                              target,  # VIF:float [3,30]
                                                              VIF=10.0)
 ```
