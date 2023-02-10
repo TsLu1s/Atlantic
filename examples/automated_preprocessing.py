@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", category=Warning) #-> For a clean console
 
 #source_data="https://www.kaggle.com/datasets/ishadss/productivity-prediction-of-garment-employees"
 
-url=""
+url="https://github.com/TsLu1s/Atlantic/blob/main/data/Garments_Worker_Productivity_reg.csv"
 data= pd.read_csv(url) 
 data['date'] = pd.to_datetime(data['date'])
 
@@ -57,7 +57,7 @@ warnings.filterwarnings("ignore", category=Warning) #-> For a clean console
 
 #source_data="https://www.kaggle.com/datasets/surekharamireddy/fraudulent-claim-on-cars-physical-damage"
 
-url=""
+url="https://raw.githubusercontent.com/TsLu1s/Atlantic/main/data/Fraudulent_Claim_Cars_class.csv"
 data= pd.read_csv(url) # Dataframe Loading Example
 
 target_col="fraud"
@@ -94,33 +94,6 @@ test=atl.data_processing(Dataset=test,
 import pickle 
 output = open("fit_atl.pkl", 'wb')
 pickle.dump(fit_atl, output)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
