@@ -15,6 +15,9 @@ url="https://raw.githubusercontent.com/TsLu1s/Atlantic/main/data/Garments_Worker
 data= pd.read_csv(url) 
 data['date'] = pd.to_datetime(data['date'])
 
+data.dtypes
+data.isna().sum()
+
 train,test = train_test_split(data, train_size=0.8)
 target_col="targeted_productivity"
 
@@ -65,7 +68,6 @@ data[target_col]=data[target_col].astype('category')
 
 data.dtypes
 data.isna().sum()
-
 
 train,test = train_test_split(data, train_size=0.8)
 
