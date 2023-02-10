@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", category=Warning) #-> For a clean console
 
 #source_data="https://www.kaggle.com/datasets/ishadss/productivity-prediction-of-garment-employees"
 
-url="https://github.com/TsLu1s/Atlantic/blob/main/data/Garments_Worker_Productivity_reg.csv"
+url="https://raw.githubusercontent.com/TsLu1s/Atlantic/main/data/Garments_Worker_Productivity_reg.csv"
 data= pd.read_csv(url) 
 data['date'] = pd.to_datetime(data['date'])
 
