@@ -33,7 +33,7 @@ Major frameworks used to built this project:
 
 ## Where to get it <a name = "ta"></a>
 
-Binary installer for the latest released version is available at the Python Package Index [PyPI](https://pypi.org/project/atlantic/). 
+Binary installer for the latest released version is available at the Python Package Index [(PyPI)](https://pypi.org/project/atlantic/). 
 
 ## Installation  
 
@@ -50,7 +50,7 @@ pip install atlantic
 In order to be able to apply the automated preprocessing `atlantic` pipeline you need first to import the package. 
 The following needed step is to load a dataset and define your to be predicted target column name into the variable `Target` and define split ratio for your Train and Test subsets.
 You can customize the main function (customizable option) by altering the following running pipeline parameters:
-* Split_Racio: Division ratio in wich the preprocessing methods will be evaluated within the loaded Dataset.
+* Split_Racio: Division ratio in which the preprocessing methods will be evaluated within the loaded Dataset.
 * total_vi: Minimal value of the total sum of relative variable\feature importance percentage selected in the "H2O AutoML feature selection" step.
 * h2o_fs_models: Quantity of models generated for competition in step "H2O AutoML feature selection" to evaluate the relative importance of each feature (only leaderboard model will be selected for evaluation).
 * encoding_fs: You can choose if you want to encond your features in order to reduce loading time in "H2O AutoML feature selection" step. If in "True" mode label encoding is applied to categorical features.
@@ -68,19 +68,19 @@ import atlantic as atl
 import pandas as pd   
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
-   
+
 train,test=atl.split_dataset(data,Split_Racio=0.8) 
 
 ### Fit Data Processing
     
 # Simple Option
-fit_atl = atl.fit_processing(Dataset=train,                # Dataset:pd.DataFrame, target:str="Name_Target_Column"
-                             target="Name_Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
+fit_atl = atl.fit_processing(Dataset=train,           # Dataset:pd.DataFrame, target:str="Target_Column"
+                             target="Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
                              Split_Racio=0.75)
     
 # Customizable Option
 fit_atl = atl.fit_processing(Dataset=train,                  # Dataset:pd.DataFrame, 
-                             target="Name_Target_Column",    # target:str="Name_Target_Column"
+                             target="Target_Column",         # target:str="Target_Column"
                              Split_Racio=0.75,               # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
                              total_vi=0.98,                  # h2o_fs_models:int [1,50], encoding_fs:bool=True\False
                              h2o_fs_models=7,                # vif_ratio:float=10.0 [3,30]
@@ -100,7 +100,7 @@ test=atl.data_processing(test,
     
 ### 2.1 Encoding Versions
  
-There are multiple preprocessing functions available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) functions with an automatic multicolumn application, as are the scalers `Standard`, `MinMax` and `Robust`. 
+There are multiple preprocessing functions available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) functions with an automatic multicolumn application. 
  
 * Note : `n_distinct` costumizable parameter in `OneHotEncoder` function constitutes the max limiter of distinct elements in columns, this meaning, columns with higher distinct values then 'n_distinct' will not be encoded.    
 
@@ -110,7 +110,7 @@ import pandas as pd
 
 train, test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
                                                           # Dataset:pd.DataFrame, Split_Racio:float
-target = "Name_Target_Column" # -> target feature name
+target = "Target_Column" # -> target feature name
     
 ## Encoders
 # MultiColumn LabelEncoder
@@ -130,27 +130,7 @@ test=atl.transform_OneHot_Encoding(test,ohe_fit)
 idf_fit=atl.fit_IDF_Encoding(train,target)
 train=atl.transform_IDF_Encoding(train,idf_fit)
 test=atl.transform_IDF_Encoding(test,idf_fit)
-        
-    
-## Scalers
-# StandardScaler
-    
-scaler,num_cols=atl.fit_StandardScaler(train,target)
-train[num_cols]=scaler.transform(train[num_cols])
-test[num_cols]=scaler.transform(test[num_cols])  
-
-# MinmaxScaler
-    
-scaler,num_cols=atl.fit_MinmaxScaler(train,target)
-train[num_cols]=scaler.transform(train[num_cols])
-test[num_cols]=scaler.transform(test[num_cols])     
-    
-# RobustScaler
-
-scaler,num_cols=atl.fit_RobustScaler(train,target)
-train[num_cols]=scaler.transform(train[num_cols])
-test[num_cols]=scaler.transform(test[num_cols])  
-    
+            
 ```    
    
 ### 2.2 Feature Selection Methods
@@ -168,14 +148,14 @@ You can get filter your most valuable features from the dataset via this 2 featu
     
 ```py    
     
-selected_columns, h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Name_Target_Column",
+selected_columns, h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Target_Column",
                                                              target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
                                                              total_vi=0.98,     
                                                              h2o_fs_models =7,
                                                              encoding_fs=True)
 
 
-selected_columns, vif_importance = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Name_Target_Column",
+selected_columns, vif_importance = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Target_Column",
                                                              target,  # VIF:float [3,30]
                                                              VIF=10.0)
 ```
@@ -212,21 +192,13 @@ The following functions were used in the development of this project.
     
 ```py  
     
-## Data Preprocessing 
-    
-atl.reset_index_DF(Dataset:pd.DataFrame) # return dataset
-    
-atl.split_dataset(Dataset:pd.DataFrame,
-                  Split_Racio:float) # return train, test
-        
+#### Data Preprocessing 
+
 atl.num_cols(Dataset:pd.DataFrame,
              target:str) # return list_num_cols
     
 atl.cat_cols(Dataset:pd.DataFrame,
-             target:str) # return list_cat_cols 
-    
-atl.del_nulls_target(Dataset:pd.DataFrame,
-                     target:str)  # return Dataset
+             target:str) # return list_cat_cols
     
 atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
                             percentage:int) # return dataset
@@ -261,4 +233,4 @@ Distributed under the MIT License. See [LICENSE](https://github.com/TsLu1s/Atlan
 
 ## Contact 
  
-[Luís Santos - LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   
+[Luís Santos - LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)

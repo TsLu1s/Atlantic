@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 import numpy as np
 import pandas as pd
 import cane
@@ -15,7 +12,6 @@ from h2o.automl import H2OAutoML
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 h2o.init()
-
 
 ##################################################### Loading/Split do Dataset #############################################################
 
@@ -47,7 +43,7 @@ def transform_dataset(Dataset:pd.DataFrame, Dataframe:pd.DataFrame):
 def target_type(Dataset:pd.DataFrame, target:str):  
     
     df=Dataset[[target]]
-    reg_target,class_target=df.select_dtypes(include=['int','float']).columns.tolist(),df.select_dtypes(include=['object']).columns.tolist()
+    reg_target,class_target=df.select_dtypes(include=['int','float']).columns.tolist(),df.select_dtypes(include=['object','category']).columns.tolist()
     if len(class_target)==1:
         pred_type='Class'
         eval_metric='Accuracy'
@@ -1085,6 +1081,9 @@ def fit_processing(Dataset:pd.DataFrame,
                    encoding_fs:bool=True,
                    vif_ratio:float=10.0):
     
+    pred_type, eval_metric=target_type(Dataset, target) ## Prediction Contextualization
+    if pred_type=='Class': Dataset[target]=Dataset[target].astype(str)
+
     Dataframe_=Dataset.copy()
     Dataset_=Dataframe_.copy()
 
@@ -1103,8 +1102,6 @@ def fit_processing(Dataset:pd.DataFrame,
     train=del_nulls_target(train,target) ## Delete target Null Values
     test=del_nulls_target(test,target) ## Delete target Null Values
     
-    Pred_type, Eval_metric=target_type(Dataset_, target) ## Prediction Contextualization
-    
 ############################## Feature Engineering Date Column ##############################
 
     train=engin_date(train)
@@ -1120,12 +1117,12 @@ def fit_processing(Dataset:pd.DataFrame,
 
 ############################## Encoding Method Selection ##############################   
 
-    enc_method=Select_Encoding_Method(train,test,target,Pred_type,Eval_metric)
+    enc_method=Select_Encoding_Method(train,test,target,pred_type,eval_metric)
 
 ############################## NULL SUBSTITUTION + ENCODING APLICATION ##############################
 
     if (train.isnull().sum().sum() or test.isnull().sum().sum()) != 0:
-        train, test,imp_method=null_substitution_method(train,test,target,enc_method,Pred_type,Eval_metric)
+        train, test,imp_method=null_substitution_method(train,test,target,enc_method,pred_type,eval_metric)
     else:
         ## Encoding Method
         imp_method='Undefined'
@@ -1208,7 +1205,6 @@ def fit_processing(Dataset:pd.DataFrame,
         
     elif imp_method=='Iterative':
         imputer=fit_IterImp(train_df,target=target,order='ascending')
-<<<<<<< HEAD
 
     elif imp_method=='Undefined':
         imputer=None
@@ -1261,66 +1257,3 @@ def data_processing(Dataset:pd.DataFrame,
             df=transform_IterImp(df,target=target,imputer=imputer)
 
     return df
-
-
-
-
->>>>>>> dfaec47b45d8a3d55b5bb0441f53724add4b9dfb
-=======
-
-    elif imp_method=='Undefined':
-        imputer=None
-
-    Dataframe=reset_index_DF(train_df)
-        
-    ## Fit_Encoding_Version
-    
-    fit_atl={'enc_version':(enc_method,imp_method,target),
-             'null_imputer':imputer,
-             'cols':(list(Dataframe.columns),c_cols,n_cols),
-             'scaler':scaler,
-             'encod':fit_pre,
-             }
-    
-    return fit_atl
-
-def data_processing(Dataset:pd.DataFrame,
-                    fit_atl:dict):
-    
-############################## Transformation Procediment ##############################
-
-    df=Dataset.copy()
-    
-    df=engin_date(df)
-    cols,c_cols,n_cols=fit_atl["cols"]
-    enc_method,imp_method,target=fit_atl["enc_version"]
-    scaler,input_cols=fit_atl["scaler"],c_cols+n_cols
-    fit_pre=fit_atl["encod"]
-    imputer=fit_atl["null_imputer"]
-    
-    df=df[cols]
-    
-    if len(n_cols)>0:
-        df[n_cols] = scaler.transform(df[n_cols])
-    
-    if enc_method=='Encoding Version 1' or enc_method=='Encoding Version 2':
-        if len(c_cols)>0:
-            df=transform_IDF_Encoding(df,fit_pre)
-    elif enc_method=='Encoding Version 3' or enc_method=='Encoding Version 4':
-        if len(c_cols)>0:
-            df=transform_Label_Encoding(df,fit_pre)
-            
-    if imp_method != "Undefined" and df[input_cols].isnull().sum().sum() != 0:
-        if imp_method=='Simple':  
-            df=transform_SimpleImp(df,target=target,imputer=imputer)
-        elif imp_method=='KNN':  
-            df=transform_KnnImp(df,target=target,imputer=imputer)
-        elif imp_method=='Iterative':
-            df=transform_IterImp(df,target=target,imputer=imputer)
-
-    return df
-
-
-
-
->>>>>>> dfaec47b45d8a3d55b5bb0441f53724add4b9dfb
