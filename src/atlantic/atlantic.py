@@ -55,12 +55,11 @@ def target_type(Dataset:pd.DataFrame, target:str):
 
 ############################################################# Datetime Feature Engineering ######################################################
 
-def slice_timestamp(Dataset:pd.DataFrame,date_col:str='Date'):
+def slice_timestamp(Dataset:pd.DataFrame):
     
     df=Dataset.copy()
-    cols=list(df.columns)
-    for col in cols:
-        if col==date_col:
+    datetime_cols=list_date=list(df.select_dtypes(include=['datetime','datetime64[ns]']))
+    for date_col in datetime_cols:
             df[date_col] = df[date_col].astype(str)
             df[date_col] = df[date_col].str.slice(0,19)
             df[date_col] = pd.to_datetime(df[date_col])
