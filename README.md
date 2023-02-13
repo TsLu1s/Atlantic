@@ -155,7 +155,7 @@ selected_columns, h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:
                                                              encoding_fs=True)
 
 
-selected_columns, vif_importance = atl.feature_selection_VIF(Dataset, # Dataset:pd.DataFrame, target:str="Target_Column",
+selected_columns, vif_importance = atl.feature_selection_vif(Dataset, # Dataset:pd.DataFrame, target:str="Target_Column",
                                                              target,  # VIF:float [3,30]
                                                              VIF=10.0)
 ```
