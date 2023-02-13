@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import warnings
 warnings.filterwarnings("ignore", category=Warning) #-> For a clean console
 
-#data_source:
+#source_data="https://www.kaggle.com/datasets/surekharamireddy/fraudulent-claim-on-cars-physical-damage"
 
 url="https://raw.githubusercontent.com/TsLu1s/Atlantic/main/data/Fraudulent_Claim_Cars_class.csv"
 
