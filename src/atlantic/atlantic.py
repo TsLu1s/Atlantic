@@ -15,12 +15,6 @@ h2o.init()
 
 ##################################################### Loading/Split do Dataset #############################################################
 
-def reset_index_DF(Dataset:pd.DataFrame):
-    
-    Dataset=Dataset.reset_index()
-    Dataset.drop(Dataset.columns[0], axis=1, inplace=True)
-    
-    return Dataset
 
 def split_dataset(Dataset:pd.DataFrame, Split_Racio:float):
     
@@ -30,16 +24,6 @@ def split_dataset(Dataset:pd.DataFrame, Split_Racio:float):
 
     return train,test
 
-def transform_dataset(Dataset:pd.DataFrame, Dataframe:pd.DataFrame):
-
-    df_ = Dataset.copy()
-    _df = Dataframe.copy()
-
-    for col in _df:
-        df_[[col]]=_df[[col]]
-        
-    return df_
-
 def target_type(Dataset:pd.DataFrame, target:str):  
     
     df=Dataset[[target]]
@@ -47,6 +31,7 @@ def target_type(Dataset:pd.DataFrame, target:str):
     if len(class_target)==1:
         pred_type='Class'
         eval_metric='Accuracy'
+        
     elif len(reg_target)==1:
         pred_type='Reg'
         eval_metric='Mean Absolute Error'
@@ -65,7 +50,6 @@ def slice_timestamp(Dataset:pd.DataFrame):
             df[date_col] = pd.to_datetime(df[date_col])
             
     return df
-
 
 def engin_date(Dataset:pd.DataFrame, drop:bool=True):
     
@@ -188,7 +172,7 @@ def fit_SimpleImp(df:pd.DataFrame,
     :return: A simpleimputer object
     """
     
-    #df=reset_index_DF(df)
+    #df=df.reset_index(drop=True)
     df_=df.copy()
     
     df=df.loc[:, df.columns != target]
@@ -213,7 +197,7 @@ def transform_SimpleImp(df:pd.DataFrame,
     :return: The dataframe with the imputed values in the columns that were transformed
     """
     
-    df=reset_index_DF(df)    
+    df=df.reset_index(drop=True)  
     df_=df.copy()
     df=df.loc[:, df.columns != target]
     input_cols= list(df.columns)
@@ -239,7 +223,7 @@ def transform_KnnImp(df:pd.DataFrame,
                       target:str,
                       imputer):
     
-    df=reset_index_DF(df)   
+    df=df.reset_index(drop=True)
     df_=df.copy()
     
     df=df.loc[:, df.columns != target]
@@ -265,7 +249,7 @@ def transform_IterImp(df:pd.DataFrame,
                       target:str,
                       imputer):
     
-    df=reset_index_DF(df)   
+    df=df.reset_index(drop=True)
     df_=df.copy()
     
     df=df.loc[:, df.columns != target]
@@ -553,12 +537,11 @@ def fit_OneHot_Encoding(Dataset:pd.DataFrame,target:str,n_distinct:int=10):
     df,list_cols,list_le=Dataset.copy(),[],[]
     drop_org_cols,list_ohe=True,[] 
     encoders=cat_cols(df,target)
-    print(encoders)
+
     if len(encoders)>0:
         for enc in encoders:
             if len(list(dict.fromkeys(df[enc].tolist())))<=n_distinct:  ## Less/= than n distinct elements in col
                 ohe = OneHotEncoder(handle_unknown = 'ignore')
-                print("******", enc)              
                 
                 list_cols.append(enc),list_le.append(ohe.fit(df[[enc]]))
     
@@ -753,11 +736,10 @@ def feature_selection_h2o(Dataset:pd.DataFrame, target:str, total_vi :float=0.98
     train=train_.copy()
     
     if encoding_fs==True:
-        le =LabelEncoder()
-        cols=cat_cols(train_,target)   
-        train_=train_[cols]
-        train_ = train_.apply(lambda col: le.fit_transform(col.astype(str)), axis=0, result_type='expand')
-        train=transform_dataset(train,train_)
+        le_fit=fit_Label_Encoding(train_,target)   
+        train_=transform_Label_Encoding(train_,le_fit)
+        train=train_.copy()
+        
     elif encoding_fs==False:
         print('    Encoding method was not applied    ')
 
@@ -1082,12 +1064,11 @@ def fit_processing(Dataset:pd.DataFrame,
     
     pred_type, eval_metric=target_type(Dataset, target) ## Prediction Contextualization
     if pred_type=='Class': Dataset[target]=Dataset[target].astype(str)
-
+    
     Dataframe_=Dataset.copy()
     Dataset_=Dataframe_.copy()
 
 ############################## Validation Procidment ##############################
-
     Dataset_=remove_columns_by_nulls(Dataset_, 99.99)
     sel_cols= list(Dataset_.columns)
     sel_cols.remove(target)
@@ -1150,7 +1131,7 @@ def fit_processing(Dataset:pd.DataFrame,
     Dataframe=Dataframe[list(train.columns)]
     train_df,test_df=split_dataset(Dataframe,Split_Racio)
     train_df,n_cols=Dataframe.copy(),num_cols(Dataframe,target)
-
+    
     n_cols,c_cols=num_cols(train_df,target),cat_cols(train_df,target) 
 
     if enc_method=='Encoding Version 1':
@@ -1208,7 +1189,7 @@ def fit_processing(Dataset:pd.DataFrame,
     elif imp_method=='Undefined':
         imputer=None
 
-    Dataframe=reset_index_DF(train_df)
+    Dataframe=train_df.reset_index(drop=True)
         
     ## Fit_Encoding_Version
     
