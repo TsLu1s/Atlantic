@@ -20,7 +20,6 @@ This project aims at providing the following application capabilities:
 
 Major frameworks used to built this project: 
    
-* [Python](https://www.python.org/downloads)
 * [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
 * [Sklearn](https://scikit-learn.org/stable/)
 
