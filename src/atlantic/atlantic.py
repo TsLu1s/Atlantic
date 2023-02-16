@@ -469,7 +469,7 @@ def encoding_v4(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
     return _train,_test
 
-######################################################## Encoding Updated Methods - >0.0.9 Version ###########################################
+######################################################## Encoding Methods ###########################################
 
 ######### MultiColumn LabelEncoding
 
