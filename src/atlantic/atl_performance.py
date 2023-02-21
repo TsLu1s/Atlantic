@@ -60,6 +60,6 @@ def pred_eval(train:pd.DataFrame, test:pd.DataFrame, target:str):
     del x['Estimators']
     
     y,z=x.iloc[:1,:],x.iloc[1:2,:]
-    Metrics_Final=(y+z)/2
+    metrics_final=(y+z)/2
     
-    return Metrics_Final
+    return metrics_final
