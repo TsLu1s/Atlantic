@@ -550,4 +550,3 @@ def Select_Encoding_Method(train:pd.DataFrame,
         print('Encoding Version 4 was choosen with an ', metric, ' of: ', round(p_v4, 4))
     
     return enc_method
-
