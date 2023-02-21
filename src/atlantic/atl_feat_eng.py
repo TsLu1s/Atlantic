@@ -148,5 +148,3 @@ def remove_columns_by_nulls(Dataset:pd.DataFrame, percentage:int): ## Colunas
     df = df.loc[:, ~(df.apply(pd.Series.value_counts, normalize=True).max() > perc/100)]
 
     return df
-
-
