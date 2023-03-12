@@ -1,6 +1,6 @@
 <br>
 <p align="center">
-  <h2 align="center"> Atlantic - Automated Preprocessing Framework for Supervised Machine Learning
+  <h2 align="center"> Atlantic - Automated Data Preprocessing Framework for Supervised Machine Learning
   <br>
   
 ## Framework Contextualization <a name = "ta"></a>
@@ -11,7 +11,7 @@ This project aims at providing the following application capabilities:
 
 * General applicability on tabular datasets: The developed preprocessing procedures are applicable on any data table associated with Supervised Machine Learning scopes regardless of the properties or specifications of the Dataset features.
 
-* Automated treatment of tabular data associated with predictive analysis: It implements a global and carefully validated tested data treatment based on the characteristics of each Dataset input columns, assuming its identification to the associated target column.
+* Automated treatment of tabular data associated with predictive analysis: It implements a global and carefully validated tested data treatment based on the characteristics of each Dataset input columns, assuming its identification with the associated target column.
 
 * Robustness and improvement of predictive results: The implementation of the `atlantic` automated data preprocessing function aims at improve predictive performance directly associated with the processing methods implemented based on the Dataset properties.  
     
@@ -22,17 +22,18 @@ Major frameworks used to built this project:
    
 * [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
 * [Sklearn](https://scikit-learn.org/stable/)
+* [Pandas](https://pandas.pydata.org/)
 
     
 ## Framework Architecture <a name = "ta"></a>
 
 <p align="center">
-  <img src="https://i.ibb.co/7VDGscP/ATL-Final-Architecture.png" align="center" width="800" height="650" />
+  <img src="https://i.ibb.co/BjmYGrz/ATL-Architecture.png" align="center" width="800" height="650" />
 </p>    
 
 ## Where to get it <a name = "ta"></a>
 
-Binary installer for the latest released version is available at the Python Package Index [(PyPI)](https://pypi.org/project/atlantic/). 
+Binary installer for the latest released version is available at the Python Package Index [PyPI](https://pypi.org/project/atlantic/).  
 
 ## Installation  
 
@@ -44,7 +45,7 @@ pip install atlantic
 
 # Usage Examples
     
-## 1. Atlantic - Automated Preprocessing Pipeline
+## 1. Atlantic - Automated Data Preprocessing Pipeline
 
 In order to be able to apply the automated preprocessing `atlantic` pipeline you need first to import the package. 
 The following needed step is to load a dataset and define your to be predicted target column name into the variable `Target` and define split ratio for your Train and Test subsets.
@@ -232,4 +233,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/TsLu1s/Atlan
 
 ## Contact 
  
-[Luís Santos - LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)
+[Luis Santos - LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   
+    
+
+Feel free to contact me and share your feedback.
