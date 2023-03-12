@@ -1,11 +1,12 @@
 import setuptools
+# read the contents of your README file
 from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
     name="atlantic",
-    version="1.0.21",
+    version="1.0.25",
     description="Atlantic is an automated preprocessing framework for supervised machine learning",
     long_description=long_description,      
     long_description_content_type="text/markdown",
@@ -13,11 +14,23 @@ setuptools.setup(
     author="Luís Santos",
     author_email="luisf_ssantos@hotmail.com",
     license="MIT",
-    python_requires='>=3.7.1',
     classifiers=[
-        "Programming Language :: Python :: 3",
+        # Indicate who your project is intended for
+        "Intended Audience :: Education",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Customer Service",
+        "Intended Audience :: Financial and Insurance Industry",
+        "Intended Audience :: Healthcare Industry",
+        "Intended Audience :: Telecommunications Industry",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     py_modules=["atlantic"],
     packages=setuptools.find_packages(where="src"),
@@ -34,4 +47,3 @@ setuptools.setup(
     ],           
     install_requires=open("requirements.txt").readlines(),
 )
-  
