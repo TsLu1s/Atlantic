@@ -192,17 +192,6 @@ The following functions were used in the development of this project.
     
 ```py  
     
-#### Data Preprocessing 
-
-atl.num_cols(Dataset:pd.DataFrame,
-             target:str) # return list_num_cols
-    
-atl.cat_cols(Dataset:pd.DataFrame,
-             target:str) # return list_cat_cols
-    
-atl.remove_columns_by_nulls(Dataset:pd.DataFrame,
-                            percentage:int) # return dataset
-
 ## Simplified Null Imputation (Only numeric features)
 
 imputer_knn=atl.fit_KnnImp(df:pd.DataFrame,
