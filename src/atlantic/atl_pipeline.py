@@ -28,7 +28,7 @@ def fit_processing(Dataset:pd.DataFrame,
     Dataframe_=Dataset.copy()
     Dataset_=Dataframe_.copy()
 
-############################## Validation Procidment ##############################
+############################## Validation Proceedment ##############################
     Dataset_=remove_columns_by_nulls(Dataset_, 99.99)
     sel_cols= list(Dataset_.columns)
     sel_cols.remove(target)
