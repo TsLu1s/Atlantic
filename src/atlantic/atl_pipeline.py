@@ -83,7 +83,7 @@ def fit_processing(Dataset:pd.DataFrame,
     
     train, test=vif_performance_selection(train,test,target)
 
-############################## Fit Procediment ##############################
+############################## Fit Proceedment ##############################
 
     Dataframe=Dataframe_.copy()
     Dataframe=del_nulls_target(Dataframe,target) ## Delete target Null Values 
@@ -165,7 +165,7 @@ def fit_processing(Dataset:pd.DataFrame,
 def data_processing(Dataset:pd.DataFrame,
                     fit_atl:dict):
     
-############################## Transformation Procediment ##############################
+############################## Transformation Proceedment ##############################
 
     df=Dataset.copy()
     
