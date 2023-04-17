@@ -21,24 +21,24 @@ data.isna().sum()
 train,test = train_test_split(data, train_size=0.8)
 
 # Option 1 - Simple Option
-fit_atl = atl.fit_processing(Dataset=train,      # Dataset:pd.DataFrame, target:str="Target_Column"
-                             target=target_col,  # Split_Racio:float=0.75 [0.5,0.95[ 
-                             Split_Racio=0.9)
+fit_atl = atl.fit_processing(dataset=train,      # dataset:pd.DataFrame, target:str="Target_Column"
+                             target=target_col,  # split_ratio:float=0.75 [0.5,0.95[ 
+                             split_ratio=0.9)
 
 # Option 2 - Customizable Option
-fit_atl = atl.fit_processing(Dataset=train,             # Dataset:pd.DataFrame, 
+fit_atl = atl.fit_processing(dataset=train,             # dataset:pd.DataFrame, 
                              target=target_col,         # target:str="Target_Column"
-                             Split_Racio=0.9,          # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
+                             split_ratio=0.9,          # split_ratio:float=0.75, total_vi:float=0.98 [0.5,1]
                              total_vi=0.98,             # h2o_fs_models:int [1,50], encoding_fs:bool=True\False
                              h2o_fs_models=7,           # vif_ratio:float=10.0 [3,30]
                              encoding_fs=True,
                              vif_ratio=10.0)
 
 # Transform Data Processing
-train=atl.data_processing(Dataset=train,
+train=atl.data_processing(dataset=train,
                           fit_atl=fit_atl)
 
-test=atl.data_processing(Dataset=test,
+test=atl.data_processing(dataset=test,
                          fit_atl=fit_atl)
 
 # Export Atlantic Preprocessing Metadata
