@@ -40,22 +40,3 @@ def metrics_classification(y_true, y_pred):
                     }
     
     return metrics_class
-
-def metrics_binary_classification(y_true, y_pred):
-    
-    f1_metric=f1_score(y_true, y_pred)
-    accuracy_metric = accuracy_score(y_true, y_pred)
-    precision_metric = precision_score(y_true, y_pred)
-    recall_metric = recall_score(y_true, y_pred)
-    average_precision_metric = average_precision(y_true, y_pred)
-    balanced_accuracy_metric = balanced_accuracy(y_true, y_pred)
-    
-    metrics_class= {'Accuracy': accuracy_metric, 
-                    'Precision Score': precision_metric,
-                    'F1 Score': f1_metric,
-                    'Recall Score': recall_metric,
-                    'Average Precision': average_precision_metric, 
-                    'Balanced Accuracy': balanced_accuracy_metric
-                    }
-
-    return metrics_class
