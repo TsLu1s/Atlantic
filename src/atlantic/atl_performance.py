@@ -8,7 +8,7 @@ from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import *
 from .atl_feat_eng import target_type, divide_dfs
-from .atl_metrics import metrics_regression, metrics_classification, metrics_binary_classification
+from .atl_metrics import metrics_regression, metrics_classification
 
 def pred_eval(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
