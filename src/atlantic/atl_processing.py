@@ -6,9 +6,9 @@ from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
 from .atl_feat_eng import num_cols, cat_cols, divide_dfs
 from .atl_performance import pred_eval
 
-def fit_SimpleImp(df:pd.DataFrame,
-                   target:str,
-                   strat:str='mean'):
+def fit_SimpleImp(dataset:pd.DataFrame,
+                  target:str,
+                  strat:str='mean'):
     """
     The fit_SimpleImp function fits a SimpleImputer to the dataframe. 
     The function returns the fitted SimpleImputer object.
@@ -19,7 +19,7 @@ def fit_SimpleImp(df:pd.DataFrame,
     :return: A simpleimputer object
     """
     
-    df_=df.copy()
+    df,df_=dataset.copy(),dataset.copy()
     df=df.loc[:, df.columns != target]
     input_cols= list(df.columns)
 
@@ -29,9 +29,9 @@ def fit_SimpleImp(df:pd.DataFrame,
     
     return imputer
 
-def transform_SimpleImp(df:pd.DataFrame,
-                         target:str,
-                         imputer):
+def transform_SimpleImp(dataset:pd.DataFrame,
+                        target:str,
+                        imputer):
     """
     The transform_SimpleImp function takes a dataframe and imputes missing values using the SimpleImputer. 
     The function returns a new dataframe with the imputed values in place of NaN's.
@@ -42,6 +42,7 @@ def transform_SimpleImp(df:pd.DataFrame,
     :return: The dataframe with the imputed values in the columns that were transformed
     """
     
+    df=dataset.copy()
     df=df.reset_index(drop=True)  
     df_=df.copy()
     
@@ -55,21 +56,22 @@ def transform_SimpleImp(df:pd.DataFrame,
     
     return df_
 
-def fit_KnnImp(df:pd.DataFrame, 
-                target:str, 
-                neighbors:int=5):
+def fit_KnnImp(dataset:pd.DataFrame, 
+               target:str, 
+               neighbors:int=5):
     
-    df_=df.copy()
+    df,df_=dataset.copy(),dataset.copy()
     df=df.loc[:, df.columns != target]
     imputer = KNNImputer(n_neighbors=neighbors)
     imputer.fit(df)
     
     return imputer
 
-def transform_KnnImp(df:pd.DataFrame,
-                      target:str,
-                      imputer):
+def transform_KnnImp(dataset:pd.DataFrame,
+                     target:str,
+                     imputer):
     
+    df=dataset.copy()
     df=df.reset_index(drop=True)
     df_=df.copy()
     
@@ -81,21 +83,23 @@ def transform_KnnImp(df:pd.DataFrame,
     
     return df_
 
-def fit_IterImp(df:pd.DataFrame, 
-                 target:str, 
-                 order:str='ascending'):
-
-    df_=df.copy()
+def fit_IterImp(dataset:pd.DataFrame, 
+                target:str, 
+                order:str='ascending'):
+    
+    df,df_=dataset.copy(),dataset.copy()
+    
     df=df.loc[:, df.columns != target]
     imputer = IterativeImputer(imputation_order=order,max_iter=10,random_state=0,n_nearest_features=None)
     imputer=imputer.fit(df)
 
     return imputer
 
-def transform_IterImp(df:pd.DataFrame,
+def transform_IterImp(dataset:pd.DataFrame,
                       target:str,
                       imputer):
     
+    df=dataset.copy()
     df=df.reset_index(drop=True)
     df_=df.copy()
     
@@ -152,7 +156,7 @@ def null_substitution_method(train:pd.DataFrame,
     elif enc_method=='Encoding Version 4':
         train, test=encoding_v4(train, test,target)
         
-    
+    print('    ')   
     print('Simple Imputation Loading')
     imputer=fit_SimpleImp(train,
                           target=target,
@@ -204,10 +208,10 @@ def null_substitution_method(train:pd.DataFrame,
     mae_simple=simple_perf[eval_metric].sum()
     mae_knn=knn_perf[eval_metric].sum()
     mae_Iterartive=iter_perf[eval_metric].sum()
+    print('    ')   
+    print('Predictive Performance Null Imputation Versions:')
     
-    print('Null Imputation Methods Performance:')
-    
-    print('KNN Performance: ', round(mae_knn, 4), '\n Iterative Performance: ', 
+    print(' KNN Performance: ', round(mae_knn, 4), '\n Iterative Performance: ', 
           round(mae_Iterartive, 4),'\n Simple Performance: ', round(mae_simple, 4))
     
     list_imp=[mae_Iterartive,mae_knn,mae_simple]
@@ -230,7 +234,6 @@ def null_substitution_method(train:pd.DataFrame,
         imp_method='Simple'  
         train, test=train_simple.copy(),test_simple.copy()
         print('Simple Imputation Algorithm was chosen with an ', metric, ' of: ', round(mae_simple, 4))
-
     return train, test,imp_method
 
 
@@ -318,17 +321,17 @@ def encoding_v4(train:pd.DataFrame, test:pd.DataFrame, target:str):
 
 ######### MultiColumn LabelEncoding
 
-def fit_Label_Encoding(Dataset:pd.DataFrame,target:str):
+def fit_Label_Encoding(dataset:pd.DataFrame,target:str):
     """
     This function performs the Label Encoding for categorical variables in a dataset.
     Args:
-        Dataset (pd.DataFrame): The dataset that you want to encode.
+        dataset (pd.DataFrame): The dataset that you want to encode.
         target (str): The name of the target variable.
     Returns:
         le_dict (dict): A dictionary of label encoders for each categorical variable.
     """
-    encoders=cat_cols(Dataset,target)
-    df,list_cols,list_le=Dataset.copy(),[],[]
+    encoders=cat_cols(dataset,target)
+    df,list_cols,list_le=dataset.copy(),[],[]
     
     for c in encoders:
         le = LabelEncoder()
@@ -337,14 +340,14 @@ def fit_Label_Encoding(Dataset:pd.DataFrame,target:str):
     
     return le_dict
 
-def transform_Label_Encoding(Dataset:pd.DataFrame,le_fit:dict):
+def transform_Label_Encoding(dataset:pd.DataFrame,le_fit:dict):
     """
     This function receives a dataset and a pre-trained label encoding dict.
     It maps any unseen values in the dataset to '<unknown>', appends it to the classes_
     array of the label encoder, and then applies the encoding to the dataframe.
     """
     encoders=list(le_fit.keys())
-    df=Dataset.copy()
+    df=dataset.copy()
 
     for c in encoders:
         le=le_fit[c]  
@@ -356,19 +359,19 @@ def transform_Label_Encoding(Dataset:pd.DataFrame,le_fit:dict):
 
 ######### MultiColumn IDF_Encoding 
 
-def fit_IDF_Encoding(Dataset:pd.DataFrame,target:str):
-    df=Dataset.copy()
+def fit_IDF_Encoding(dataset:pd.DataFrame,target:str):
+    df=dataset.copy()
     
     encoders=cat_cols(df,target)
-    IDF_filter = cane.idf(df, n_coresJob=2,disableLoadBar = False, columns_use = encoders)
+    IDF_filter = cane.idf(df, n_coresJob=2,disableLoadBar = True, columns_use = encoders)
     idf_fit = cane.idfDictionary(Original = df, Transformed = IDF_filter, columns_use = encoders)
 
     return idf_fit
 
-def transform_IDF_Encoding(Dataset:pd.DataFrame,idf_fit:dict):
+def transform_IDF_Encoding(dataset:pd.DataFrame,idf_fit:dict):
     
     encoders=list(idf_fit.keys())
-    df=Dataset.copy()
+    df=dataset.copy()
         
     for col in encoders:
         df[col] = (df[col].map(idf_fit[col]).fillna(max(idf_fit[col].values())))
@@ -377,9 +380,9 @@ def transform_IDF_Encoding(Dataset:pd.DataFrame,idf_fit:dict):
 
 ######### MultiColumn OneHotEncoding
 
-def fit_OneHot_Encoding(Dataset:pd.DataFrame,target:str,n_distinct:int=10):
+def fit_OneHot_Encoding(dataset:pd.DataFrame,target:str,n_distinct:int=10):
         
-    df,list_cols,list_le=Dataset.copy(),[],[]
+    df,list_cols,list_le=dataset.copy(),[],[]
     drop_org_cols,list_ohe=True,[] 
     encoders=cat_cols(df,target)
 
@@ -395,9 +398,9 @@ def fit_OneHot_Encoding(Dataset:pd.DataFrame,target:str,n_distinct:int=10):
     
     return ohe_fit
 
-def transform_OneHot_Encoding(Dataset:pd.DataFrame,ohe_fit:dict):
+def transform_OneHot_Encoding(dataset:pd.DataFrame,ohe_fit:dict):
     
-    df= Dataset.copy()
+    df= dataset.copy()
     drop_org_cols,list_ohe,n_distinct=True,[],ohe_fit["n_distinct"]
     del ohe_fit["n_distinct"]
     encoders=list(ohe_fit.keys())
@@ -423,27 +426,27 @@ def transform_OneHot_Encoding(Dataset:pd.DataFrame,ohe_fit:dict):
 
 ############################# Scalers
 
-def fit_StandardScaler(Dataset:pd.DataFrame,target:str):
+def fit_StandardScaler(dataset:pd.DataFrame,target:str):
     
-    df,n_cols=Dataset.copy(),num_cols(Dataset,target)
+    df,n_cols=dataset.copy(),num_cols(dataset,target)
     
     scaler = StandardScaler()
     scaler = scaler.fit(df[n_cols])
 
     return scaler, n_cols
 
-def fit_MinmaxScaler(Dataset:pd.DataFrame,target:str):
+def fit_MinmaxScaler(dataset:pd.DataFrame,target:str):
     
-    df,n_cols=Dataset.copy(),num_cols(Dataset,target)
+    df,n_cols=dataset.copy(),num_cols(dataset,target)
     
     scaler = MinMaxScaler() 
     scaler = scaler.fit(df[n_cols])
 
     return scaler, n_cols
 
-def fit_RobustScaler(Dataset:pd.DataFrame,target:str):
+def fit_RobustScaler(dataset:pd.DataFrame,target:str):
     
-    df,n_cols=Dataset.copy(),num_cols(Dataset,target)
+    df,n_cols=dataset.copy(),num_cols(dataset,target)
     
     scaler = RobustScaler()
     scaler = scaler.fit(df[n_cols])
@@ -548,5 +551,7 @@ def Select_Encoding_Method(train:pd.DataFrame,
     elif list_encoding[0]==p_v4:
         enc_method='Encoding Version 4'
         print('Encoding Version 4 was choosen with an ', metric, ' of: ', round(p_v4, 4))
-    
+        print(' ')
+        
     return enc_method
+
