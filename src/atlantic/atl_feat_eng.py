@@ -2,17 +2,17 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-def split_dataset(Dataset:pd.DataFrame, Split_Racio:float):
+def split_dataset(dataset:pd.DataFrame, split_ratio:float):
     
-    assert Split_Racio>=0.5 and Split_Racio<=0.95 , 'Split_Racio value should be in [0.5,0.95] interval'
+    assert split_ratio>=0.5 and split_ratio<=0.95 , 'split_ratio value should be in [0.5,0.95[ interval'
     
-    train, test= train_test_split(Dataset, train_size=Split_Racio)
+    train, test= train_test_split(dataset, train_size=split_ratio)
 
     return train,test
 
-def target_type(Dataset:pd.DataFrame, target:str):  
+def target_type(dataset:pd.DataFrame, target:str):  
     
-    df=Dataset[[target]]
+    df=dataset[[target]]
     reg_target,class_target=df.select_dtypes(include=['int','float']).columns.tolist(),df.select_dtypes(include=['object','category']).columns.tolist()
     if len(class_target)==1:
         pred_type='Class'
@@ -38,9 +38,9 @@ def divide_dfs(train:pd.DataFrame,test:pd.DataFrame,target:str):
     
     return X_train,X_test,y_train,y_test
 
-def slice_timestamp(Dataset:pd.DataFrame):
+def slice_timestamp(dataset:pd.DataFrame):
     
-    df=Dataset.copy()
+    df=dataset.copy()
     datetime_cols=list_date=list(df.select_dtypes(include=['datetime','datetime64[ns]']))
     for date_col in datetime_cols:
             df[date_col] = df[date_col].astype(str)
@@ -49,21 +49,21 @@ def slice_timestamp(Dataset:pd.DataFrame):
             
     return df
 
-def engin_date(Dataset:pd.DataFrame, drop:bool=True):
+def engin_date(dataset:pd.DataFrame, drop:bool=True):
     
     """
     The engin_date function takes a DataFrame and returns a DataFrame with the date features engineered.
     The function has two parameters: 
-    Dataset: A Pandas DataFrame containing at least one column of datetime data. 
+    dataset: A Pandas DataFrame containing at least one column of datetime data. 
     drop: A Boolean value indicating whether or not to drop the original datetime columns from the returned dataset.
     
-    :param Dataset:pd.DataFrame: Pass the dataset
+    :param dataset:pd.DataFrame: Pass the dataset
     :param drop:bool=False: Decide whether or not to drop the original datetime columns from the returned dataset
     :return: A dataframe with the date features engineered
     """
 
-    Dataset_=Dataset.copy()
-    Df=Dataset_.copy()
+    dataset_=dataset.copy()
+    Df=dataset_.copy()
     Df=slice_timestamp(Df)
     
     x=pd.DataFrame(Df.dtypes)
@@ -110,9 +110,9 @@ def engin_date(Dataset:pd.DataFrame, drop:bool=True):
         
     return Df
 
-def num_cols(Dataset:pd.DataFrame, target:str):
+def num_cols(dataset:pd.DataFrame, target:str):
     
-    n_cols=Dataset.select_dtypes(include=['int','float']).columns.tolist()
+    n_cols=dataset.select_dtypes(include=['int','float']).columns.tolist()
     
     for col in n_cols:
         if col==target:
@@ -120,9 +120,9 @@ def num_cols(Dataset:pd.DataFrame, target:str):
             
     return n_cols
 
-def cat_cols(Dataset:pd.DataFrame, target):
+def cat_cols(dataset:pd.DataFrame, target):
 
-    c_cols=Dataset.select_dtypes(include=['object']).columns.tolist()
+    c_cols=dataset.select_dtypes(include=['object']).columns.tolist()
 
     for col in c_cols:
         if col==target:
@@ -130,16 +130,16 @@ def cat_cols(Dataset:pd.DataFrame, target):
             
     return c_cols 
 
-def del_nulls_target(Dataset:pd.DataFrame, target:str):
+def del_nulls_target(dataset:pd.DataFrame, target:str):
         
-    Dataset=Dataset[Dataset[target].isnull()==False]
+    dataset=dataset[dataset[target].isnull()==False]
     
-    return Dataset
+    return dataset
 
-def remove_columns_by_nulls(Dataset:pd.DataFrame, percentage:int): ## Colunas 
+def remove_columns_by_nulls(dataset:pd.DataFrame, percentage:int): ## Colunas 
     
     assert percentage>0 and percentage<=100 , 'percentage should not exceed value of 100'
-    df=Dataset.copy()
+    df=dataset.copy()
     perc = percentage
     min_count =  int(((100-perc)/100)*df.shape[0] + 1)
     df = df.dropna( axis=1,
