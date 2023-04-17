@@ -8,34 +8,32 @@ from .atl_metrics import *
 from .atl_performance import * 
 from .atl_processing import *
 
-h2o.init()
-
 #############################################################################################################################################
 ###########################################################    Atlantic Pipeline   ##########################################################
 #############################################################################################################################################
 
-def fit_processing(Dataset:pd.DataFrame,
+def fit_processing(dataset:pd.DataFrame,
                    target:str, 
-                   Split_Racio:float,
+                   split_ratio:float,
                    total_vi:float=0.98,
                    h2o_fs_models:int =7,
                    encoding_fs:bool=True,
                    vif_ratio:float=10.0):
     
-    pred_type, eval_metric=target_type(Dataset, target) ## Prediction Contextualization
-    if pred_type=='Class': Dataset[target]=Dataset[target].astype(str)
+    pred_type, eval_metric=target_type(dataset, target) ## Prediction Contextualization
+    if pred_type=='Class': dataset[target]=dataset[target].astype(str)
     
-    Dataframe_=Dataset.copy()
-    Dataset_=Dataframe_.copy()
+    Dataframe_=dataset.copy()
+    dataset_=Dataframe_.copy()
 
 ############################## Validation Proceedment ##############################
-    Dataset_=remove_columns_by_nulls(Dataset_, 99.99)
-    sel_cols= list(Dataset_.columns)
+    dataset_=remove_columns_by_nulls(dataset_, 99.99)
+    sel_cols= list(dataset_.columns)
     sel_cols.remove(target)
     sel_cols.append(target) 
-    Dataset_=Dataset_[sel_cols] ## target -> Last Column Index
+    dataset_=dataset_[sel_cols] ## target -> Last Column Index
 
-    train, test= split_dataset(Dataset_,Split_Racio)
+    train, test= split_dataset(dataset_,split_ratio)
 
     train_test_=train.copy(),test.copy()
 
@@ -83,13 +81,13 @@ def fit_processing(Dataset:pd.DataFrame,
     
     train, test=vif_performance_selection(train,test,target)
 
-############################## Fit Proceedment ##############################
+############################## Fit Procediment ##############################
 
     Dataframe=Dataframe_.copy()
     Dataframe=del_nulls_target(Dataframe,target) ## Delete target Null Values 
     Dataframe=engin_date(Dataframe)
     Dataframe=Dataframe[list(train.columns)]
-    train_df,test_df=split_dataset(Dataframe,Split_Racio)
+    train_df,test_df=split_dataset(Dataframe,split_ratio)
     train_df,n_cols=Dataframe.copy(),num_cols(Dataframe,target)
     
     n_cols,c_cols=num_cols(train_df,target),cat_cols(train_df,target) 
@@ -162,12 +160,12 @@ def fit_processing(Dataset:pd.DataFrame,
     
     return fit_atl
 
-def data_processing(Dataset:pd.DataFrame,
+def data_processing(dataset:pd.DataFrame,
                     fit_atl:dict):
     
 ############################## Transformation Proceedment ##############################
 
-    df=Dataset.copy()
+    df=dataset.copy()
     
     df=engin_date(df)
     cols,c_cols,n_cols=fit_atl["cols"]
@@ -197,4 +195,3 @@ def data_processing(Dataset:pd.DataFrame,
             df=transform_IterImp(df,target=target,imputer=imputer)
 
     return df
-  
