@@ -12,15 +12,13 @@ from .atl_feat_eng import target_type, remove_columns_by_nulls
 from .atl_performance import pred_eval
 from .atl_processing import fit_Label_Encoding, transform_Label_Encoding
 
-#h2o.init()
-
 ###################################  H2O Feature Selection ######################################
 
-def feature_selection_h2o(Dataset:pd.DataFrame, target:str, total_vi :float=0.98, h2o_fs_models:int =7, encoding_fs:bool=True):
+def feature_selection_h2o(dataset:pd.DataFrame, target:str, total_vi :float=0.98, h2o_fs_models:int =7, encoding_fs:bool=True):
     """
     Function to select features using h2o's Autodml feature.
     Parameters:
-    Dataset: pandas DataFrame, shape = (n_samples,n_features)
+    dataset: pandas DataFrame, shape = (n_samples,n_features)
             Dataframe 
     target: str
             target variable
@@ -39,7 +37,9 @@ def feature_selection_h2o(Dataset:pd.DataFrame, target:str, total_vi :float=0.98
     assert total_vi>=0.5 and total_vi<=1 , 'total_vi value should be in [0.5,1] interval'
     assert h2o_fs_models>=1 and h2o_fs_models<=50 , 'h2o_fs_models value should be in [0,50] interval'
     
-    train_=Dataset.copy()
+    h2o.init()
+    
+    train_=dataset.copy()
     train=train_.copy()
     
     if encoding_fs==True:
@@ -119,11 +119,11 @@ def calc_vif(X):
     vif = vif.sort_values(['VIF'], ascending=False)
     return vif
 
-def feature_selection_vif(Dataset:pd.DataFrame, target:str, VIF:float=10.0):
+def feature_selection_vif(dataset:pd.DataFrame, target:str, VIF:float=10.0):
     """
     Function to select features based on VIF 
     Parameters:
-    Dataset: pandas DataFrame, shape = (n_samples,n_features)
+    dataset: pandas DataFrame, shape = (n_samples,n_features)
             Dataframe 
     target: str
             target variable
@@ -137,10 +137,10 @@ def feature_selection_vif(Dataset:pd.DataFrame, target:str, VIF:float=10.0):
     """   
     assert VIF>=3 and VIF<=30 , 'VIF value should be in [3,30] interval'
     
-    input_cols= list(Dataset.columns)
+    input_cols= list(dataset.columns)
     input_cols.remove(target)
-    Dataset_=Dataset[input_cols]
-    vif_df=calc_vif(Dataset_)
+    dataset_=dataset[input_cols]
+    vif_df=calc_vif(dataset_)
     sel_cols=input_cols
     for line in range(0,len(vif_df['VIF'])):
         if vif_df['VIF'].loc[vif_df['VIF'].idxmax()]>=VIF:
@@ -148,8 +148,8 @@ def feature_selection_vif(Dataset:pd.DataFrame, target:str, VIF:float=10.0):
             sel_cols=[]
             for rows in vif_df['variables']:
                 sel_cols.append(rows)
-        Dataset_=Dataset_[sel_cols]
-        vif_df=calc_vif(Dataset_)
+        dataset_=dataset_[sel_cols]
+        vif_df=calc_vif(dataset_)
     sel_cols.append(target)
 
     return sel_cols,vif_df
@@ -196,9 +196,10 @@ def vif_performance_selection(train:pd.DataFrame,
 
     try:
         cols_vif,vif_df=feature_selection_vif(_train__,target,vif_ratio)
+        print('    ')
         print('Number of Selected VIF Columns: ', len(cols_vif), 
-              '\n Removed Columns with VIF (Feature Selection - VIF):', len(sel_cols) - len(cols_vif), 
-              '\n Selected Columns:', cols_vif)
+              '\nRemoved Columns with VIF :', len(sel_cols) - len(cols_vif)
+              ,'\n All Selected Columns:', cols_vif)
         _train__=_train__[cols_vif]
         _test__=_test__[cols_vif]
     except Exception:
@@ -208,7 +209,7 @@ def vif_performance_selection(train:pd.DataFrame,
     p_default_vif=pred_vif[eval_metric][0]
     print('   ')
     print('Default Performance:',round(default_p, 4))
-    print('Performance Default VIF:',round(p_default_vif, 4))
+    print('VIF Performance:',round(p_default_vif, 4))
     if pred_type=='Reg':
         if p_default_vif<default_p:
             print('The VIF filtering method was applied    ')
@@ -224,3 +225,4 @@ def vif_performance_selection(train:pd.DataFrame,
         else:
             print('The VIF filtering method was not applied    ')
     return _train_, _test_
+
