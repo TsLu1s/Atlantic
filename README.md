@@ -35,8 +35,6 @@ Major frameworks used to built this project:
 
 Binary installer for the latest released version is available at the Python Package Index [PyPI](https://pypi.org/project/atlantic/).  
 
-The source code is currently hosted on GitHub at: https://github.com/TsLu1s/Atlantic
-
 ## Installation  
 
 To install this package from Pypi repository run the following command:
