@@ -21,19 +21,21 @@ This project aims at providing the following application capabilities:
 Major frameworks used to built this project: 
    
 * [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
-* [Sklearn](https://scikit-learn.org/stable/)
+* [Scikit-learn](https://scikit-learn.org/stable/)
 * [Pandas](https://pandas.pydata.org/)
 
     
 ## Framework Architecture <a name = "ta"></a>
 
 <p align="center">
-  <img src="https://i.ibb.co/BjmYGrz/ATL-Architecture.png" align="center" width="800" height="650" />
+  <img src="https://i.ibb.co/nb3Wh2X/ATL-Architecture-Final.png" align="center" width="700" height="680" />
 </p>    
 
 ## Where to get it <a name = "ta"></a>
 
 Binary installer for the latest released version is available at the Python Package Index [PyPI](https://pypi.org/project/atlantic/).  
+
+The source code is currently hosted on GitHub at: https://github.com/TsLu1s/Atlantic
 
 ## Installation  
 
@@ -48,9 +50,9 @@ pip install atlantic
 ## 1. Atlantic - Automated Data Preprocessing Pipeline
 
 In order to be able to apply the automated preprocessing `atlantic` pipeline you need first to import the package. 
-The following needed step is to load a dataset and define your to be predicted target column name into the variable `Target` and define split ratio for your Train and Test subsets.
+The following needed step is to load a dataset and define your to be predicted target column name into the variable `Target` and define split ratio for your Train and Validation subsets.
 You can customize the main function (customizable option) by altering the following running pipeline parameters:
-* Split_Racio: Division ratio in which the preprocessing methods will be evaluated within the loaded Dataset.
+* split_ratio: Division ratio in which the preprocessing methods will be evaluated within the loaded Dataset.
 * total_vi: Minimal value of the total sum of relative variable\feature importance percentage selected in the "H2O AutoML feature selection" step.
 * h2o_fs_models: Quantity of models generated for competition in step "H2O AutoML feature selection" to evaluate the relative importance of each feature (only leaderboard model will be selected for evaluation).
 * encoding_fs: You can choose if you want to encond your features in order to reduce loading time in "H2O AutoML feature selection" step. If in "True" mode label encoding is applied to categorical features.
@@ -60,7 +62,7 @@ Importante Notes:
     
 * Default predictive evaluation metric for regression contexts is MAE (Mean Absolute Error) and classification is AUC (Accuracy).
 * Although functional, `Atlantic` data processing is not optimized for big data purposes yet.
-* Major update is now available in **versions>=1.0.1**
+* Major update is now available in **versions>=1.0.5**
     
 ```py
     
@@ -69,19 +71,19 @@ import pandas as pd
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
 
-train,test=atl.split_dataset(data,Split_Racio=0.8) 
+train,test=atl.split_dataset(data,split_ratio=0.8) 
 
 ### Fit Data Processing
     
 # Simple Option
-fit_atl = atl.fit_processing(Dataset=train,           # Dataset:pd.DataFrame, target:str="Target_Column"
-                             target="Target_Column",  # Split_Racio:float=0.75 [0.5,0.95[ -> Recommended
-                             Split_Racio=0.75)
+fit_atl = atl.fit_processing(dataset=train,           # dataset:pd.DataFrame, target:str="Target_Column"
+                             target="Target_Column",  # split_ratio:float=0.75 [0.5,0.95[ -> Recommended
+                             split_ratio=0.75)
     
 # Customizable Option
-fit_atl = atl.fit_processing(Dataset=train,                  # Dataset:pd.DataFrame, 
+fit_atl = atl.fit_processing(dataset=train,                  # dataset:pd.DataFrame, 
                              target="Target_Column",         # target:str="Target_Column"
-                             Split_Racio=0.75,               # Split_Racio:float=0.75, total_vi:float=0.98 [0.5,1]
+                             split_ratio=0.75,               # split_ratio:float=0.75, total_vi:float=0.98 [0.5,1]
                              total_vi=0.98,                  # h2o_fs_models:int [1,50], encoding_fs:bool=True\False
                              h2o_fs_models=7,                # vif_ratio:float=10.0 [3,30]
                              encoding_fs=True,
@@ -108,8 +110,8 @@ There are multiple preprocessing functions available to direct use. This package
 import atlantic as atl
 import pandas as pd 
 
-train, test = atl.split_dataset(Dataset,Split_Racio=0.75) # Split Initial Dataframe
-                                                          # Dataset:pd.DataFrame, Split_Racio:float
+train, test = atl.split_dataset(dataset,split_ratio=0.75) # Split Initial Dataframe
+                                                          # dataset:pd.DataFrame, split_ratio:float
 target = "Target_Column" # -> target feature name
     
 ## Encoders
@@ -145,16 +147,17 @@ You can get filter your most valuable features from the dataset via this 2 featu
     
 * [VIF Feature Selection (Variance Inflation Factor)](https://www.investopedia.com/terms/v/variance-inflation-factor.asp) - Variance inflation factor aims at measuring the amount of multicollinearity in a set of multiple regression variables or features, therefore for this filtering function to be applied all input variables need to be of numeric type. It can be customized by changing the column selection treshold (VIF:float) designated with a default value of 10.
     
+    
 ```py    
     
-selected_columns, h2o_importance = atl.feature_selection_h2o(Dataset, # Dataset:pd.DataFrame ,target:str="Target_Column",
+selected_columns, h2o_importance = atl.feature_selection_h2o(dataset,     # dataset:pd.DataFrame ,target:str="Target_Column",
                                                              target,      #  total_vi:float [0.5,1], h2o_fs_models:int [1,50], encoding_fs:bool=True/False
                                                              total_vi=0.98,     
                                                              h2o_fs_models =7,
                                                              encoding_fs=True)
 
 
-selected_columns, vif_importance = atl.feature_selection_vif(Dataset, # Dataset:pd.DataFrame, target:str="Target_Column",
+selected_columns, vif_importance = atl.feature_selection_vif(dataset, # dataset:pd.DataFrame, target:str="Target_Column",
                                                              target,  # VIF:float [3,30]
                                                              VIF=10.0)
 ```
@@ -166,51 +169,36 @@ The engin_date function converts and transforms columns of Datetime type into ad
     
 ```py   
     
-dataset = atl.engin_date(Dataset,drop=False) # Dataset:pd.DataFrame, drop:bool
+dataset = atl.engin_date(dataset,drop=False) # dataset:pd.DataFrame, drop:bool
     
 ```
 
-### 2.4 Predictive Performance Metrics
-
-You can analyse the obtained predictive performance results by using the given bellow functions witch contains the most used metrics for each supervised predictive context.
+### 2.4 Null Imputation Auxiliar Functions
     
-    
-```py  
-
-reg_performance = pd.DataFrame(atl.metrics_regression(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
-    
-binary_class_Performance = pd.DataFrame(atl.metrics_binary_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
-    
-multiclass_performance = pd.DataFrame(atl.metrics_classification(y_true,y_pred),index=[0])    # y_true:list, y_pred:list
-    
-```
-
-### 2.5 Extra Auxiliar Functions
-    
-The following functions were used in the development of this project.
+The following simplified multivariate null imputation methods based from [Sklearn](https://scikit-learn.org/stable/modules/impute.html) can be used through this package.
     
 ```py  
     
 ## Simplified Null Imputation (Only numeric features)
 
-imputer_knn=atl.fit_KnnImp(df:pd.DataFrame,
+imputer_knn=atl.fit_KnnImp(dataset:pd.DataFrame,
                            target:str,
                            neighbors:int=5)
-df=atl.transform_KnnImp(df:pd.DataFrame,
+df=atl.transform_KnnImp(dataset:pd.DataFrame,
                         target:str,
                         imputer=imputer_knn)
 
-imputer_simple=atl.fit_SimpleImp(df:pd.DataFrame,
+imputer_simple=atl.fit_SimpleImp(dataset:pd.DataFrame,
                                  target:str,
                                  strat:str='mean')
-df=atl.transform_SimpleImp(df:pd.DataFrame,
+df=atl.transform_SimpleImp(dataset:pd.DataFrame,
                            target:str,
                            imputer=imputer_simple)
     
-imputer_iter=atl.fit_IterImp(df:pd.DataFrame, 
+imputer_iter=atl.fit_IterImp(dataset:pd.DataFrame, 
                              target:str, 
                              order:str='ascending')
-df=atl.transform_IterImp(df:pd.DataFrame,
+df=atl.transform_IterImp(dataset:pd.DataFrame,
                          target:str,
                          imputer=imputer_iter)
 ```   
