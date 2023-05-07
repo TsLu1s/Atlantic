@@ -14,7 +14,7 @@ def pred_eval(train:pd.DataFrame, test:pd.DataFrame, target:str):
     
     X_train,X_test,y_train,y_test=divide_dfs(train,test,target)  
     
-    list_estimators,rf,et=[100],[],[]
+    list_estimators,rf,et=[100,150],[],[]
     pred_type, eval_metric=target_type(train, target)
     
     for estimators in list_estimators:
