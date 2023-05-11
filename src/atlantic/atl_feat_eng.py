@@ -41,7 +41,7 @@ def divide_dfs(train:pd.DataFrame,test:pd.DataFrame,target:str):
 def slice_timestamp(dataset:pd.DataFrame):
     
     df=dataset.copy()
-    datetime_cols=list_date=list(df.select_dtypes(include=['datetime','datetime64[ns]']))
+    datetime_cols=list(df.select_dtypes(include=['datetime','datetime64[ns]']))
     for date_col in datetime_cols:
             df[date_col] = df[date_col].astype(str)
             df[date_col] = df[date_col].str.slice(0,19)
