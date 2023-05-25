@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 
 def split_dataset(dataset:pd.DataFrame, split_ratio:float):
     
-    assert split_ratio>=0.5 and split_ratio<=0.95 , 'split_ratio value should be in [0.5,0.95[ interval'
+    assert split_ratio>=0.5 and split_ratio<0.95 , 'split_ratio value should be in [0.5,0.95[ interval'
     
     train, test= train_test_split(dataset, train_size=split_ratio)
 
