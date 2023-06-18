@@ -28,7 +28,7 @@ Major frameworks used to built this project:
 ## Framework Architecture <a name = "ta"></a>
 
 <p align="center">
-  <img src="https://i.ibb.co/nb3Wh2X/ATL-Architecture-Final.png" align="center" width="800" height="680" />
+  <img src="https://i.ibb.co/C9dWJmk/ATL-Architecture-Final.png" align="center" width="800" height="680" />
 </p>    
 
 ## Where to get it <a name = "ta"></a>
