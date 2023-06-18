@@ -28,14 +28,12 @@ Major frameworks used to built this project:
 ## Framework Architecture <a name = "ta"></a>
 
 <p align="center">
-  <img src="https://i.ibb.co/nb3Wh2X/ATL-Architecture-Final.png" align="center" width="800" height="680" />
+  <img src="https://i.ibb.co/C9dWJmk/ATL-Architecture-Final.png" align="center" width="800" height="680" />
 </p>    
 
 ## Where to get it <a name = "ta"></a>
 
 Binary installer for the latest released version is available at the Python Package Index [PyPI](https://pypi.org/project/atlantic/).  
-
-The source code is currently hosted on GitHub at: https://github.com/TsLu1s/Atlantic
 
 ## Installation  
 
@@ -62,7 +60,7 @@ Importante Notes:
     
 * Default predictive evaluation metric for regression contexts is MAE (Mean Absolute Error) and classification is AUC (Accuracy).
 * Although functional, `Atlantic` data processing is not optimized for big data purposes yet.
-* Major update is now available in **versions>=1.0.5**
+* Major update is now available in **versions>=1.0.50**
     
 ```py
     
@@ -210,6 +208,3 @@ Distributed under the MIT License. See [LICENSE](https://github.com/TsLu1s/Atlan
 ## Contact 
  
 [Luis Santos - LinkedIn](https://www.linkedin.com/in/lu%C3%ADsfssantos/)   
-    
-
-Feel free to contact me and share your feedback.

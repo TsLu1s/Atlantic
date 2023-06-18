@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 
 def split_dataset(dataset:pd.DataFrame, split_ratio:float):
     
-    assert split_ratio>=0.5 and split_ratio<=0.95 , 'split_ratio value should be in [0.5,0.95[ interval'
+    assert split_ratio>=0.5 and split_ratio<0.95 , 'split_ratio value should be in [0.5,0.95[ interval'
     
     train, test= train_test_split(dataset, train_size=split_ratio)
 
@@ -41,7 +41,7 @@ def divide_dfs(train:pd.DataFrame,test:pd.DataFrame,target:str):
 def slice_timestamp(dataset:pd.DataFrame):
     
     df=dataset.copy()
-    datetime_cols=list_date=list(df.select_dtypes(include=['datetime','datetime64[ns]']))
+    datetime_cols=list(df.select_dtypes(include=['datetime','datetime64[ns]']))
     for date_col in datetime_cols:
             df[date_col] = df[date_col].astype(str)
             df[date_col] = df[date_col].str.slice(0,19)

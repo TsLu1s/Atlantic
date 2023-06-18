@@ -19,7 +19,7 @@ def fit_SimpleImp(dataset:pd.DataFrame,
     :return: A simpleimputer object
     """
     
-    df,df_=dataset.copy(),dataset.copy()
+    df=dataset.copy()
     df=df.loc[:, df.columns != target]
     input_cols= list(df.columns)
 
@@ -60,7 +60,7 @@ def fit_KnnImp(dataset:pd.DataFrame,
                target:str, 
                neighbors:int=5):
     
-    df,df_=dataset.copy(),dataset.copy()
+    df=dataset.copy()
     df=df.loc[:, df.columns != target]
     imputer = KNNImputer(n_neighbors=neighbors)
     imputer.fit(df)
@@ -87,7 +87,7 @@ def fit_IterImp(dataset:pd.DataFrame,
                 target:str, 
                 order:str='ascending'):
     
-    df,df_=dataset.copy(),dataset.copy()
+    df=dataset.copy()
     
     df=df.loc[:, df.columns != target]
     imputer = IterativeImputer(imputation_order=order,max_iter=10,random_state=0,n_nearest_features=None)
@@ -554,4 +554,5 @@ def Select_Encoding_Method(train:pd.DataFrame,
         print(' ')
         
     return enc_method
+
 
