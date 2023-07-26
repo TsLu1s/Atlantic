@@ -58,7 +58,7 @@ You can customize the main function (customizable option) by altering the follow
  
 Importante Notes:
     
-* Default predictive evaluation metric for regression contexts is MAE (Mean Absolute Error) and classification is AUC (Accuracy).
+* Default predictive evaluation metric for regression contexts is MAE (Mean Absolute Error) and classification is Accuracy.
 * Although functional, `Atlantic` data processing is not optimized for big data purposes yet.
 * Major update is now available in **versions>=1.0.50**
     
@@ -141,7 +141,7 @@ You can get filter your most valuable features from the dataset via this 2 featu
   * total_vi: Minimal value of the total sum of relative variable\feature importance percentage selected.
   * h2o_fs_models: Quantity of models generated for competition to evaluate the relative importance of each feature (only leaderboard model will be selected for evaluation).
   * encoding_fs: You can choose if you want to encond your features in order to reduce loading time in "H2O AutoML feature selection" step. If in "True" mode label encoding is applied to categorical features.
-    
+
     
 * [VIF Feature Selection (Variance Inflation Factor)](https://www.investopedia.com/terms/v/variance-inflation-factor.asp) - Variance inflation factor aims at measuring the amount of multicollinearity in a set of multiple regression variables or features, therefore for this filtering function to be applied all input variables need to be of numeric type. It can be customized by changing the column selection treshold (VIF:float) designated with a default value of 10.
     
@@ -199,8 +199,24 @@ imputer_iter=atl.fit_IterImp(dataset:pd.DataFrame,
 df=atl.transform_IterImp(dataset:pd.DataFrame,
                          target:str,
                          imputer=imputer_iter)
-```   
-    
+```
+
+### Citation
+
+Feel free to cite Atlantic as following:
+```
+@article{SANTOS2023100532,
+  author = {Luís Santos and Luís Ferreira}
+  title = {Atlantic - Automated data preprocessing framework for supervised machine learning},
+  journal = {Software Impacts},
+  volume = {17},
+  year = {2023},
+  issn = {2665-9638},
+  doi = {http://dx.doi.org/10.1016/j.simpa.2023.100532},
+  url = {https://www.sciencedirect.com/science/article/pii/S2665963823000696}
+}
+```
+
 ## License
 
 Distributed under the MIT License. See [LICENSE](https://github.com/TsLu1s/Atlantic/blob/main/LICENSE) for more information.
