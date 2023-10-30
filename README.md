@@ -103,8 +103,7 @@ pickle.dump(atl, output)
 There are multiple preprocessing methods available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) methods with an automatic multicolumn application. 
  
 ```py
-import atlantic.analysis import Analysis
-from atlantic.processing import AutoLabelEncoder, AutoIdfEncoder, AutoOneHotEncoder, Encoding_Version #,BaseTransformer
+from atlantic.processing import AutoLabelEncoder, AutoIdfEncoder, AutoOneHotEncoder
 import pandas as pd
 from sklearn.model_selection import train_test_split 
 
