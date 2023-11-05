@@ -21,6 +21,8 @@ Major frameworks used to built this project:
    
 * [H2O.ai](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html)
 * [Scikit-learn](https://scikit-learn.org/stable/)
+* [XGBoost](https://xgboost.readthedocs.io/en/stable/)
+* [Optuna](https://optuna.org/)
 * [Pandas](https://pandas.pydata.org/)
 
     
@@ -32,7 +34,8 @@ Major frameworks used to built this project:
 
 ## Where to get it <a name = "ta"></a>
 
-Binary installer for the latest released version is available at the Python Package Index [PyPI](https://pypi.org/project/atlantic/).  
+Binary installer for the latest released version is available at the Python Package Index ([PyPI](https://pypi.org/project/atlantic/)).  
+
 
 ## Installation  
 
@@ -70,7 +73,7 @@ from sklearn.model_selection import train_test_split
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
 
 train,test = train_test_split(data, train_size=0.8)
-train,test=train.reset_index(drop=True), test.reset_index(drop=True) # Required 
+train,test = train.reset_index(drop=True), test.reset_index(drop=True) # Required 
 
 ### Fit Data Processing
 
@@ -108,7 +111,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split 
 
 train,test = train_test_split(data, train_size=0.8)
-train,test=train.reset_index(drop=True), test.reset_index(drop=True) # Required
+train,test = train.reset_index(drop=True), test.reset_index(drop=True) # Required
 
 target = "Target_Column" # -> target feature name
     
@@ -126,8 +129,8 @@ encoder = AutoOneHotEncoder()
 encoder.fit(train[cat_cols])
 
 # Transform the DataFrame using Label\IDF\One-hot Encoding
-train=encoder.transform(X=train)
-test=encoder.transform(X=test)
+train = encoder.transform(X=train)
+test = encoder.transform(X=test)
 
 # Label Encoding : Perform an inverse transform to convert it back the categorical columns values
 test = encoder.inverse_transform(X=test)
@@ -155,10 +158,12 @@ You can get filter your most valuable features from the dataset via this 2 featu
 from atlantic.selector import Selector
 
 fs=Selector(X=train,target="Target_Column")
-cols_vif=fs.feature_selection_vif(vif_threshold=10.0)   # X: Only numerical values allowed & No nans allowed in VIF
-selected_cols, selected_importance=fs.feature_selection_h2o(relevance=0.99,     # relevance:float [0.5,1], h2o_fs_models:int [1,50]
-                                                            h2o_fs_models=7,    # encoding_fs:bool=True/False
-                                                            encoding_fs=True)
+
+cols_vif = fs.feature_selection_vif(vif_threshold=10.0)   # X: Only numerical values allowed & No nans allowed in VIF
+
+selected_cols, selected_importance = fs.feature_selection_h2o(relevance=0.99,     # relevance:float [0.5,1], h2o_fs_models:int [1,50]
+                                                              h2o_fs_models=7,    # encoding_fs:bool=True/False
+                                                              encoding_fs=True)
 ```
     
 ### 2.3 Null Imputation Auxiliar Methods
