@@ -68,12 +68,14 @@ Importante Notes:
     
 from atlantic.pipeline import ATLpipeline
 import pandas as pd
-from sklearn.model_selection import train_test_split 
+from sklearn.model_selection import train_test_split
+import warnings
+warnings.filterwarnings("ignore", category=Warning) # -> For a clean console
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
 
 train,test = train_test_split(data, train_size=0.8)
-train,test = train.reset_index(drop=True), test.reset_index(drop=True) # Required 
+train,test = train.reset_index(drop=True), test.reset_index(drop=True) # -> Required 
 
 ### Fit Data Processing
 
