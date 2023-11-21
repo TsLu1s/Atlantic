@@ -31,14 +31,14 @@ class Analysis:
         # Determines the prediction type and evaluation metric based on target data type.
         target_dtype = X[self.target].dtype
         pred_type, eval_metric = 'Reg', 'Mean Absolute Error'
-        if target_dtype not in ['int64', 'float64', 'float32']:
+        if target_dtype not in ['int32', 'int64', 'float32', 'float64']:
             pred_type, eval_metric = 'Class', 'Accuracy'
             
         return pred_type, eval_metric
 
     def num_cols(self, X: pd.DataFrame):
         # Returns a list of numerical columns (int64 and float64) in the DataFrame.
-        return [col for col in X.select_dtypes(include=['int64', 'float64','float32']).columns if col != self.target]
+        return [col for col in X.select_dtypes(include=['int32', 'int64', 'float32', 'float64']).columns if col != self.target]
 
     def cat_cols(self, X: pd.DataFrame):
         # Returns a list of categorical columns (object data type) in the DataFrame.
