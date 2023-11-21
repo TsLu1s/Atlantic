@@ -186,7 +186,7 @@ class Encoding_Version:
         self.test = test
         self.target = target
         self.cat_cols = [col for col in self.train.select_dtypes(include=['object']).columns if col != self.target]
-        self.num_cols = [col for col in self.train.select_dtypes(include=['int64', 'float64']).columns if col != self.target]
+        self.num_cols = [col for col in self.train.select_dtypes(include=['int32', 'int64', 'float32', 'float64']).columns if col != self.target]
         
     @staticmethod
     def apply_encoder(train, test, encoder_, cols):
