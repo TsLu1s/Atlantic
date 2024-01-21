@@ -83,7 +83,7 @@ test_df[num_cols] = scaler.inverse_transform(X=test_df[num_cols])
 
 
 ########################################################################
-################# Automated (Sklearn) Null Imputation [Only numeric features]
+################# Automated Null Imputation [Only numeric features]
 
 # Example usage of AutoSimpleImputer
 simple_imputer = AutoSimpleImputer(strategy='mean')
