@@ -38,16 +38,6 @@ class AutoSimpleImputer(TransformerMixin):
         
         return X
     
-    def inverse_transform(self, X):
-        
-        if self.imputer is None:
-            raise ValueError("You must call 'fit' first to initialize the imputer.")
-        
-        # Reverse the imputation on numeric columns
-        X[self.numeric_columns] = self.imputer.inverse_transform(X[self.numeric_columns])
-    
-        return X
-    
     def impute(self,train:pd.DataFrame, test:pd.DataFrame, strategy:str="mean"):
         if strategy is not None:
             self.strategy = strategy  # Update the strategy if provided
@@ -95,16 +85,6 @@ class AutoKNNImputer(TransformerMixin):
         X[self.numeric_columns] = imputed_numeric
         
         return X
-    
-    def inverse_transform(self, X):
-        
-        if self.imputer is None:
-            raise ValueError("You must call 'fit' first to initialize the imputer.")
-        
-        # Reverse the imputation on numeric columns
-        X[self.numeric_columns] = self.imputer.inverse_transform(X[self.numeric_columns])
-    
-        return X
 
 class AutoIterativeImputer(TransformerMixin):
 
@@ -148,18 +128,7 @@ class AutoIterativeImputer(TransformerMixin):
         X[self.numeric_columns] = imputed_numeric
         
         return X
+  
     
-    def inverse_transform(self, X):
-        
-        if self.imputer is None:
-            raise ValueError("You must call 'fit' first to initialize the imputer.")
-        
-        # Reverse the imputation on numeric columns
-        X[self.numeric_columns] = self.imputer.inverse_transform(X[self.numeric_columns])
-    
-        return X
-    
-    
-    
-    
-    
+
+
