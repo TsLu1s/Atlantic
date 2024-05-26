@@ -32,7 +32,7 @@ atl = Atlantic(X = train,              # X:pd.DataFrame, target:str="Target_Colu
                target = target_col)
 
 atl.fit_processing(split_ratio = 0.75,   # split_ratio:float=0.75, relevance:float=0.99 [0.4,1]
-                   relevance = 0.99,     # h2o_fs_models:int [1,5100], encoding_fs:bool=True\False
+                   relevance = 0.99,     # h2o_fs_models:int [1,100], encoding_fs:bool=True\False
                    h2o_fs_models = 7,    # vif_ratio:float=10.0 [3,30]
                    encoding_fs = True,
                    vif_ratio = 10.0)
