@@ -1,7 +1,14 @@
-from atlantic.processing import AutoMinMaxScaler, AutoStandardScaler, AutoLabelEncoder, AutoIdfEncoder, AutoOneHotEncoder
-from atlantic.imputation import AutoSimpleImputer, AutoKNNImputer, AutoIterativeImputer
-from atlantic.analysis import Analysis 
-from atlantic.selector import Selector 
+from atlantic.processing.analysis import Analysis 
+from atlantic.processing.scalers import (AutoMinMaxScaler, 
+                                         AutoStandardScaler,
+                                         AutoRobustScaler)
+from atlantic.processing.encoders import (AutoLabelEncoder, 
+                                          AutoIdfEncoder,
+                                          AutoOneHotEncoder)
+from atlantic.imputers.imputation import (AutoSimpleImputer, 
+                                          AutoKNNImputer,
+                                          AutoIterativeImputer)
+from atlantic.feature_selection.selector import Selector  
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import warnings
@@ -72,6 +79,8 @@ num_cols = list(Analysis(target).num_cols(X=train_df))
 scaler = AutoStandardScaler()
 ### MinMax Scaler
 scaler = AutoMinMaxScaler()
+### Robust Scaler
+scaler = AutoRobustScaler()
 
 scaler.fit(X=train_df[num_cols])
 
@@ -115,8 +124,8 @@ df_imputed_test.select_dtypes(include=["float","int"]).isnull().sum()
 ########################################################################
 ################# Feature Selection #################
 
-fs=Selector(X=train,target=target)
-cols_vif=fs.feature_selection_vif(vif_threshold=10.0)   # X: Only numerical values allowed & No nans allowed
-selected_cols, selected_importance=fs.feature_selection_h2o(relevance=0.98,     # total_vi:float [0.5,1], h2o_fs_models:int [1,50]
-                                                            h2o_fs_models=7,    # encoding_fs:bool=True/False
-                                                            encoding_fs=True)
+fs = Selector(X = train, target = target)
+cols_vif = fs.feature_selection_vif(vif_threshold = 10.0)                           # X: Only numerical values allowed & No nans allowed
+selected_cols, selected_importance = fs.feature_selection_h2o(relevance = 0.98,     # total_vi:float [0.5,1], h2o_fs_models:int [1,100]
+                                                              h2o_fs_models = 7,    # encoding_fs:bool=True/False
+                                                              encoding_fs = True)

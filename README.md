@@ -36,7 +36,6 @@ Major frameworks used to built this project:
 
 Binary installer for the latest released version is available at the Python Package Index [(PyPI)](https://pypi.org/project/atlantic/).  
 
-
 ## Installation  
 
 To install this package from Pypi repository run the following command:
@@ -50,48 +49,56 @@ pip install atlantic
 ## 1. Atlantic - Automated Data Preprocessing Pipeline
 
 In order to be able to apply the automated preprocessing `atlantic` pipeline you need first to import the package. 
-The following needed step is to load a dataset and define your to be predicted target column name into the variable `target` and define split ratio for your Train and Validation subsets.
+The following needed step is to load a dataset, split it and define your to be predicted target column name into the variable `target`.
 You can customize the `fit_processing` method by altering the following running pipeline parameters:
-* split_ratio: Division ratio in which the preprocessing methods will be evaluated within the loaded Dataset.
-* relevance: Minimal value of the total sum of relative variable\feature importance percentage selected in the `H2O AutoML feature selection` step.
+* split_ratio: Division ratio (Train\Validation) in which the preprocessing methods will be evaluated within the loaded Dataset.
+* relevance: Minimal value of the total sum of relative feature importance percentage selected in the `H2O AutoML feature selection` step.
 * h2o_fs_models: Quantity of models generated for competition in step `H2O AutoML feature selection` to evaluate the relative importance of each feature (only leaderboard model is selected for evaluation).
-* encoding_fs: You can choose if you want to encond your features in order to reduce loading time in `H2O AutoML feature selection` step. If in `True` mode label encoding is applied to categorical features.
+* encoding_fs: You can choose if you want to enconde categorical features in order to reduce loading time in `H2O AutoML feature selection` step.
 * vif_ratio: This value defines the minimal `threshold` for Variance Inflation Factor filtering (default value=10).
+
+Once the data fitting process is complete, you can automaticaly optimize preprocessing transformations on all future dataframes with the same properties using the `data_processing` method.
  
 Importante Notes:
     
 * Default predictive evaluation metric for regression contexts is `Mean Absolute Error` and classification is `Accuracy`.
 * Although functional, `Atlantic` data processing is not optimized for big data purposes yet.
-* Major update is now available in **versions>=1.1.0**
     
 ```py
-    
-from atlantic.pipeline import ATLpipeline
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from atlantic.pipeline import Atlantic
 import warnings
 warnings.filterwarnings("ignore", category=Warning) # -> For a clean console
     
 data = pd.read_csv('csv_directory_path', encoding='latin', delimiter=',') # Dataframe Loading Example
 
-train,test = train_test_split(data, train_size=0.8)
-train,test = train.reset_index(drop=True), test.reset_index(drop=True) # -> Required 
+train,test = train_test_split(data, train_size = 0.8)
+test,future_data = train_test_split(test, train_size = 0.6)
+
+# Resetting Index is Required
+train = train.reset_index(drop=True)
+test = test.reset_index(drop=True)
+future_data = future_data.reset_index(drop=True)
+
+future_data.drop(columns=["Target_Column"], inplace=True) # Drop Target
 
 ### Fit Data Processing
 
-atl = ATLpipeline(X=train,              # X:pd.DataFrame, target:str="Target_Column"
-                  target="Target Column")    
+atl = Atlantic(X = train,                # X:pd.DataFrame, target:str="Target_Column"
+               target = "Target Column")    
 
-atl.fit_processing(split_ratio=0.75,   # split_ratio:float=0.75, relevance:float=0.99 [0.5,1]
-                   relevance=0.99,     # h2o_fs_models:int [1,50], encoding_fs:bool=True\False
-                   h2o_fs_models=7,    # vif_ratio:float=10.0 [3,30]
-                   encoding_fs=True,
-                   vif_ratio=10.0)
+atl.fit_processing(split_ratio = 0.75,   # split_ratio:float=0.75, relevance:float=0.99 [0.5,1]
+                   relevance = 0.99,     # h2o_fs_models:int [1,100], encoding_fs:bool=True\False
+                   h2o_fs_models = 7,    # vif_ratio:float=10.0 [3,30]
+                   encoding_fs = True,
+                   vif_ratio = 10.0)
 
 ### Transform Data Processing
 
-train = atl.data_processing(X=train)
-test = atl.data_processing(X=test)
+train = atl.data_processing(X = train)
+test = atl.data_processing(X = test)
+future_data = atl.data_processing(X = future_data)
 
 ### Export Atlantic Preprocessing Metadata
 
@@ -108,16 +115,16 @@ pickle.dump(atl, output)
 There are multiple preprocessing methods available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) methods with an automatic multicolumn application. 
  
 ```py
-from atlantic.processing import AutoLabelEncoder, AutoIdfEncoder, AutoOneHotEncoder
 import pandas as pd
 from sklearn.model_selection import train_test_split 
+from atlantic.processing.encoders import AutoLabelEncoder, AutoIdfEncoder, AutoOneHotEncoder
 
 train,test = train_test_split(data, train_size=0.8)
 train,test = train.reset_index(drop=True), test.reset_index(drop=True) # Required
 
 target = "Target_Column" # -> target feature name
     
-cat_cols=[col for col in data.select_dtypes(include=['object']).columns if col != target]
+cat_cols = [col for col in data.select_dtypes(include=['object']).columns if col != target]
 
 ### Encoders
 ## Create Label Encoder
@@ -131,11 +138,11 @@ encoder = AutoOneHotEncoder()
 encoder.fit(train[cat_cols])
 
 # Transform the DataFrame using Label\IDF\One-hot Encoding
-train = encoder.transform(X=train)
-test = encoder.transform(X=test)
+train = encoder.transform(X = train)
+test = encoder.transform(X = test)
 
 # Label Encoding : Perform an inverse transform to convert it back the categorical columns values
-test = encoder.inverse_transform(X=test)
+test = encoder.inverse_transform(X = test)
 
 # IDF & One-hot Encoding : Perform an inverse transform to convert it back the categorical columns values
 # Note: Only decodes the last transformed Dataframe
@@ -152,20 +159,19 @@ You can get filter your most valuable features from the dataset via this 2 featu
   * h2o_fs_models: Quantity of models generated for competition to evaluate the relative importance of each feature (only leaderboard model will be selected for evaluation).
   * encoding_fs: You can choose if you want to encond your features in order to reduce loading time. If in `True` mode label encoding is applied to categorical features.
     
-    
 * [VIF Feature Selection (Variance Inflation Factor)](https://www.investopedia.com/terms/v/variance-inflation-factor.asp) - Variance inflation factor aims at measuring the amount of multicollinearity in a set of multiple regression variables or features, therefore for this filtering method to be applied all input variables need to be of numeric type. It can be customized by changing the column filtering treshold `vif_threshold` designated with a default value of 10.
     
     
 ```py    
-from atlantic.selector import Selector
+from atlantic.feature_selection.selector import Selector
 
-fs=Selector(X=train,target="Target_Column")
+fs = Selector(X = train, target = "Target_Column")
 
-cols_vif = fs.feature_selection_vif(vif_threshold=10.0)   # X: Only numerical values allowed & No nans allowed in VIF
+cols_vif = fs.feature_selection_vif(vif_threshold = 10.0)   # X: Only numerical values allowed & No nans allowed in VIF
 
-selected_cols, selected_importance = fs.feature_selection_h2o(relevance=0.99,     # relevance:float [0.5,1], h2o_fs_models:int [1,50]
-                                                              h2o_fs_models=7,    # encoding_fs:bool=True/False
-                                                              encoding_fs=True)
+selected_cols, selected_importance = fs.feature_selection_h2o(relevance = 0.99,     # relevance:float [0.5,1], h2o_fs_models:int [1,100]
+                                                              h2o_fs_models = 7,    # encoding_fs:bool=True/False
+                                                              encoding_fs = True)
 ```
     
 ### 2.3 Null Imputation Auxiliar Methods
@@ -175,26 +181,26 @@ Simplified and automated multivariate null imputation methods based from [Sklear
 ```py  
 
 ## Simplified Null Imputation (Only numeric features)
-from atlantic.imputation import AutoSimpleImputer, AutoKNNImputer, AutoIterativeImputer
+from atlantic.imputers.imputation import AutoSimpleImputer, AutoKNNImputer, AutoIterativeImputer
 
 # Example usage of AutoSimpleImputer
-simple_imputer = AutoSimpleImputer(strategy='mean')
+simple_imputer = AutoSimpleImputer(strategy = 'mean')
 simple_imputer.fit(train)  # Fit on the Train DataFrame
 df_imputed = simple_imputer.transform(train.copy())  # Transform the Train DataFrame
 df_imputed_test = simple_imputer.transform(test.copy()) # Transform the Test DataFrame
 
 # Example usage of AutoKNNImputer
-knn_imputer = AutoKNNImputer(n_neighbors=3,
-                             weights="uniform")
+knn_imputer = AutoKNNImputer(n_neighbors = 3,
+                             weights = "uniform")
 knn_imputer.fit(train)  # Fit on the Train DataFrame
 df_imputed = knn_imputer.transform(train.copy())  # Transform the Train DataFrame
 df_imputed_test = knn_imputer.transform(test.copy()) # Transform the Test DataFrame
 
 # Example usage of AutoIterativeImputer
-iterative_imputer = AutoIterativeImputer(max_iter=10, 
-                                         random_state=0, 
-                                         initial_strategy="mean", 
-                                         imputation_order="ascending")
+iterative_imputer = AutoIterativeImputer(max_iter = 10, 
+                                         random_state = 0, 
+                                         initial_strategy = "mean", 
+                                         imputation_order = "ascending")
 iterative_imputer.fit(train)  # Fit on the Train DataFrame
 df_imputed = iterative_imputer.transform(train.copy())  # Transform the Train DataFrame
 df_imputed_test = iterative_imputer.transform(test.copy()) # Transform the Test DataFrame

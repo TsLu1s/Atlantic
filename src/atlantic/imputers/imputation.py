@@ -6,8 +6,8 @@ from sklearn.base import TransformerMixin
 
 class AutoSimpleImputer(TransformerMixin):
     def __init__(self, 
-                 strategy:str='mean', # {"mean", "median", "most_frequent", "constant"}
-                 target:str=None):
+                 strategy : str = 'mean', # {"mean", "median", "most_frequent", "constant"}
+                 target : str = None):
         self.strategy = strategy 
         self.target = target
         self.imputer = None
@@ -52,9 +52,10 @@ class AutoSimpleImputer(TransformerMixin):
         return train, test
 
 class AutoKNNImputer(TransformerMixin):
-    def __init__(self, n_neighbors:int=5,
-                 weights:str="uniform", #{"uniform", "distance"}
-                 target:str=None):
+    def __init__(self, 
+                 n_neighbors : int = 5,
+                 weights : str = "uniform", #{"uniform", "distance"}
+                 target : str = None):
         self.n_neighbors = n_neighbors
         self.weights = weights
         self.target = target
@@ -88,11 +89,12 @@ class AutoKNNImputer(TransformerMixin):
 
 class AutoIterativeImputer(TransformerMixin):
 
-    def __init__(self, max_iter:int=10, 
-                 random_state:int=None, 
-                 initial_strategy:str="mean", # {"mean", "median", "most_frequent", "constant"}
-                 imputation_order:str="ascending", # {"ascending", "descending", "roman", "arabic", "random"}
-                 target:str=None):
+    def __init__(self,
+                 max_iter : int = 10, 
+                 random_state : int = None, 
+                 initial_strategy : str = "mean", # {"mean", "median", "most_frequent", "constant"}
+                 imputation_order : str = "ascending", # {"ascending", "descending", "roman", "arabic", "random"}
+                 target : str = None):
         self.max_iter = max_iter
         self.random_state = random_state
         self.initial_strategy = initial_strategy
@@ -128,7 +130,7 @@ class AutoIterativeImputer(TransformerMixin):
         X[self.numeric_columns] = imputed_numeric
         
         return X
-  
     
-
-
+    
+        
+    
