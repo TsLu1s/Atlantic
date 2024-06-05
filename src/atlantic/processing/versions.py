@@ -1,5 +1,5 @@
 import pandas as pd
-from atlantic.processing.encoders import AutoLabelEncoder, AutoIdfEncoder #, AutoOneHotEncoder
+from atlantic.processing.encoders import AutoLabelEncoder, AutoIFrequencyEncoder #, AutoOneHotEncoder
 from atlantic.processing.scalers import AutoMinMaxScaler, AutoStandardScaler #, AutoRobustScaler
 
 class Encoding_Version:
@@ -81,14 +81,13 @@ class Encoding_Version:
 
     def encoding_v1(self):
         """
-        Apply Standard Scaling to numerical columns and IDF Encoding to categorical columns.
+        Apply Standard Scaling to numerical columns and Inverse Frequency Encoding to categorical columns.
         
         This method generates a version of the training and testing datasets where numerical features are scaled
-        using the standard scaling technique and categorical features are encoded using the Inverse Document 
-        Frequency (IDF) encoding method. The standard scaling transforms numerical features to have zero mean 
-        and unit variance, which is crucial for many machine learning algorithms. The IDF encoding transforms 
-        categorical features based on the frequency of terms, providing a more informative encoding than simple 
-        one-hot encoding.
+        using the standard scaling technique and categorical features are encoded using the Inverse Frequency
+        encoding method. The standard scaling transforms numerical features to have zero mean nd unit variance,
+        a which is crucial for many machine learning algorithms. The IDF encoding transforms categorical features
+        based on the frequency of terms, providing a more informative encoding than simple one-hot encoding.
 
         Returns:
         - train_enc: pd.DataFrame
@@ -98,12 +97,12 @@ class Encoding_Version:
         """
         train_enc, test_enc = self.train.copy(), self.test.copy()
         self.apply_encoder(train_enc, test_enc, AutoStandardScaler, self.num_cols)
-        self.apply_encoder(train_enc, test_enc, AutoIdfEncoder, self.cat_cols)
+        self.apply_encoder(train_enc, test_enc, AutoIFrequencyEncoder, self.cat_cols)
         return train_enc, test_enc
 
     def encoding_v2(self):
         """
-        Apply MinMax Scaling to numerical columns and IDF Encoding to categorical columns.
+        Apply MinMax Scaling to numerical columns and Inverse Frequency Encoding to categorical columns.
         
         This method generates a version of the training and testing datasets where numerical features are scaled
         using the MinMax scaling technique and categorical features are encoded using the Inverse Document 
@@ -119,7 +118,7 @@ class Encoding_Version:
         """
         train_enc, test_enc = self.train.copy(), self.test.copy()
         self.apply_encoder(train_enc, test_enc, AutoMinMaxScaler, self.num_cols)
-        self.apply_encoder(train_enc, test_enc, AutoIdfEncoder, self.cat_cols)
+        self.apply_encoder(train_enc, test_enc, AutoIFrequencyEncoder, self.cat_cols)
         return train_enc, test_enc
 
     def encoding_v3(self):

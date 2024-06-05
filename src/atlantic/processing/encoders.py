@@ -1,7 +1,7 @@
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-from sklearn.base import TransformerMixin
-import cane
+from sklearn.base import BaseEstimator, TransformerMixin
        
 class AutoLabelEncoder(TransformerMixin):
     def __init__(self):
@@ -179,78 +179,89 @@ class AutoOneHotEncoder(TransformerMixin):
                     
         return self.decoded
         
-class AutoIdfEncoder(TransformerMixin):
+class AutoIFrequencyEncoder(BaseEstimator, TransformerMixin):
     def __init__(self):
         """
-        Initialize an instance of the AutoIdfEncoder class. This class provides functionality for encoding categorical features
-        using an IDF (Inverse Document Frequency) based approach, which is a technique often used in text processing to evaluate
-        how important a word is to a document in a collection.
+        Initialize an instance of the AutoFrequencyEncoder class. This class provides functionality for encoding categorical features
+        using a frequency-based approach, and then applying a logarithmic transformation to set importance based on incidence.
         
         Attributes:
-        idf_fit (dict): A dictionary to store the IDF mapping for each column.
+        freq_fit (dict): A dictionary to store the frequency mapping for each column.
         columns (Index): Stores the column names of the DataFrame being transformed.
+        ratio (float): Scaling ratio to adjust the log transformation.
         """
-        self.idf_fit = None
+        self.freq_fit = None
         self.columns = None
+        self._ratio = 1
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         """
-        Fit the IDF encoders to each column in the DataFrame. This method prepares the encoder for transforming the
-        categorical data based on the IDF values.
+        Fit the encoder to the input DataFrame X to compute the frequency of each category.
         
         Parameters:
-        X (pd.DataFrame): The input DataFrame containing the categorical features to be encoded.
+        X (pd.DataFrame): The input DataFrame containing categorical features to be encoded.
+        y: Ignored.
         
         Returns:
-        self: The fitted instance of AutoIdfEncoder.
-        
-        Raises:
-        ValueError: If the `columns` attribute is not specified during initialization.
+        self: Returns the instance itself.
         """
         self.columns = X.columns
-        
+        self.X_size = X.shape[0]  # Store the size of the training data
+
         if self.columns is None:
-            raise ValueError("You must specify categorical_columns when creating the AutoIdfEncoding instance.")
+            raise ValueError("You must specify categorical columns when creating the AutoFrequencyEncoder instance.")
         
-        IDF_filter = cane.idf(X, n_coresJob=2, disableLoadBar=True, columns_use=self.columns)
-        self.idf_fit = cane.idfDictionary(Original=X, Transformed=IDF_filter, columns_use=self.columns)
+        # Calculate frequency of each category
+        self.freq_fit = {}
+        for col in self.columns:
+            frequency = X[col].value_counts().to_dict()
+            self.freq_fit[col] = frequency
         
         return self
 
     def transform(self, X):
         """
-        Transform the categorical features in the DataFrame based on the fitted IDF values. This method maps each category
-        to its corresponding IDF value.
+        Transform the input DataFrame X using the fitted frequency mapping and apply a logarithmic transformation.
         
         Parameters:
-        X (pd.DataFrame): The input DataFrame containing the categorical features to be transformed.
+        X (pd.DataFrame): The input DataFrame containing categorical features to be encoded.
         
         Returns:
-        pd.DataFrame: A DataFrame with the categorical features encoded based on their IDF values.
-        
-        Raises:
-        ValueError: If the transformer has not been fitted yet.
+        pd.DataFrame: The encoded DataFrame with frequency values transformed by a logarithmic function.
         """
-        if self.idf_fit is None:
+        if self.freq_fit is None:
             raise ValueError("The transformer has not been fitted yet.")
         
         X_encoded = X.copy()
         self.decoded = X.copy()
-
+        
         for col in self.columns:
-            X_encoded[col] = X_encoded[col].map(self.idf_fit[col]).fillna(max(self.idf_fit[col].values()))
+            # Map frequencies to the column values
+            frequency_map = self.freq_fit[col]
+            
+            # Apply log transformation to the frequencies
+            def transform_value(x):
+                if pd.isna(x):
+                    return x
+                if x in frequency_map:
+ 
+                    return np.log1p(int(self.X_size * self._ratio) / frequency_map[x])
+                else:
+                    return np.log1p(int(self.X_size * self._ratio) / min(frequency_map.values()))
+            
+            X_encoded[col] = X[col].map(transform_value)
             
         return X_encoded
     
     def inverse_transform(self):
         """
-        Inverse transform the IDF-encoded values back to the original categorical values using the stored original DataFrame.
+        Returns the original DataFrame before transformation.
+        
+        Parameters:
+        X (pd.DataFrame): The input DataFrame to be inverse transformed.
         
         Returns:
-        pd.DataFrame: The original DataFrame before transformation.
-        
-        Raises:
-        ValueError: If the transformer has not been fitted yet.
+        pd.DataFrame: The original DataFrame.
         """
         if self.columns is None:
             raise ValueError("The transformer has not been fitted yet.")

@@ -4,7 +4,7 @@ from atlantic.processing.scalers import (AutoMinMaxScaler,
                                          AutoStandardScaler,
                                          AutoRobustScaler) 
 from atlantic.processing.encoders import (AutoLabelEncoder,
-                                          AutoIdfEncoder,
+                                          AutoIFrequencyEncoder,
                                           AutoOneHotEncoder) 
 from atlantic.processing.versions import Encoding_Version
 from atlantic.imputers.imputation import (AutoSimpleImputer,
@@ -188,7 +188,7 @@ class Atlantic(Selector):
         if len(self.c_cols) > 0:
             
             if self.enc_method == 'Encoding Version 1' or self.enc_method == 'Encoding Version 2':
-                    self.encoder = AutoIdfEncoder()
+                    self.encoder = AutoIFrequencyEncoder()
                     self.encoder.fit(data[self.c_cols])
                     data = self.encoder.transform(X = data)
                     
@@ -265,7 +265,7 @@ __all__ = [
     'AutoStandardScaler',
     'AutoRobustScaler',
     'AutoLabelEncoder',
-    'AutoIdfEncoder',
+    'AutoIFrequencyEncoder',
     'AutoOneHotEncoder',
     'Encoding_Version',
     'AutoSimpleImputer',

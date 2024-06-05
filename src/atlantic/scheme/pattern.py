@@ -109,8 +109,8 @@ class Pattern(Evaluation):
         metric = 'MAE' if self.pred_type == 'Reg' else 'ACC'
         
         print('\nPredictive Performance Encoding Versions:')
-        print(f'\n Version 1 [IDF + StandardScaler] : {round(p_v1, 4)}',
-              f'\n Version 2 [IDF + MinMaxScaler] : {round(p_v2, 4)}',
+        print(f'\n Version 1 [IFrequency + StandardScaler] : {round(p_v1, 4)}',
+              f'\n Version 2 [IFrequency + MinMaxScaler] : {round(p_v2, 4)}',
               f'\n Version 3 [Label + StandardScaler] : {round(p_v3, 4)}',
               f'\n Version 4 [Label + MinMaxScaler] : {round(p_v4, 4)}')
         
