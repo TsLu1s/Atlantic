@@ -1,6 +1,6 @@
 <br>
 <p align="center">
-  <h2 align="center"> Atlantic: Automated Data Preprocessing Framework for Supervised Machine Learning
+  <h2 align="center"> Atlantic - Automated Data Preprocessing Framework for Supervised Machine Learning
   <br>
   
 ## Framework Contextualization <a name = "ta"></a>
@@ -9,11 +9,11 @@ The `Atlantic` project constitutes an comprehensive and objective approach to si
 
 This project aims at providing the following application capabilities:
 
-* General applicability on tabular datasets: The developed preprocessing procedures are applicable on any data table associated with Supervised Machine Learning scopes regardless of the properties or specifications of the Dataset features.
+* General applicability on tabular datasets: The developed preprocessing procedures are applicable on multiple domains associated with Supervised Machine Learning, regardless of the properties or specifications of the data.
 
-* Automated treatment of tabular data associated with predictive analysis: It implements a global and carefully validated tested data treatment based on the characteristics of each Dataset input columns, assuming its identification with the associated target column.
+* Automated treatment of tabular data associated with predictive analysis: It implements a global and carefully validated data processing based on the characteristics of the data input columns.
 
-* Robustness and improvement of predictive results: The implementation of the `atlantic` automated data preprocessing pipeline aims at improving predictive performance directly associated with the processing methods implemented based on the Dataset properties.  
+* Robustness and improvement of predictive results: The implementation of the `atlantic` automated data preprocessing pipeline aims at improving predictive performance directly associated with the processing methods implemented based on the data properties.  
    
 #### Main Development Tools <a name = "pre1"></a>
 
@@ -112,12 +112,12 @@ pickle.dump(atl, output)
     
 ### 2.1 Encoding Versions
  
-There are multiple preprocessing methods available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and [IDF](https://pypi.org/project/cane/) methods with an automatic multicolumn application. 
+There are multiple preprocessing methods available to direct use. This package provides upgrated encoding `LabelEncoder`, `OneHotEncoder` and `InverseFrequency` ([IDF](https://pypi.org/project/cane/) based) methods with an automatic multicolumn application. 
  
 ```py
 import pandas as pd
 from sklearn.model_selection import train_test_split 
-from atlantic.processing.encoders import AutoLabelEncoder, AutoIdfEncoder, AutoOneHotEncoder
+from atlantic.processing.encoders import AutoLabelEncoder, AutoIFrequencyEncoder, AutoOneHotEncoder
 
 train,test = train_test_split(data, train_size=0.8)
 train,test = train.reset_index(drop=True), test.reset_index(drop=True) # Required
@@ -129,22 +129,22 @@ cat_cols = [col for col in data.select_dtypes(include=['object']).columns if col
 ### Encoders
 ## Create Label Encoder
 encoder = AutoLabelEncoder()
-## Create IDF Encoder
-encoder = AutoIdfEncoder()
+## Create InverseFrequency Encoder
+encoder = AutoIFrequencyEncoder()
 ## Create One-hot Encoder
 encoder = AutoOneHotEncoder()
 
 ## Fit
 encoder.fit(train[cat_cols])
 
-# Transform the DataFrame using Label\IDF\One-hot Encoding
+# Transform the DataFrame using Label\IF\One-hot Encoding
 train = encoder.transform(X = train)
 test = encoder.transform(X = test)
 
 # Label Encoding : Perform an inverse transform to convert it back the categorical columns values
 test = encoder.inverse_transform(X = test)
 
-# IDF & One-hot Encoding : Perform an inverse transform to convert it back the categorical columns values
+# IFrequency & One-hot Encoding : Perform an inverse transform to convert it back the categorical columns values
 # Note: Only decodes the last transformed Dataframe
 test = encoder.inverse_transform()
             

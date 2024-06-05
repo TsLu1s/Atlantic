@@ -3,7 +3,7 @@ from atlantic.processing.scalers import (AutoMinMaxScaler,
                                          AutoStandardScaler,
                                          AutoRobustScaler)
 from atlantic.processing.encoders import (AutoLabelEncoder, 
-                                          AutoIdfEncoder,
+                                          AutoIFrequencyEncoder,
                                           AutoOneHotEncoder)
 from atlantic.imputers.imputation import (AutoSimpleImputer, 
                                           AutoKNNImputer,
@@ -49,8 +49,8 @@ cat_cols=list(Analysis(target).cat_cols(X=train_df))
 
 ## Create Label Encoder
 encoder = AutoLabelEncoder()
-## Create IDF Encoder
-encoder = AutoIdfEncoder()
+## Create IFrequency Encoder
+encoder = AutoIFrequencyEncoder()
 ## Create One-hot Encoder
 encoder = AutoOneHotEncoder()
 
