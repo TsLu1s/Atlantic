@@ -61,12 +61,9 @@ encoder.fit(train_df[cat_cols])
 train_df=encoder.transform(X=train_df)
 test_df=encoder.transform(X=test_df)
 
-# Label Encoding : Perform an inverse transform to convert it back the categorical columns values
-test_df = encoder.inverse_transform(X=test_df)
-
-# IDF & One-hot Encoding : Perform an inverse transform to convert it back the categorical columns values
-# Note: Only decodes the last transformed Dataframe
-test_df = encoder.inverse_transform()
+# Perform an inverse transform to convert it back the original categorical columns values
+train_df = encoder.inverse_transform(X = train_df)
+test_df = encoder.inverse_transform(X = test_df)
 
 ########################################################################
 ################# Scalers #################

@@ -164,20 +164,34 @@ class AutoOneHotEncoder(TransformerMixin):
 
         return X_encoded
     
-    def inverse_transform(self):
+    def inverse_transform(self, X):
         """
-        Inverse transform the binary vectors back to the original categorical values using the stored original DataFrame.
+        Inverse transform the binary vectors back to the original categorical values using the fitted OneHotEncoders.
+        
+        Parameters:
+        X (pd.DataFrame): The input DataFrame containing the binary vectors to be inverse transformed.
         
         Returns:
-        pd.DataFrame: The original DataFrame before transformation.
+        pd.DataFrame: The DataFrame with the original categorical values.
         
         Raises:
         ValueError: If the transformer has not been fitted yet.
         """
         if self.columns is None:
             raise ValueError("The transformer has not been fitted yet.")
-                    
-        return self.decoded
+
+        X_decoded = pd.DataFrame()
+
+        for col in self.columns:
+            encoder = self.one_hot_encoders[col]
+            encoded_columns = encoder.get_feature_names_out([col])
+            encoded_data = X[encoded_columns].values
+
+            # Get the original categories back from the encoded data
+            decoded_col = encoder.inverse_transform(encoded_data)
+            X_decoded[col] = decoded_col.flatten()
+
+        return X_decoded
         
 class AutoIFrequencyEncoder(BaseEstimator, TransformerMixin):
     def __init__(self):
@@ -253,17 +267,38 @@ class AutoIFrequencyEncoder(BaseEstimator, TransformerMixin):
             
         return X_encoded
     
-    def inverse_transform(self):
+    def inverse_transform(self, X):
         """
-        Returns the original DataFrame before transformation.
+        Inverse transform the frequency-encoded DataFrame back to the original categorical values using the fitted frequency mappings.
         
         Parameters:
-        X (pd.DataFrame): The input DataFrame to be inverse transformed.
+        X (pd.DataFrame): The input DataFrame containing the frequency-encoded values to be inverse transformed.
         
         Returns:
-        pd.DataFrame: The original DataFrame.
+        pd.DataFrame: The DataFrame with the original categorical values.
+        
+        Raises:
+        ValueError: If the transformer has not been fitted yet.
         """
-        if self.columns is None:
+        if self.freq_fit is None:
             raise ValueError("The transformer has not been fitted yet.")
-                    
-        return self.decoded
+        
+        X_decoded = pd.DataFrame()
+
+        for col in self.columns:
+            # Invert the log transformation and map back to original values
+            frequency_map = self.freq_fit[col]
+            inverse_frequency_map = {np.log1p(int(self.X_size * self._ratio) / v): k for k, v in frequency_map.items()}
+            sorted_freq_keys = sorted(inverse_frequency_map.keys(), reverse=True)
+            
+            def inverse_transform_value(x):
+                if pd.isna(x):
+                    return x
+                closest_log_val = min(sorted_freq_keys, key=lambda log_val: abs(log_val - x))
+                if abs(closest_log_val - x) > 1e-6:  # Threshold to detect if the value is recognized
+                    return 'unknown'
+                return inverse_frequency_map[closest_log_val]
+            
+            X_decoded[col] = X[col].map(inverse_transform_value)
+            
+        return X_decoded
