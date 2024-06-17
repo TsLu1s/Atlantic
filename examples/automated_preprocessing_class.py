@@ -46,7 +46,7 @@ future_data = atl.data_processing(X = future_data)
 
 
 # Export Atlantic Preprocessing Metadata
-import pickle 
-output = open("fit_atl.pkl", 'wb')
-pickle.dump(atl, output)
+import dill as pickle
+with open('fit_atl.pkl', 'wb') as output:
+    pickle.dump(atl, output)
 

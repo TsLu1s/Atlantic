@@ -117,7 +117,7 @@ class AutoOneHotEncoder(TransformerMixin):
         self.columns = X.columns
         
         for col in X.columns:
-            encoder = OneHotEncoder(sparse=False, handle_unknown="ignore")
+            encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
             encoder.fit(X[col].values.reshape(-1, 1))
             self.one_hot_encoders[col] = encoder
             
