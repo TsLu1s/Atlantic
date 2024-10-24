@@ -1,3 +1,23 @@
+[![Contributors][contributors-shield]][contributors-url]
+[![Stargazers][stars-shield]][stars-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Downloads][downloads-shield]][downloads-url]
+[![Month Downloads][downloads-month-shield]][downloads-month-url]
+
+[contributors-shield]: https://img.shields.io/github/contributors/TsLu1s/Atlantic.svg?style=for-the-badge&logo=github&logoColor=white
+[contributors-url]: https://github.com/TsLu1s/Atlantic/graphs/contributors
+[stars-shield]: https://img.shields.io/github/stars/TsLu1s/Atlantic.svg?style=for-the-badge&logo=github&logoColor=white
+[stars-url]: https://github.com/TsLu1s/Atlantic/stargazers
+[license-shield]: https://img.shields.io/github/license/TsLu1s/Atlantic.svg?style=for-the-badge&logo=opensource&logoColor=white
+[license-url]: https://github.com/TsLu1s/Atlantic/blob/main/LICENSE
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/luísfssantos/
+[downloads-shield]: https://static.pepy.tech/personalized-badge/atlantic?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Total%20Downloads
+[downloads-url]: https://pepy.tech/project/atlantic
+[downloads-month-shield]: https://static.pepy.tech/personalized-badge/atlantic?period=month&units=international_system&left_color=grey&right_color=blue&left_text=Month%20Downloads
+[downloads-month-url]: https://pepy.tech/project/atlantic
+
 <br>
 <p align="center">
   <h2 align="center"> Atlantic - Automated Data Preprocessing Framework for Supervised Machine Learning
